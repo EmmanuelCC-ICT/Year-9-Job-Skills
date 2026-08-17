@@ -81,8 +81,13 @@ test("GitHub Pages version is present in docs", async () => {
 
   assert.match(index, /<title>Year 9 Job Skills<\/title>/);
   assert.match(index, /https:\/\/emmanuelcc-ict\.github\.io\/Year-9-Job-Skills\//);
-  assert.match(index, /<video[\s\S]*controls/);
   assert.match(index, /video-shell/);
+  assert.match(index, /Class video checkpoint/);
+  assert.match(index, /data-load-video="intro"/);
+  assert.match(index, /data-video-checkpoint="intro"/);
+  assert.match(index, /data-video-checkpoint="communication"/);
+  assert.match(index, /data-video-checkpoint="collaboration"/);
+  assert.match(index, /Only play it here if your teacher asks you to/);
   assert.match(index, /opener-poster-v1\.png/);
   assert.match(index, /intro-employability-skills\.mp4/);
   assert.match(index, /communication-explainer\.mp4/);
@@ -152,8 +157,13 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /No, move on/);
   assert.match(index, /app\.js/);
   assert.match(css, /video-player/);
+  assert.match(css, /video-actions/);
+  assert.match(css, /video-complete-button/);
+  assert.match(css, /hud-theme-switch/);
+  assert.match(css, /class-mode-note/);
   assert.match(css, /unpack-grid/);
   assert.match(css, /arcade-grid/);
+  assert.match(css, /Skill scanner/);
   assert.match(css, /sort-card/);
   assert.match(css, /theme-picker/);
   assert.match(css, /skill-sorter-scene/);
@@ -204,6 +214,12 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /commitDraft/);
   assert.match(js, /openPrintDialog/);
   assert.match(js, /save-pdf-button/);
+  assert.match(js, /videoCheckpoints/);
+  assert.match(js, /isVideoCheckpointComplete/);
+  assert.match(js, /loadVideoOnDevice/);
+  assert.match(js, /completeVideoCheckpoint/);
+  assert.match(js, /isSnapshotReady/);
+  assert.match(js, /Finish examples first/);
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
   assert.match(js, /showSortPulse/);
@@ -227,7 +243,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /Happy/);
   assert.match(js, /Barista course/);
   assert.match(js, /Certificate II/);
-  assert.match(js, /hydrateVideoSlots/);
+  assert.doesNotMatch(js, /hydrateVideoSlots/);
   assert.doesNotMatch(js, /pcClasses|pcClass|9 Teresa|snapshot-pc-class|pc-grid/);
   assert.match(js, /firstNameOnly/);
   assert.match(js, /communicationMoments/);

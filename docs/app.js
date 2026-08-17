@@ -410,6 +410,11 @@ const initialState = {
   visitedStages: ["start"],
   celebratedStages: [],
   theme: "city",
+  videoCheckpoints: {
+    intro: false,
+    communication: false,
+    collaboration: false,
+  },
   student: {
     firstName: "",
   },
@@ -444,6 +449,10 @@ function loadState() {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
     parsed.theme = liveThemeChoices.includes(parsed.theme) ? parsed.theme : "city";
+    parsed.videoCheckpoints = {
+      ...initialState.videoCheckpoints,
+      ...parsed.videoCheckpoints,
+    };
     parsed.student = {
       firstName: firstNameOnly(parsed.student?.firstName || ""),
     };
@@ -545,7 +554,8 @@ function hasMeaningfulWork() {
   });
 
   return Boolean(
-    state.student.firstName.trim() ||
+      state.student.firstName.trim() ||
+      Object.values(state.videoCheckpoints).some(Boolean) ||
       state.skillCheck.answers.length ||
       state.skillCheck.revealedTileIds.length ||
       state.selectedCommunicationMoments.length ||
@@ -619,6 +629,21 @@ function skillCheckScore() {
 
 function isSkillCheckComplete() {
   return state.skillCheck.answers.length >= skillCheckCards.length;
+}
+
+function isVideoCheckpointComplete(key) {
+  return Boolean(state.videoCheckpoints?.[key]);
+}
+
+function requiredVideoKeyForStage(stageId) {
+  if (stageId === "start") return "intro";
+  if (stageId === "communication") return "communication";
+  if (stageId === "collaboration") return "collaboration";
+  return "";
+}
+
+function isSnapshotReady() {
+  return hasCompleteExample("communication") && hasCompleteExample("collaboration");
 }
 
 function currentSkillCheckCard() {
@@ -703,11 +728,12 @@ function allCompleteExamples() {
 function getProgress() {
   const parts = [
     Boolean(state.student.firstName.trim()),
+    isVideoCheckpointComplete("intro"),
     isSkillCheckComplete(),
-    state.visitedStages.includes("communication"),
+    isVideoCheckpointComplete("communication"),
     state.selectedCommunicationMoments.length > 0,
     hasCompleteExample("communication"),
-    state.visitedStages.includes("collaboration"),
+    isVideoCheckpointComplete("collaboration"),
     state.selectedCollaborationMoments.length > 0,
     hasCompleteExample("collaboration"),
   ];
@@ -724,23 +750,23 @@ function currentStageIndex() {
 function isStageComplete(stageId) {
   switch (stageId) {
     case "start":
-      return Boolean(state.student.firstName.trim());
+      return Boolean(state.student.firstName.trim()) && isVideoCheckpointComplete("intro");
     case "skill-check":
       return isSkillCheckComplete();
     case "communication":
-      return state.visitedStages.includes("communication");
+      return isVideoCheckpointComplete("communication");
     case "communication-life":
       return state.selectedCommunicationMoments.length > 0;
     case "communication-build":
       return hasCompleteExample("communication");
     case "collaboration":
-      return state.visitedStages.includes("collaboration");
+      return isVideoCheckpointComplete("collaboration");
     case "collaboration-life":
       return state.selectedCollaborationMoments.length > 0;
     case "collaboration-build":
       return hasCompleteExample("collaboration");
     case "unlock":
-      return hasCompleteExample("communication") && hasCompleteExample("collaboration");
+      return isSnapshotReady();
     default:
       return false;
   }
@@ -829,16 +855,21 @@ function stageRequiresCompletion(stageId) {
   return [
     "start",
     "skill-check",
+    "communication",
     "communication-life",
     "communication-build",
+    "collaboration",
     "collaboration-life",
     "collaboration-build",
+    "unlock",
   ].includes(stageId);
 }
 
 function nextButtonLabel(stageId) {
+  if (requiredVideoKeyForStage(stageId) && !isStageComplete(stageId)) return "Wait for video";
   if (stageId === "communication-build") return "Use the Yes/No choice";
   if (stageId === "collaboration-build") return "Use the Yes/No choice";
+  if (stageId === "unlock" && !isSnapshotReady()) return "Finish examples first";
   if (currentStageIndex() === stages.length - 1) return "Stay here";
   return "Next mission";
 }
@@ -937,6 +968,74 @@ function showFeedbackAnimation(correct) {
   }, 1550);
 }
 
+function createVideoPlayer(slot) {
+  const videoSrc = slot.dataset.video;
+  if (!videoSrc) return null;
+
+  const video = document.createElement("video");
+  video.className = "video-player";
+  video.controls = true;
+  video.preload = "metadata";
+  if (slot.dataset.poster) video.poster = slot.dataset.poster;
+
+  const source = document.createElement("source");
+  source.src = videoSrc;
+  source.type = "video/mp4";
+  video.append(source);
+
+  if (slot.dataset.captions) {
+    const track = document.createElement("track");
+    track.default = true;
+    track.kind = "captions";
+    track.label = "English";
+    track.src = slot.dataset.captions;
+    track.srclang = "en";
+    video.append(track);
+  }
+
+  return video;
+}
+
+function loadVideoOnDevice(key) {
+  const button = document.querySelector(`[data-load-video="${key}"]`);
+  const slot = button?.closest(".video-shell");
+  const video = slot ? createVideoPlayer(slot) : null;
+  if (!slot || !video) return;
+  const badgeText = slot.querySelector(".video-badge")?.textContent || "Lesson video";
+  const badge = document.createElement("div");
+  badge.className = "video-badge";
+  badge.textContent = badgeText;
+
+  const checkpointButton = document.createElement("button");
+  checkpointButton.type = "button";
+  checkpointButton.className = "video-complete-button";
+  checkpointButton.dataset.videoCheckpoint = key;
+  checkpointButton.textContent = isVideoCheckpointComplete(key) ? "Class video done" : "My class watched this";
+  checkpointButton.addEventListener("click", () => completeVideoCheckpoint(key));
+
+  slot.replaceChildren(video, badge, checkpointButton);
+}
+
+function completeVideoCheckpoint(key) {
+  if (!Object.prototype.hasOwnProperty.call(initialState.videoCheckpoints, key)) return;
+  state.videoCheckpoints[key] = true;
+  saveState();
+  render();
+
+  const stageId = key === "intro" ? "start" : key;
+  maybeCelebrate(stageId);
+}
+
+function renderVideoCheckpoints() {
+  document.querySelectorAll("[data-video-checkpoint]").forEach((button) => {
+    const key = button.dataset.videoCheckpoint;
+    const complete = isVideoCheckpointComplete(key);
+    button.classList.toggle("complete", complete);
+    button.textContent = complete ? "Class video done" : "My class watched this";
+    button.setAttribute("aria-pressed", String(complete));
+  });
+}
+
 function renderStudent() {
   $("first-name-input").value = state.student.firstName;
   $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
@@ -1009,6 +1108,10 @@ function renderSkillCheck() {
   const skillScene = $("skill-scene");
   skillScene.className = `skill-sorter-scene level-${botLevel} ${pictureComplete ? "complete" : ""}`;
   skillScene.dataset.revealed = String(revealedCount);
+  const sceneBadge = skillScene.querySelector(".scene-badge");
+  if (sceneBadge) {
+    sceneBadge.textContent = state.theme === "space" ? "Mission Control hidden picture" : "City Shift hidden picture";
+  }
   document.querySelectorAll("[data-picture-tile]").forEach((piece) => {
     const pieceNumber = Number(piece.dataset.pictureTile || "0");
     piece.classList.toggle("revealed", state.skillCheck.revealedTileIds.includes(pieceNumber));
@@ -1036,7 +1139,7 @@ function renderSkillCheck() {
   $("skill-no-button").disabled = complete;
 
   if (currentCard) {
-    $("sort-card-kicker").textContent = `Card ${answeredCount + 1} of ${skillCheckCards.length}`;
+    $("sort-card-kicker").textContent = `Scan target ${answeredCount + 1} of ${skillCheckCards.length}`;
     $("sort-card-label").textContent = currentCard.label;
     $("sort-card-clue").textContent = currentCard.clue;
     window.requestAnimationFrame(() => sortCard.classList.add("deal-in"));
@@ -1143,6 +1246,8 @@ function renderBuilderFrame() {
   $("finish-skill-button").textContent = isCommunication ? "No, move to collaboration" : "No, build my skills PDF";
   $("another-example-button").disabled = !draftComplete;
   $("finish-skill-button").disabled = !draftComplete;
+  $("print-button").disabled = !isSnapshotReady();
+  $("print-button").textContent = isSnapshotReady() ? "Save PDF" : "Finish both examples";
 
   const savedList = $("saved-examples-list");
   savedList.innerHTML = "";
@@ -1166,17 +1271,20 @@ function renderOutputs() {
   const progress = getProgress();
   const outputs = getOutputs();
   const examples = allCompleteExamples();
+  const snapshotReady = isSnapshotReady();
 
   $("progress-percent").textContent = `${progress}%`;
   $("progress-fill").style.width = `${progress}%`;
   $("job-speak-output").textContent = outputs.jobSpeak;
   $("feedback-output").textContent = outputs.feedback;
+  $("save-pdf-button").disabled = !snapshotReady;
+  $("save-pdf-button").textContent = snapshotReady ? "Save as PDF" : "Finish examples first";
 
   const snapshotExamples = $("snapshot-examples");
   snapshotExamples.innerHTML = "";
-  if (examples.length === 0) {
+  if (!snapshotReady) {
     const empty = document.createElement("p");
-    empty.textContent = "Build one communication example and one collaboration example to complete your skills PDF.";
+    empty.textContent = "Build one communication example and one collaboration example to unlock your finished skills PDF.";
     snapshotExamples.append(empty);
   } else {
     examples.forEach((example) => {
@@ -1194,29 +1302,40 @@ function renderOutputs() {
 
   const bullets = $("resume-bullets");
   bullets.innerHTML = "";
-  const bulletSource = examples.length > 0 ? examples : [{ ...currentDraft(), skillId: buildSkillId() }];
-  bulletSource.forEach((example) => {
-    const output = getOutputsForDraft(example.skillId, example);
-    output.resumeBullets.forEach((bullet) => {
-      const item = document.createElement("li");
-      item.textContent = bullet;
-      bullets.append(item);
+  if (!snapshotReady) {
+    const item = document.createElement("li");
+    item.textContent = "Your resume bullets will appear after both examples are finished.";
+    bullets.append(item);
+  } else {
+    examples.forEach((example) => {
+      const output = getOutputsForDraft(example.skillId, example);
+      output.resumeBullets.forEach((bullet) => {
+        const item = document.createElement("li");
+        item.textContent = bullet;
+        bullets.append(item);
+      });
     });
-  });
+  }
 
   const answers = $("interview-answers");
   answers.innerHTML = "";
-  (examples.length > 0 ? examples : [{ ...currentDraft(), skillId: buildSkillId() }]).forEach((example) => {
-    const skill = skillById(example.skillId);
-    const output = getOutputsForDraft(example.skillId, example);
-    const answer = document.createElement("article");
-    const heading = document.createElement("strong");
-    const paragraph = document.createElement("p");
-    heading.textContent = skill.title;
-    paragraph.textContent = output.interviewAnswer;
-    answer.append(heading, paragraph);
-    answers.append(answer);
-  });
+  if (!snapshotReady) {
+    const empty = document.createElement("p");
+    empty.textContent = "Interview practice will unlock when your communication and collaboration examples are both complete.";
+    answers.append(empty);
+  } else {
+    examples.forEach((example) => {
+      const skill = skillById(example.skillId);
+      const output = getOutputsForDraft(example.skillId, example);
+      const answer = document.createElement("article");
+      const heading = document.createElement("strong");
+      const paragraph = document.createElement("p");
+      heading.textContent = skill.title;
+      paragraph.textContent = output.interviewAnswer;
+      answer.append(heading, paragraph);
+      answers.append(answer);
+    });
+  }
 }
 
 function render() {
@@ -1229,6 +1348,7 @@ function render() {
   renderInputs();
   renderBuilderFrame();
   renderOutputs();
+  renderVideoCheckpoints();
   renderQuest();
 }
 
@@ -1246,68 +1366,12 @@ window.addEventListener("beforeunload", (event) => {
 });
 
 function openPrintDialog() {
+  if (!isSnapshotReady()) {
+    setStage("communication-build", false);
+    showCelebration("Finish examples first", "Build one communication example and one collaboration example before saving the PDF.");
+    return;
+  }
   window.setTimeout(() => window.print(), 60);
-}
-
-async function hydrateVideoSlots() {
-  const slots = [...document.querySelectorAll(".video-shell[data-video]")];
-
-  await Promise.all(
-    slots.map(async (slot) => {
-      const videoSrc = slot.dataset.video;
-      if (!videoSrc) return;
-
-      try {
-        const response = await fetch(videoSrc, { method: "HEAD" });
-        if (!response.ok) return;
-      } catch {
-        return;
-      }
-
-      const poster = slot.dataset.poster || "";
-      const captions = slot.dataset.captions || "";
-      const label =
-        slot.querySelector(".video-badge")?.textContent ||
-        slot.querySelector(".video-label")?.textContent ||
-        "Lesson video";
-      const video = document.createElement("video");
-      video.className = "video-player";
-      video.controls = true;
-      video.preload = "metadata";
-      if (poster) video.poster = poster;
-
-      const source = document.createElement("source");
-      source.src = videoSrc;
-      source.type = "video/mp4";
-      video.append(source);
-
-      let captionsAvailable = false;
-      if (captions) {
-        try {
-          const captionsResponse = await fetch(captions, { method: "HEAD" });
-          captionsAvailable = captionsResponse.ok;
-        } catch {
-          captionsAvailable = false;
-        }
-      }
-
-      if (captionsAvailable) {
-        const track = document.createElement("track");
-        track.default = true;
-        track.kind = "captions";
-        track.label = "English";
-        track.src = captions;
-        track.srclang = "en";
-        video.append(track);
-      }
-
-      const badge = document.createElement("div");
-      badge.className = "video-badge";
-      badge.textContent = label;
-
-      slot.replaceChildren(video, badge);
-    }),
-  );
 }
 
 function bindForm() {
@@ -1325,6 +1389,14 @@ function bindForm() {
       saveState();
       renderTheme();
     });
+  });
+
+  document.querySelectorAll("[data-load-video]").forEach((button) => {
+    button.addEventListener("click", () => loadVideoOnDevice(button.dataset.loadVideo));
+  });
+
+  document.querySelectorAll("[data-video-checkpoint]").forEach((button) => {
+    button.addEventListener("click", () => completeVideoCheckpoint(button.dataset.videoCheckpoint));
   });
 
   $("experience-select").addEventListener("change", (event) => {
@@ -1387,6 +1459,10 @@ function bindForm() {
   });
 
   $("print-button").addEventListener("click", () => {
+    if (!isSnapshotReady()) {
+      openPrintDialog();
+      return;
+    }
     if (state.currentStage.endsWith("-build")) {
       commitDraft(buildSkillId());
     }
@@ -1434,4 +1510,3 @@ function bindForm() {
 
 bindForm();
 render();
-hydrateVideoSlots();

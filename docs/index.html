@@ -26,6 +26,10 @@
             <span id="quest-meter-fill"></span>
           </div>
         </div>
+        <div class="hud-theme-switch" aria-label="Quest style">
+          <button type="button" data-theme-choice="city">City</button>
+          <button type="button" data-theme-choice="space">Mission</button>
+        </div>
         <div class="mission-rail" id="mission-rail" aria-label="Missions"></div>
       </section>
 
@@ -86,6 +90,11 @@
                 about yourself or anyone else. Use Clear work if you want to remove your draft from this browser.
               </p>
 
+              <p class="class-mode-note">
+                Class mode: stop at each video checkpoint. Your teacher can play the video once for the room, then you
+                tick that your class has watched it and move to the activity.
+              </p>
+
               <div class="starter-actions">
                 <button type="button" class="clear-work-button" id="clear-start-button">Clear work</button>
               </div>
@@ -99,21 +108,16 @@
             data-poster="assets/video-opener/opener-poster-v1.png"
             aria-label="Opening video area"
           >
-            <video
-              class="video-player"
-              controls
-              poster="assets/video-opener/opener-poster-v1.png"
-              preload="metadata"
-            >
-              <source src="assets/intro-employability-skills.mp4" type="video/mp4">
-              <track
-                default
-                kind="captions"
-                label="English"
-                src="assets/intro-employability-skills.vtt"
-                srclang="en"
-              >
-            </video>
+            <img src="assets/video-opener/opener-poster-v1.png" alt="Students recognising everyday employability skills">
+            <div class="video-overlay">
+              <span class="video-label">Class video checkpoint</span>
+              <h2>Pause for the teacher video</h2>
+              <p>Watch this on the classroom screen. Only play it here if your teacher asks you to.</p>
+              <div class="video-actions">
+                <button type="button" class="secondary" data-load-video="intro">Play on this device</button>
+                <button type="button" data-video-checkpoint="intro">My class watched this</button>
+              </div>
+            </div>
             <div class="video-badge">Video 1: What are employability skills?</div>
           </div>
         </div>
@@ -197,21 +201,16 @@
           data-poster="assets/quest/career-quest-communication-v1.png"
           aria-label="Communication explainer video area"
         >
-          <video
-            class="video-player"
-            controls
-            poster="assets/quest/career-quest-communication-v1.png"
-            preload="metadata"
-          >
-            <source src="assets/communication-explainer.mp4" type="video/mp4">
-            <track
-              default
-              kind="captions"
-              label="English"
-              src="assets/communication-explainer.vtt"
-              srclang="en"
-            >
-          </video>
+          <img src="assets/quest/career-quest-communication-v1.png" alt="Students explaining ideas, listening, and checking instructions">
+          <div class="video-overlay">
+            <span class="video-label">Class video checkpoint</span>
+            <h2>Communication video</h2>
+            <p>Stop here until your teacher plays the communication explainer for the class.</p>
+            <div class="video-actions">
+              <button type="button" class="secondary" data-load-video="communication">Play on this device</button>
+              <button type="button" data-video-checkpoint="communication">My class watched this</button>
+            </div>
+          </div>
           <div class="video-badge">Video 2: Communication</div>
         </div>
 
@@ -267,21 +266,16 @@
           data-poster="assets/quest/career-quest-collaboration-v1.png"
           aria-label="Collaboration explainer video area"
         >
-          <video
-            class="video-player"
-            controls
-            poster="assets/quest/career-quest-collaboration-v1.png"
-            preload="metadata"
-          >
-            <source src="assets/collaboration-explainer.mp4" type="video/mp4">
-            <track
-              default
-              kind="captions"
-              label="English"
-              src="assets/collaboration-explainer.vtt"
-              srclang="en"
-            >
-          </video>
+          <img src="assets/quest/career-quest-collaboration-v1.png" alt="Students planning roles and sharing materials on a group project">
+          <div class="video-overlay">
+            <span class="video-label">Class video checkpoint</span>
+            <h2>Collaboration video</h2>
+            <p>Stop here until your teacher plays the collaboration explainer for the class.</p>
+            <div class="video-actions">
+              <button type="button" class="secondary" data-load-video="collaboration">Play on this device</button>
+              <button type="button" data-video-checkpoint="collaboration">My class watched this</button>
+            </div>
+          </div>
           <div class="video-badge">Video 3: Collaboration</div>
         </div>
 

@@ -212,10 +212,10 @@ code {
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: minmax(230px, 0.7fr) minmax(172px, 0.34fr) minmax(0, 1.8fr);
-  gap: 16px;
+  grid-template-columns: minmax(220px, 0.68fr) minmax(150px, 0.28fr) auto minmax(0, 1.75fr);
+  gap: 12px;
   align-items: center;
-  padding: 16px clamp(16px, 4vw, 56px);
+  padding: 11px clamp(16px, 3vw, 42px);
   border-bottom: 1px solid rgba(0, 167, 165, 0.2);
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(248, 252, 255, 0.95)),
@@ -246,7 +246,7 @@ code {
 }
 
 .quest-score {
-  min-height: 78px;
+  min-height: 66px;
   display: grid;
   align-content: center;
   justify-items: center;
@@ -294,8 +294,8 @@ code {
 .mission-rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(126px, 144px);
-  gap: 10px;
+  grid-auto-columns: minmax(118px, 136px);
+  gap: 8px;
   overflow-x: auto;
   padding: 3px 3px 8px;
   scroll-snap-type: x proximity;
@@ -305,13 +305,13 @@ code {
 
 .mission-pill {
   position: relative;
-  min-height: 82px;
+  min-height: 68px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 5px;
   align-items: start;
   align-content: start;
-  padding: 12px 11px 10px;
+  padding: 10px 10px 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -321,6 +321,39 @@ code {
   text-align: left;
   scroll-snap-align: start;
   transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.hud-theme-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.hud-theme-switch button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hud-theme-switch button:hover,
+.hud-theme-switch button:focus-visible {
+  outline: 3px solid rgba(0, 167, 165, 0.16);
+}
+
+.hud-theme-switch button.active {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 167, 165, 0.18);
 }
 
 .mission-pill::before {
@@ -687,6 +720,7 @@ code {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  gap: 12px;
   padding: 26px;
   background: linear-gradient(180deg, rgba(23, 32, 51, 0.08), rgba(23, 32, 51, 0.88));
   color: #ffffff;
@@ -715,10 +749,53 @@ code {
 
 .video-shell p {
   max-width: 540px;
-  margin: 12px 0 0;
+  margin: 0;
   color: rgba(255, 255, 255, 0.86);
   font-size: 1rem;
   line-height: 1.5;
+}
+
+.video-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.video-actions button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.video-actions button.secondary {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.video-actions button.complete {
+  border-color: rgba(72, 217, 118, 0.72);
+  background: linear-gradient(135deg, var(--green), var(--teal));
+}
+
+.video-complete-button {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 3;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--green), var(--teal));
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22);
 }
 
 .video-badge {
@@ -774,6 +851,17 @@ code {
   border-radius: 8px;
   background: #eef6f4;
   color: var(--muted);
+  line-height: 1.5;
+}
+
+.class-mode-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(244, 183, 64, 0.34);
+  border-radius: 8px;
+  background: rgba(244, 183, 64, 0.14);
+  color: var(--ink);
   line-height: 1.5;
 }
 
@@ -1156,6 +1244,7 @@ body[data-theme="space"] .scene-badge {
 }
 
 .arcade-panel {
+  position: relative;
   display: grid;
   gap: 14px;
   padding: 22px;
@@ -1164,21 +1253,59 @@ body[data-theme="space"] .scene-badge {
     linear-gradient(180deg, #ffffff, #f8fbff);
 }
 
+.arcade-panel::before {
+  content: "Skill scanner";
+  justify-self: start;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: rgba(0, 167, 165, 0.1);
+  color: var(--teal);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .sort-card {
-  min-height: 260px;
+  position: relative;
+  min-height: 232px;
   display: grid;
   align-content: center;
   gap: 12px;
-  padding: clamp(20px, 4vw, 42px);
+  padding: clamp(20px, 4vw, 36px);
   border: 2px solid rgba(0, 167, 165, 0.34);
   border-radius: 8px;
   background:
+    linear-gradient(90deg, rgba(0, 167, 165, 0.08) 0 2px, transparent 2px 42px),
     radial-gradient(circle at 80% 16%, rgba(244, 183, 64, 0.32), transparent 28%),
     linear-gradient(135deg, #f8fafc, #ffffff);
   text-align: center;
   box-shadow: 0 18px 42px rgba(23, 32, 51, 0.08);
   transform-origin: center;
   transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.sort-card::before,
+.sort-card::after {
+  content: "";
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  pointer-events: none;
+}
+
+.sort-card::before {
+  top: 14px;
+  left: 14px;
+  border-top: 4px solid var(--teal);
+  border-left: 4px solid var(--teal);
+}
+
+.sort-card::after {
+  right: 14px;
+  bottom: 14px;
+  border-right: 4px solid var(--pink);
+  border-bottom: 4px solid var(--pink);
 }
 
 .sort-card.complete {
@@ -1226,7 +1353,7 @@ body[data-theme="space"] .scene-badge {
 
 .sort-card h3 {
   color: var(--ink);
-  font-size: clamp(2.6rem, 7vw, 5.4rem);
+  font-size: clamp(2.1rem, 6vw, 4.7rem);
   line-height: 0.95;
 }
 
