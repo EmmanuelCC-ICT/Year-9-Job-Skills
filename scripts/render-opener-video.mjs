@@ -195,7 +195,7 @@ const videos = [
     scenes: [
       {
         duration: 6,
-        image: "collaboration-hero-v1.png",
+        motion: "collaboration-motion/collaboration-s01-team-effort.mp4",
         label: "Collaboration",
         title: "Teamwork you can explain",
         subtitle: "Working with other people so the job gets done.",
@@ -206,7 +206,7 @@ const videos = [
       },
       {
         duration: 6,
-        image: "collaboration-detail-v1.png",
+        motion: "collaboration-motion/collaboration-s02-share-the-load.mp4",
         label: "Do your part",
         title: "Reliable actions count.",
         subtitle: "Finish your piece, share materials, and let people know what is happening.",
@@ -217,7 +217,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "collaboration-hero-v1.png",
+        motion: "collaboration-motion/collaboration-s03-include-ideas.mp4",
         label: "Support the group",
         title: "Include, encourage, adapt.",
         subtitle: "Use someone else's idea, help someone practise, or choose a fair plan.",
@@ -228,7 +228,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "collaboration-detail-v1.png",
+        motion: "collaboration-motion/collaboration-s04-employer-speak.mp4",
         label: "Employer speak",
         title: "Shared the work + kept going",
         subtitle: "That becomes evidence of collaboration.",
@@ -240,7 +240,7 @@ const videos = [
       },
       {
         duration: 6,
-        image: "collaboration-hero-v1.png",
+        motion: "collaboration-motion/collaboration-s05-your-activity.mp4",
         label: "Your activity",
         title: "Find your collaboration evidence.",
         subtitle: "Choose moments that feel true for school, sport, home, hobbies or community.",
