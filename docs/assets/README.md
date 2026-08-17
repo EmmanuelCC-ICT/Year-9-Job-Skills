@@ -19,6 +19,8 @@ Recommended files:
 - `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
 - `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
 - `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
+- `feedback/city-well-done-v1.gif` - City Shift fly-in celebration feedback.
+- `feedback/city-try-again-v1.gif` - City Shift fly-in retry feedback.
 - `takeaway-background.png` - optional subtle print background.
 - skill badges or stills for the 12 enterprise skills.
 

@@ -65,15 +65,18 @@
                 <legend>Quest style</legend>
                 <button type="button" data-theme-choice="city">
                   <span></span>
-                  City Shift
+                  <strong>City Shift</strong>
+                  <small>live build</small>
                 </button>
-                <button type="button" data-theme-choice="space">
+                <button type="button" data-theme-choice="space" disabled>
                   <span></span>
-                  Mission Control
+                  <strong>Mission Control</strong>
+                  <small>next theme</small>
                 </button>
-                <button type="button" data-theme-choice="studio">
+                <button type="button" data-theme-choice="studio" disabled>
                   <span></span>
-                  Studio Crew
+                  <strong>Studio Crew</strong>
+                  <small>next theme</small>
                 </button>
               </fieldset>
 
@@ -128,9 +131,21 @@
         <div class="arcade-grid">
           <aside class="skill-scene-panel" aria-label="Skill Sorter progress">
             <div class="skill-sorter-scene" id="skill-scene" aria-hidden="true">
+              <div class="city-puzzle" aria-hidden="true">
+                <div class="city-piece sky-piece" data-city-piece="1"></div>
+                <div class="city-piece tower-piece tower-one" data-city-piece="2"></div>
+                <div class="city-piece tower-piece tower-two" data-city-piece="3"></div>
+                <div class="city-piece transit-piece" data-city-piece="4"></div>
+                <div class="city-piece windows-piece" data-city-piece="5"></div>
+                <div class="city-piece skill-depot-piece" data-city-piece="6"></div>
+                <div class="city-piece return-depot-piece" data-city-piece="7"></div>
+                <div class="city-piece route-piece" data-city-piece="8"></div>
+                <div class="city-piece team-piece" data-city-piece="9"></div>
+                <div class="city-piece final-piece" data-city-piece="10"></div>
+              </div>
               <div class="drop-zone skill-zone">Employability skill</div>
               <div class="drop-zone not-skill-zone">Not a skill</div>
-              <div class="scene-badge">Skill Spotter Arena</div>
+              <div class="scene-badge">City Shift sorter</div>
             </div>
             <div>
               <p class="scene-status" id="bot-status">The arena is warming up.</p>
@@ -498,6 +513,10 @@
         </div>
         <strong id="celebration-title">Badge unlocked</strong>
         <p id="celebration-message">Nice work. Your snapshot is getting stronger.</p>
+      </div>
+
+      <div class="sort-feedback-animation" id="sort-feedback-animation" aria-hidden="true">
+        <img id="sort-feedback-gif" src="assets/feedback/city-well-done-v1.gif" alt="">
       </div>
     </main>
     <script src="app.js"></script>

@@ -389,6 +389,22 @@ const stageRailLabels = {
 };
 
 const themeChoices = ["city", "space", "studio"];
+const liveThemeChoices = ["city"];
+
+const feedbackAssets = {
+  city: {
+    correct: "assets/feedback/city-well-done-v1.gif",
+    incorrect: "assets/feedback/city-try-again-v1.gif",
+  },
+  space: {
+    correct: "assets/feedback/city-well-done-v1.gif",
+    incorrect: "assets/feedback/city-try-again-v1.gif",
+  },
+  studio: {
+    correct: "assets/feedback/city-well-done-v1.gif",
+    incorrect: "assets/feedback/city-try-again-v1.gif",
+  },
+};
 
 const initialState = {
   currentStage: "start",
@@ -427,7 +443,7 @@ function loadState() {
   try {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
-    parsed.theme = themeChoices.includes(parsed.theme) ? parsed.theme : "city";
+    parsed.theme = liveThemeChoices.includes(parsed.theme) ? parsed.theme : "city";
     parsed.student = {
       firstName: firstNameOnly(parsed.student?.firstName || ""),
     };
@@ -866,6 +882,7 @@ function showSortPulse(correct, answerIsSkill) {
   const feedback = $("sort-feedback");
   card.classList.remove("sort-correct", "sort-wrong", "sort-skill", "sort-not");
   feedback.classList.remove("correct", "try-again", "pulse");
+  showFeedbackAnimation(correct);
 
   window.requestAnimationFrame(() => {
     card.classList.add(correct ? "sort-correct" : "sort-wrong");
@@ -878,6 +895,25 @@ function showSortPulse(correct, answerIsSkill) {
     card.classList.remove("sort-correct", "sort-wrong", "sort-skill", "sort-not");
     feedback.classList.remove("pulse");
   }, 760);
+}
+
+function showFeedbackAnimation(correct) {
+  const burst = $("sort-feedback-animation");
+  const image = $("sort-feedback-gif");
+  if (!burst || !image) return;
+
+  const theme = feedbackAssets[state.theme] ? state.theme : "city";
+  image.src = `${feedbackAssets[theme][correct ? "correct" : "incorrect"]}?t=${Date.now()}`;
+  burst.classList.remove("show", "well-done", "try-again");
+
+  window.requestAnimationFrame(() => {
+    burst.classList.add("show", correct ? "well-done" : "try-again");
+  });
+
+  window.clearTimeout(showFeedbackAnimation.timeout);
+  showFeedbackAnimation.timeout = window.setTimeout(() => {
+    burst.classList.remove("show", "well-done", "try-again");
+  }, 1550);
 }
 
 function renderStudent() {
@@ -947,15 +983,21 @@ function renderSkillCheck() {
   const power = Math.round((correctCount / skillCheckCards.length) * 100);
   const botLevel = Math.min(5, Math.ceil((correctCount / skillCheckCards.length) * 5));
 
-  $("skill-scene").className = `skill-sorter-scene level-${botLevel} ${complete ? "complete" : ""}`;
+  const skillScene = $("skill-scene");
+  skillScene.className = `skill-sorter-scene level-${botLevel} ${complete ? "complete" : ""}`;
+  skillScene.dataset.revealed = String(correctCount);
+  document.querySelectorAll("[data-city-piece]").forEach((piece) => {
+    const pieceNumber = Number(piece.dataset.cityPiece || "0");
+    piece.classList.toggle("revealed", pieceNumber <= correctCount);
+  });
   $("bot-power-fill").style.width = `${power}%`;
   $("sort-progress").textContent = `${Math.min(answeredCount, skillCheckCards.length)} of ${skillCheckCards.length}`;
   $("sort-score").textContent = `${correctCount}`;
   $("bot-status").textContent = complete
     ? correctCount >= 8
-      ? "Skill Spotter unlocked. Strong sorting."
-      : "Round complete. Replay to sharpen your score."
-    : `Arena energy ${power}%. Keep sorting.`;
+      ? `City Shift online. ${correctCount} scene pieces built.`
+      : `Round complete. ${correctCount} city pieces built. Replay to sharpen your score.`
+    : `City Shift ${correctCount} of ${skillCheckCards.length} pieces built. Keep sorting.`;
 
   const sortCard = $("sort-card");
   sortCard.classList.toggle("complete", complete);
@@ -1248,7 +1290,8 @@ function bindForm() {
 
   document.querySelectorAll("[data-theme-choice]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.theme = themeChoices.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : "city";
+      if (!liveThemeChoices.includes(button.dataset.themeChoice)) return;
+      state.theme = button.dataset.themeChoice;
       saveState();
       renderTheme();
     });

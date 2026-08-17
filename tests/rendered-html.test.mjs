@@ -98,7 +98,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Skill Sorter/);
   assert.match(index, /skill-yes-button/);
   assert.match(index, /skill-scene/);
-  assert.match(index, /Skill Spotter Arena/);
+  assert.match(index, /city-puzzle/);
+  assert.match(index, /data-city-piece="10"/);
+  assert.match(index, /City Shift sorter/);
+  assert.match(index, /sort-feedback-animation/);
+  assert.match(index, /city-well-done-v1\.gif/);
   assert.doesNotMatch(index, /Skill Bot|skill-bot/);
   assert.match(index, /Employability skill/);
   assert.match(index, /Not a skill/);
@@ -151,7 +155,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /sort-card/);
   assert.match(css, /theme-picker/);
   assert.match(css, /skill-sorter-scene/);
-  assert.match(css, /career-quest-sorter-arena-v1\.png/);
+  assert.match(css, /city-piece/);
+  assert.match(css, /puzzle-pop/);
+  assert.match(css, /transit-light/);
+  assert.match(css, /sort-feedback-animation/);
+  assert.match(css, /feedback-flyout/);
   assert.match(css, /compact-video-shell/);
   assert.match(css, /clarifying-panel/);
   assert.match(css, /saved-examples-panel/);
@@ -196,6 +204,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
   assert.match(js, /showSortPulse/);
+  assert.match(js, /feedbackAssets/);
+  assert.match(js, /showFeedbackAnimation/);
+  assert.match(js, /data-city-piece/);
   assert.match(js, /stageRailLabels/);
   assert.match(js, /themeChoices/);
   assert.match(js, /renderTheme/);
@@ -230,6 +241,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(assetReadme, /career-quest-sorter-arena-v1\.png/);
   assert.match(assetReadme, /career-quest-communication-v1\.png/);
   assert.match(assetReadme, /career-quest-collaboration-v1\.png/);
+  assert.match(assetReadme, /city-well-done-v1\.gif/);
+  assert.match(assetReadme, /city-try-again-v1\.gif/);
   assert.doesNotMatch(assetReadme, /opener-video\.mp4/);
   assert.match(assetReadme, /opener-poster-v1\.png/);
   assert.match(storyboard, /Collaboration \+ Communication/);
@@ -270,6 +283,21 @@ test("GitHub Pages version is present in docs", async () => {
 
     assert.ok(docsImage.size > 500_000, `${imageName}.png should contain a generated scene image`);
     assert.equal(docsImage.size, publicImage.size);
+  }
+
+  const feedbackGifs = [
+    "city-well-done-v1",
+    "city-try-again-v1",
+  ];
+
+  for (const gifName of feedbackGifs) {
+    const [docsGif, publicGif] = await Promise.all([
+      stat(new URL(`../docs/assets/feedback/${gifName}.gif`, import.meta.url)),
+      stat(new URL(`../public/assets/feedback/${gifName}.gif`, import.meta.url)),
+    ]);
+
+    assert.ok(docsGif.size > 100_000, `${gifName}.gif should contain rendered animation frames`);
+    assert.equal(docsGif.size, publicGif.size);
   }
 
   const [docsLogo, publicLogo] = await Promise.all([
