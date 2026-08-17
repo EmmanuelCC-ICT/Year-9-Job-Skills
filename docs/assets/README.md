@@ -16,6 +16,9 @@ Recommended files:
 - `video-opener/collaboration-detail-v1.png` - close-up collaboration evidence still.
 - `video-opener/communication-detail-v1.png` - close-up communication evidence still.
 - `video-opener/collaboration-communication-contact-sheet-v1.png` - current storyboard placeholder.
+- `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
+- `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
+- `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
 - `takeaway-background.png` - optional subtle print background.
 - skill badges or stills for the 12 enterprise skills.
 

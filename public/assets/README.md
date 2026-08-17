@@ -37,6 +37,9 @@ Current generated image assets:
 - `video-opener/communication-detail-v1.png` - close-up communication evidence still.
 - `video-opener/job-skills-contact-sheet-v1.png` - broader first contact sheet.
 - `video-opener/collaboration-communication-contact-sheet-v1.png` - focused lesson contact sheet.
+- `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
+- `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
+- `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
 
 Look and feel prompt:
 

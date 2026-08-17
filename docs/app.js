@@ -299,7 +299,7 @@ const stages = [
     short: "Sort",
     title: "Skill Sorter",
     subtitle: "Check that you can spot employability skills.",
-    hint: "Sort each card into skill or not a skill to power up Skill Bot.",
+    hint: "Sort each card into skill or not a skill to unlock Skill Spotter.",
   },
   {
     id: "communication",
@@ -388,10 +388,13 @@ const stageRailLabels = {
   unlock: "Skills PDF",
 };
 
+const themeChoices = ["city", "space", "studio"];
+
 const initialState = {
   currentStage: "start",
   visitedStages: ["start"],
   celebratedStages: [],
+  theme: "city",
   student: {
     firstName: "",
   },
@@ -424,6 +427,7 @@ function loadState() {
   try {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
+    parsed.theme = themeChoices.includes(parsed.theme) ? parsed.theme : "city";
     parsed.student = {
       firstName: firstNameOnly(parsed.student?.firstName || ""),
     };
@@ -507,6 +511,24 @@ function loadState() {
 
 function saveState() {
   window.localStorage.setItem("year-9-job-skills-state", JSON.stringify(state));
+}
+
+function hasMeaningfulWork() {
+  const draftHasText = lessonFocusSkillIds.some((skillId) => {
+    const draft = state.drafts?.[skillId] || emptyExampleDraft;
+    return [draft.experience, draft.situation, draft.action, draft.result].some((value) => String(value || "").trim());
+  });
+
+  return Boolean(
+    state.student.firstName.trim() ||
+      state.skillCheck.answers.length ||
+      state.selectedCommunicationMoments.length ||
+      state.selectedCollaborationMoments.length ||
+      state.examples.length ||
+      draftHasText ||
+      state.nextStep.improve.trim() !== initialState.nextStep.improve ||
+      state.nextStep.nextStep.trim() !== initialState.nextStep.nextStep,
+  );
 }
 
 function sentenceCase(value) {
@@ -718,7 +740,7 @@ function answerSkillCheckCard(answerIsSkill) {
   state.skillCheck.lastFeedback = `${correct ? "Correct" : "Not quite"}. ${card.explanation}`;
   saveState();
   render();
-  showSortPulse(correct);
+  showSortPulse(correct, answerIsSkill);
   if (isSkillCheckComplete()) {
     maybeCelebrate("skill-check");
   }
@@ -820,12 +842,12 @@ function renderQuest() {
     button.setAttribute("aria-pressed", String(stage.id === state.currentStage));
     button.setAttribute(
       "aria-label",
-      `${index + 1}. ${stageRailLabels[stage.id] || stage.short}. ${complete ? "Badge earned" : active ? "Current mission" : "Not complete yet"}`,
+      `${index + 1}. ${stageRailLabels[stage.id] || stage.short}. ${complete ? "Badge earned" : active ? "Current mission" : "Open mission"}`,
     );
     button.innerHTML = `
       <span class="mission-token">${stageTokens[stage.id] || String(index + 1).padStart(2, "0")}</span>
       <strong>${stageRailLabels[stage.id] || stage.short}</strong>
-      <small>${complete ? "Badge earned" : active ? "Current mission" : "Locked by progress"}</small>
+      <small>${complete ? "Badge earned" : active ? "Current mission" : "Open mission"}</small>
     `;
     button.addEventListener("click", () => setStage(stage.id));
     rail.append(button);
@@ -839,20 +861,21 @@ function renderQuest() {
     (stageRequiresCompletion(currentStage.id) && !isStageComplete(currentStage.id));
 }
 
-function showSortPulse(correct) {
+function showSortPulse(correct, answerIsSkill) {
   const card = $("sort-card");
   const feedback = $("sort-feedback");
-  card.classList.remove("sort-correct", "sort-wrong");
+  card.classList.remove("sort-correct", "sort-wrong", "sort-skill", "sort-not");
   feedback.classList.remove("correct", "try-again", "pulse");
 
   window.requestAnimationFrame(() => {
     card.classList.add(correct ? "sort-correct" : "sort-wrong");
+    card.classList.add(answerIsSkill ? "sort-skill" : "sort-not");
     feedback.classList.add(correct ? "correct" : "try-again", "pulse");
   });
 
   window.clearTimeout(showSortPulse.timeout);
   showSortPulse.timeout = window.setTimeout(() => {
-    card.classList.remove("sort-correct", "sort-wrong");
+    card.classList.remove("sort-correct", "sort-wrong", "sort-skill", "sort-not");
     feedback.classList.remove("pulse");
   }, 760);
 }
@@ -860,6 +883,15 @@ function showSortPulse(correct) {
 function renderStudent() {
   $("first-name-input").value = state.student.firstName;
   $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
+}
+
+function renderTheme() {
+  document.body.dataset.theme = state.theme || "city";
+  document.querySelectorAll("[data-theme-choice]").forEach((button) => {
+    const active = button.dataset.themeChoice === state.theme;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 
 function renderMomentGrid(gridId, moments, selectedKey, skillId, celebrationStage) {
@@ -915,17 +947,19 @@ function renderSkillCheck() {
   const power = Math.round((correctCount / skillCheckCards.length) * 100);
   const botLevel = Math.min(5, Math.ceil((correctCount / skillCheckCards.length) * 5));
 
-  $("skill-bot").className = `skill-bot level-${botLevel} ${complete ? "complete" : ""}`;
+  $("skill-scene").className = `skill-sorter-scene level-${botLevel} ${complete ? "complete" : ""}`;
   $("bot-power-fill").style.width = `${power}%`;
   $("sort-progress").textContent = `${Math.min(answeredCount, skillCheckCards.length)} of ${skillCheckCards.length}`;
   $("sort-score").textContent = `${correctCount}`;
   $("bot-status").textContent = complete
     ? correctCount >= 8
-      ? "Skill Bot is fully charged."
-      : "Skill Bot is charged. Replay to boost your score."
-    : `Power ${power}%. Keep sorting.`;
+      ? "Skill Spotter unlocked. Strong sorting."
+      : "Round complete. Replay to sharpen your score."
+    : `Arena energy ${power}%. Keep sorting.`;
 
-  $("sort-card").classList.toggle("complete", complete);
+  const sortCard = $("sort-card");
+  sortCard.classList.toggle("complete", complete);
+  sortCard.classList.remove("deal-in");
   $("skill-yes-button").disabled = complete;
   $("skill-no-button").disabled = complete;
 
@@ -933,6 +967,7 @@ function renderSkillCheck() {
     $("sort-card-kicker").textContent = `Card ${answeredCount + 1} of ${skillCheckCards.length}`;
     $("sort-card-label").textContent = currentCard.label;
     $("sort-card-clue").textContent = currentCard.clue;
+    window.requestAnimationFrame(() => sortCard.classList.add("deal-in"));
   } else {
     $("sort-card-kicker").textContent = "Round complete";
     $("sort-card-label").textContent = `${correctCount} of ${skillCheckCards.length} correct`;
@@ -1113,6 +1148,7 @@ function renderOutputs() {
 }
 
 function render() {
+  renderTheme();
   renderStudent();
   renderSkillCheck();
   renderExperiences();
@@ -1125,10 +1161,17 @@ function render() {
 }
 
 function resetWork() {
+  if (hasMeaningfulWork() && !window.confirm("Clear your draft from this browser? This cannot be undone.")) return;
   state = structuredClone(initialState);
   window.localStorage.removeItem("year-9-job-skills-state");
   render();
 }
+
+window.addEventListener("beforeunload", (event) => {
+  if (!hasMeaningfulWork()) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
 
 function openPrintDialog() {
   window.setTimeout(() => window.print(), 60);
@@ -1201,6 +1244,14 @@ function bindForm() {
     saveState();
     render();
     maybeCelebrate("start");
+  });
+
+  document.querySelectorAll("[data-theme-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.theme = themeChoices.includes(button.dataset.themeChoice) ? button.dataset.themeChoice : "city";
+      saveState();
+      renderTheme();
+    });
   });
 
   $("experience-select").addEventListener("change", (event) => {

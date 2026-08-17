@@ -91,15 +91,21 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /communication-explainer\.vtt/);
   assert.match(index, /collaboration-explainer\.vtt/);
   assert.doesNotMatch(index, /opener-video\.mp4/);
-  assert.match(index, /collaboration-hero-v1\.png/);
-  assert.match(index, /communication-hero-v1\.png/);
+  assert.match(index, /career-quest-communication-v1\.png/);
+  assert.match(index, /career-quest-collaboration-v1\.png/);
+  assert.match(index, /data-theme-choice="city"/);
+  assert.match(index, /Mission Control/);
   assert.match(index, /Skill Sorter/);
   assert.match(index, /skill-yes-button/);
-  assert.match(index, /skill-bot/);
+  assert.match(index, /skill-scene/);
+  assert.match(index, /Skill Spotter Arena/);
+  assert.doesNotMatch(index, /Skill Bot|skill-bot/);
   assert.match(index, /Employability skill/);
   assert.match(index, /Not a skill/);
   assert.doesNotMatch(index, /data-stage-panel="brief"/);
   assert.match(index, /Communication is more than talking/);
+  assert.match(index, /Listening, asking, checking/);
+  assert.match(index, /Explaining ideas for the person in front of you/);
   assert.match(index, /Where have you already used communication/);
   assert.match(index, /data-stage-panel="communication-build collaboration-build"/);
   assert.match(index, /Build one strong communication example/);
@@ -107,6 +113,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /another-example-button/);
   assert.match(index, /finish-skill-button/);
   assert.match(index, /Collaboration is teamwork you can explain/);
+  assert.match(index, /share tasks and materials/);
+  assert.match(index, /projects with friends/);
   assert.match(index, /Where have you already used collaboration/);
   assert.match(index, /My Skills PDF/);
   assert.match(index, /assets\/ecc-logo\.png/);
@@ -141,7 +149,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /unpack-grid/);
   assert.match(css, /arcade-grid/);
   assert.match(css, /sort-card/);
-  assert.match(css, /skill-bot/);
+  assert.match(css, /theme-picker/);
+  assert.match(css, /skill-sorter-scene/);
+  assert.match(css, /career-quest-sorter-arena-v1\.png/);
   assert.match(css, /compact-video-shell/);
   assert.match(css, /clarifying-panel/);
   assert.match(css, /saved-examples-panel/);
@@ -161,6 +171,10 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /grid-auto-flow: column/);
   assert.match(css, /quest-meter/);
   assert.match(css, /mission-token/);
+  assert.match(css, /unpack-card:not\(\.media-card\)::before/);
+  assert.match(css, /card-fly-in/);
+  assert.match(css, /card-sort-left/);
+  assert.match(css, /card-sort-right/);
   assert.match(css, /sort-correct/);
   assert.match(css, /sort-wrong/);
   assert.match(css, /feedback-pop/);
@@ -183,9 +197,15 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /answerSkillCheckCard/);
   assert.match(js, /showSortPulse/);
   assert.match(js, /stageRailLabels/);
+  assert.match(js, /themeChoices/);
+  assert.match(js, /renderTheme/);
   assert.match(js, /quest-meter-fill/);
   assert.match(js, /mission-token/);
   assert.match(js, /celebrate-screen/);
+  assert.match(js, /hasMeaningfulWork/);
+  assert.match(js, /beforeunload/);
+  assert.match(js, /Open mission/);
+  assert.doesNotMatch(js, /Locked by progress|Skill Bot/);
   assert.match(js, /Happy/);
   assert.match(js, /Barista course/);
   assert.match(js, /Certificate II/);
@@ -207,6 +227,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(assetReadme, /intro-employability-skills\.mp4/);
   assert.match(assetReadme, /communication-explainer\.mp4/);
   assert.match(assetReadme, /collaboration-explainer\.mp4/);
+  assert.match(assetReadme, /career-quest-sorter-arena-v1\.png/);
+  assert.match(assetReadme, /career-quest-communication-v1\.png/);
+  assert.match(assetReadme, /career-quest-collaboration-v1\.png/);
   assert.doesNotMatch(assetReadme, /opener-video\.mp4/);
   assert.match(assetReadme, /opener-poster-v1\.png/);
   assert.match(storyboard, /Collaboration \+ Communication/);
@@ -231,6 +254,22 @@ test("GitHub Pages version is present in docs", async () => {
     assert.ok(docsCaptions.size > 200, `${videoName}.vtt should contain captions`);
     assert.equal(docsVideo.size, publicVideo.size);
     assert.equal(docsCaptions.size, publicCaptions.size);
+  }
+
+  const questImages = [
+    "career-quest-sorter-arena-v1",
+    "career-quest-communication-v1",
+    "career-quest-collaboration-v1",
+  ];
+
+  for (const imageName of questImages) {
+    const [docsImage, publicImage] = await Promise.all([
+      stat(new URL(`../docs/assets/quest/${imageName}.png`, import.meta.url)),
+      stat(new URL(`../public/assets/quest/${imageName}.png`, import.meta.url)),
+    ]);
+
+    assert.ok(docsImage.size > 500_000, `${imageName}.png should contain a generated scene image`);
+    assert.equal(docsImage.size, publicImage.size);
   }
 
   const [docsLogo, publicLogo] = await Promise.all([

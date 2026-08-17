@@ -824,7 +824,7 @@ function App() {
               class in the approved school system.
             </p>
           </div>
-          <a className="form-link-button" href={microsoftFormsUrl} rel="noopener" target="_blank">
+          <a className="form-link-button" href={microsoftFormsUrl} rel="noreferrer" target="_blank">
             Open upload form
           </a>
         </div>

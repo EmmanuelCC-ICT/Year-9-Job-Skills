@@ -61,6 +61,22 @@
                 <input id="first-name-input" autocomplete="given-name" maxlength="24" placeholder="First name only">
               </label>
 
+              <fieldset class="theme-picker" aria-label="Choose your quest style">
+                <legend>Quest style</legend>
+                <button type="button" data-theme-choice="city">
+                  <span></span>
+                  City Shift
+                </button>
+                <button type="button" data-theme-choice="space">
+                  <span></span>
+                  Mission Control
+                </button>
+                <button type="button" data-theme-choice="studio">
+                  <span></span>
+                  Studio Crew
+                </button>
+              </fieldset>
+
               <p class="privacy-note">
                 Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
                 print, save, or share it. It does not ask for your PC class or surname. Do not include private details
@@ -110,16 +126,15 @@
         </div>
 
         <div class="arcade-grid">
-          <aside class="skill-bot-panel" aria-label="Skill Bot progress">
-            <div class="skill-bot" id="skill-bot" aria-hidden="true">
-              <span class="bot-antenna"></span>
-              <span class="bot-eye left"></span>
-              <span class="bot-eye right"></span>
-              <span class="bot-mouth"></span>
+          <aside class="skill-scene-panel" aria-label="Skill Sorter progress">
+            <div class="skill-sorter-scene" id="skill-scene" aria-hidden="true">
+              <div class="drop-zone skill-zone">Employability skill</div>
+              <div class="drop-zone not-skill-zone">Not a skill</div>
+              <div class="scene-badge">Skill Spotter Arena</div>
             </div>
             <div>
-              <p class="bot-status" id="bot-status">Skill Bot is warming up.</p>
-              <div class="bot-power-track" aria-label="Skill Bot power">
+              <p class="scene-status" id="bot-status">The arena is warming up.</p>
+              <div class="bot-power-track" aria-label="Skill Sorter energy">
                 <span id="bot-power-fill"></span>
               </div>
             </div>
@@ -166,13 +181,13 @@
           class="video-shell compact-video-shell"
           data-video="assets/communication-explainer.mp4"
           data-captions="assets/communication-explainer.vtt"
-          data-poster="assets/video-opener/communication-hero-v1.png"
+          data-poster="assets/quest/career-quest-communication-v1.png"
           aria-label="Communication explainer video area"
         >
           <video
             class="video-player"
             controls
-            poster="assets/video-opener/communication-hero-v1.png"
+            poster="assets/quest/career-quest-communication-v1.png"
             preload="metadata"
           >
             <source src="assets/communication-explainer.mp4" type="video/mp4">
@@ -189,26 +204,26 @@
 
         <div class="unpack-grid">
           <article class="unpack-card media-card">
-            <img src="assets/video-opener/communication-hero-v1.png" alt="Student explaining an idea while classmates listen">
+            <img src="assets/quest/career-quest-communication-v1.png" alt="Students explaining ideas, listening, and checking instructions">
             <p>Workplace why</p>
             <h3>Clear communication prevents mix-ups</h3>
-            <span>It helps people follow instructions, ask for help, serve customers, and solve small problems before they become bigger.</span>
+            <span>It helps people understand instructions, ask for help, serve customers, and check small details before they become bigger mix-ups.</span>
           </article>
           <article class="unpack-card">
             <p>Listening can look like</p>
-            <h3>Paying attention, remembering, checking</h3>
-            <span>You listen when you focus, remember instructions, ask a question, or repeat back the important part.</span>
+            <h3>Listening, asking, checking</h3>
+            <span>You listen carefully before you answer, ask when something is unclear, and check you understood the instruction.</span>
           </article>
           <article class="unpack-card">
             <p>Speaking can look like</p>
-            <h3>Sharing clearly, explaining, choosing words</h3>
-            <span>You speak well when you use clear words, organise your ideas, adjust for the person, or use an example.</span>
+            <h3>Explaining ideas for the person in front of you</h3>
+            <span>You speak well when you choose clear words, organise your idea, and use an example that fits the person.</span>
           </article>
           <article class="unpack-card media-card">
             <img src="assets/video-opener/communication-detail-v1.png" alt="Students listening and asking questions in a group discussion">
             <p>You might already do this when</p>
             <h3>You help someone understand</h3>
-            <span>Explaining a task, asking a coach a question, helping a sibling, checking instructions, or messaging responsibly all count.</span>
+            <span>Explaining a task, asking a coach a question, helping a friend or sibling, speaking to a group, or messaging responsibly all count.</span>
           </article>
         </div>
       </section>
@@ -236,13 +251,13 @@
           class="video-shell compact-video-shell"
           data-video="assets/collaboration-explainer.mp4"
           data-captions="assets/collaboration-explainer.vtt"
-          data-poster="assets/video-opener/collaboration-hero-v1.png"
+          data-poster="assets/quest/career-quest-collaboration-v1.png"
           aria-label="Collaboration explainer video area"
         >
           <video
             class="video-player"
             controls
-            poster="assets/video-opener/collaboration-hero-v1.png"
+            poster="assets/quest/career-quest-collaboration-v1.png"
             preload="metadata"
           >
             <source src="assets/collaboration-explainer.mp4" type="video/mp4">
@@ -259,15 +274,15 @@
 
         <div class="unpack-grid">
           <article class="unpack-card media-card">
-            <img src="assets/video-opener/collaboration-hero-v1.png" alt="Students collaborating on a group project">
+            <img src="assets/quest/career-quest-collaboration-v1.png" alt="Students planning roles and sharing materials on a group project">
             <p>Workplace why</p>
             <h3>Most jobs rely on other people</h3>
-            <span>People share tasks, swap information, cover each other, keep to time, and notice what the team needs next.</span>
+            <span>People share tasks and materials, do their part, swap information, and let the group know when they need help.</span>
           </article>
           <article class="unpack-card">
             <p>Teamwork can look like</p>
             <h3>Doing your part reliably</h3>
-            <span>You collaborate when you take responsibility, keep to time, finish your part, or let people know if you need help.</span>
+            <span>You collaborate when you take responsibility, finish your part, share materials, or let people know if you need help.</span>
           </article>
           <article class="unpack-card">
             <p>Teamwork can look like</p>
@@ -278,7 +293,7 @@
             <img src="assets/video-opener/collaboration-detail-v1.png" alt="Hands arranging a shared project plan">
             <p>You might already do this when</p>
             <h3>You help the group move forward</h3>
-            <span>Group assignments, sport, productions, home jobs, volunteering, clubs, and helping friends can all show teamwork.</span>
+            <span>Group assignments, team sport, production, clubs, volunteering, home jobs, and projects with friends can all show teamwork.</span>
           </article>
         </div>
       </section>

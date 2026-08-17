@@ -1,4 +1,12 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -7,14 +15,17 @@ const tmpRoot = "/private/tmp/year9-job-skills-lesson-videos";
 const docsAssets = join(root, "docs", "assets");
 const publicAssets = join(root, "public", "assets");
 const videoDir = join(docsAssets, "video-opener");
+const voiceoverDir = "/Users/tania.byrnes/Desktop/Voiceover";
 const width = 1280;
 const height = 720;
 const fps = 30;
+const voiceoverTailSeconds = 0.25;
 
 const videos = [
   {
     slug: "intro-employability-skills",
     label: "Video 1",
+    voiceoverPrefix: "intro",
     narration: [
       "As you get closer to fourteen, casual and part time work can start to feel real.",
       "Not everyone will look for work straight away, and that is okay.",
@@ -100,6 +111,7 @@ const videos = [
   {
     slug: "communication-explainer",
     label: "Video 2",
+    voiceoverPrefix: "communication",
     narration: [
       "Communication is more than talking.",
       "In work, communication means helping people understand what is happening.",
@@ -170,6 +182,7 @@ const videos = [
   {
     slug: "collaboration-explainer",
     label: "Video 3",
+    voiceoverPrefix: "collaboration",
     narration: [
       "Collaboration is teamwork you can explain.",
       "In work, collaboration means working with other people so the job gets done.",
@@ -256,6 +269,96 @@ function run(command, args, options = {}) {
   }
 
   return result;
+}
+
+function escapeConcatPath(filePath) {
+  return filePath.replaceAll("'", "'\\''");
+}
+
+function probeDuration(filePath) {
+  const result = run("ffprobe", [
+    "-v",
+    "error",
+    "-show_entries",
+    "format=duration",
+    "-of",
+    "default=noprint_wrappers=1:nokey=1",
+    filePath,
+  ]);
+  const duration = Number.parseFloat(result.stdout.trim());
+
+  if (!Number.isFinite(duration)) {
+    throw new Error(`Could not read duration for ${filePath}`);
+  }
+
+  return duration;
+}
+
+function findSceneVoiceover(prefix, sceneNumber) {
+  if (!existsSync(voiceoverDir)) {
+    return null;
+  }
+
+  const sceneToken = String(sceneNumber).padStart(2, "0");
+  const matchPattern = new RegExp(
+    `^voiceover:${prefix}_s${sceneToken}\\.(m4a|mp3|wav|aiff)$`,
+    "i",
+  );
+  const matchingFile = readdirSync(voiceoverDir).find((fileName) => matchPattern.test(fileName));
+
+  return matchingFile ? join(voiceoverDir, matchingFile) : null;
+}
+
+function prepareSceneAudio(video, scenes, workDir) {
+  const voiceoverFiles = scenes.map((_, index) => findSceneVoiceover(video.voiceoverPrefix, index + 1));
+
+  if (!voiceoverFiles.every(Boolean)) {
+    return {
+      audioPath: renderNarration(video, workDir),
+      scenes,
+      source: "generated",
+    };
+  }
+
+  const convertedFiles = voiceoverFiles.map((file, index) => {
+    const wav = join(workDir, `voiceover-${String(index + 1).padStart(2, "0")}.wav`);
+    run("ffmpeg", ["-y", "-i", file, "-ar", "48000", "-ac", "2", wav]);
+    return wav;
+  });
+
+  const audioConcatFile = join(workDir, "audio-concat.txt");
+  writeFileSync(
+    audioConcatFile,
+    convertedFiles.map((file) => `file '${escapeConcatPath(file)}'`).join("\n"),
+    "utf8",
+  );
+
+  const audioPath = join(workDir, "narration.wav");
+  run("ffmpeg", [
+    "-y",
+    "-f",
+    "concat",
+    "-safe",
+    "0",
+    "-i",
+    audioConcatFile,
+    "-ar",
+    "48000",
+    "-ac",
+    "2",
+    audioPath,
+  ]);
+
+  const timedScenes = scenes.map((scene, index) => ({
+    ...scene,
+    duration: probeDuration(voiceoverFiles[index]) + voiceoverTailSeconds,
+  }));
+
+  return {
+    audioPath,
+    scenes: timedScenes,
+    source: "recorded",
+  };
 }
 
 function escapeXml(value) {
@@ -362,8 +465,8 @@ function sortExamples() {
 function sceneSvg(scene) {
   const anchor = scene.align === "right" ? "end" : scene.align === "center" ? "middle" : "start";
   const textX = scene.align === "center" ? width / 2 : scene.align === "right" ? 1212 : 68;
-  const titleY = scene.align === "center" ? 155 : 438;
-  const subY = scene.align === "center" ? 250 : 548;
+  const titleY = scene.align === "center" ? (scene.skillMap ? 148 : 155) : 438;
+  const subY = scene.align === "center" ? (scene.skillMap ? 232 : scene.sortExamples ? 238 : 250) : 548;
   const footerY = scene.align === "center" ? 604 : 618;
   const labelAnchor = scene.align === "right" ? "end" : scene.align === "center" ? "middle" : "start";
   const label = scene.label.toUpperCase();
@@ -385,6 +488,8 @@ function sceneSvg(scene) {
   const skillMap = scene.skillMap ? `<g>${skillBadges()}</g>` : "";
   const sortMap = scene.sortExamples ? `<g>${sortExamples()}</g>` : "";
   const footerMax = scene.align === "center" ? 48 : 58;
+  const titleMaxChars = scene.skillMap ? 34 : scene.align === "center" ? 24 : 25;
+  const subtitleMaxChars = scene.skillMap ? 82 : scene.sortExamples ? 58 : scene.align === "center" ? 52 : 38;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
@@ -423,8 +528,8 @@ function sceneSvg(scene) {
   ${skillMap}
   ${sortMap}
   ${focusSkill}
-  ${textBlock(scene.title, textX, titleY, { anchor, className: "title", maxChars: scene.align === "center" ? 24 : 25 })}
-  ${textBlock(scene.subtitle, textX, subY, { anchor, className: "copy", maxChars: scene.align === "center" ? 52 : 38 })}
+  ${textBlock(scene.title, textX, titleY, { anchor, className: "title", maxChars: titleMaxChars })}
+  ${textBlock(scene.subtitle, textX, subY, { anchor, className: "copy", maxChars: subtitleMaxChars })}
   ${textBlock(scene.footer, textX, footerY, { anchor, className: "footer", maxChars: footerMax })}
   <rect x="28" y="28" width="1224" height="664" rx="18" fill="none" stroke="#156b86" stroke-width="2"/>
 </svg>`;
@@ -444,6 +549,28 @@ function renderPng(scene, index, workDir) {
   return png;
 }
 
+function sceneMotionFilters(scene, index) {
+  const scaleWidth = 1344;
+  const scaleHeight = 756;
+  const phase = (index * 0.82).toFixed(2);
+  const horizontalDrift = index % 2 === 0 ? 21 : -21;
+  const verticalDrift = index % 2 === 0 ? 11 : -11;
+
+  return [
+    `scale=${scaleWidth}:${scaleHeight}`,
+    [
+      `crop=${width}:${height}`,
+      `x='(iw-ow)/2+sin(t*0.42+${phase})*${horizontalDrift}'`,
+      `y='(ih-oh)/2+cos(t*0.34+${phase})*${verticalDrift}'`,
+    ].join(":"),
+    `drawbox=x='mod(t*210\\,${width + 260})-220':y=${height - 48}:w=210:h=4:color=0x00e7ff@0.46:t=fill`,
+    `drawbox=x='${width}-mod(t*160\\,${width + 260})':y=42:w=160:h=3:color=0xffd100@0.42:t=fill`,
+    "format=yuv420p",
+    "fade=t=in:st=0:d=0.18",
+    `fade=t=out:st=${Math.max(0, scene.duration - 0.2).toFixed(2)}:d=0.2`,
+  ];
+}
+
 function renderScene(scene, index, workDir) {
   const png = renderPng(scene, index, workDir);
   const output = join(workDir, `scene-${String(index).padStart(2, "0")}.mp4`);
@@ -459,12 +586,7 @@ function renderScene(scene, index, workDir) {
     "-i",
     png,
     "-vf",
-    [
-      `scale=${width}:${height}`,
-      "format=yuv420p",
-      "fade=t=in:st=0:d=0.18",
-      `fade=t=out:st=${Math.max(0, scene.duration - 0.2).toFixed(2)}:d=0.2`,
-    ].join(","),
+    sceneMotionFilters(scene, index).join(","),
     "-t",
     String(scene.duration),
     "-an",
@@ -527,14 +649,16 @@ function renderVideo(video) {
   const workDir = join(tmpRoot, video.slug);
   mkdirSync(workDir, { recursive: true });
 
-  const sceneFiles = video.scenes.map((scene, index) => renderScene(scene, index, workDir));
+  const prepared = prepareSceneAudio(video, video.scenes, workDir);
+  const renderedVideo = { ...video, scenes: prepared.scenes };
+  const sceneFiles = renderedVideo.scenes.map((scene, index) => renderScene(scene, index, workDir));
   const concatFile = join(workDir, "concat.txt");
-  writeFileSync(concatFile, sceneFiles.map((file) => `file '${file}'`).join("\n"), "utf8");
+  writeFileSync(concatFile, sceneFiles.map((file) => `file '${escapeConcatPath(file)}'`).join("\n"), "utf8");
 
   const silentVideo = join(workDir, `${video.slug}-silent.mp4`);
   run("ffmpeg", ["-y", "-f", "concat", "-safe", "0", "-i", concatFile, "-c", "copy", silentVideo]);
 
-  const narrationWav = renderNarration(video, workDir);
+  const narrationWav = prepared.audioPath;
   const docsVideo = join(docsAssets, `${video.slug}.mp4`);
   const docsCaptions = join(docsAssets, `${video.slug}.vtt`);
   const publicVideo = join(publicAssets, `${video.slug}.mp4`);
@@ -560,11 +684,11 @@ function renderVideo(video) {
     docsVideo,
   ]);
 
-  writeCaptions(video, docsCaptions);
+  writeCaptions(renderedVideo, docsCaptions);
   copyFileSync(docsVideo, publicVideo);
   copyFileSync(docsCaptions, publicCaptions);
 
-  console.log(`\n${video.label}: ${video.slug}`);
+  console.log(`\n${video.label}: ${video.slug} (${prepared.source} voiceover)`);
   run(
     "ffprobe",
     ["-v", "error", "-show_entries", "format=duration,size", "-of", "default=noprint_wrappers=1", docsVideo],
