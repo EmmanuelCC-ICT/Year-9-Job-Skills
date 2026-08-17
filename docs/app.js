@@ -1387,7 +1387,7 @@ function bindForm() {
       if (!liveThemeChoices.includes(button.dataset.themeChoice)) return;
       state.theme = button.dataset.themeChoice;
       saveState();
-      renderTheme();
+      render();
     });
   });
 

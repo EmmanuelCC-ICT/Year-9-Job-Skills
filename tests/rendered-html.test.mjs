@@ -233,6 +233,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /stageRailLabels/);
   assert.match(js, /liveThemeChoices/);
   assert.match(js, /renderTheme/);
+  assert.match(js, /state\.theme = button\.dataset\.themeChoice;\s*saveState\(\);\s*render\(\);/);
   assert.match(js, /quest-meter-fill/);
   assert.match(js, /mission-token/);
   assert.match(js, /celebrate-screen/);
