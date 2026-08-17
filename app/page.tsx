@@ -424,6 +424,10 @@ function App() {
     window.localStorage.removeItem("skill-sprint-state");
   }
 
+  function openPrintDialog() {
+    window.setTimeout(() => window.print(), 60);
+  }
+
   return (
     <main>
       <section className="hero-section">
@@ -735,8 +739,8 @@ function App() {
             <button type="button" onClick={copyJobSpeak}>
               {copied ? "Copied" : "Copy"}
             </button>
-            <button type="button" onClick={() => window.print()}>
-              Print
+            <button type="button" onClick={openPrintDialog}>
+              Save PDF
             </button>
             <button type="button" className="secondary" onClick={resetWork}>
               Reset
@@ -749,14 +753,31 @@ function App() {
         <div className="section-heading">
           <p className="eyebrow">Takeaway</p>
           <h2>My Employability Snapshot</h2>
-          <p>This section is designed to print or save as a PDF.</p>
+          <p>This section is designed as a one-page profile to save as a PDF.</p>
+        </div>
+
+        <div className="pdf-action-panel" aria-label="Save your skills PDF">
+          <div>
+            <p className="eyebrow">Save your PDF</p>
+            <h3>Download your one-page skills profile</h3>
+            <ol>
+              <li>Click Save as PDF.</li>
+              <li>In the print window, choose Save as PDF.</li>
+              <li>If it goes onto page 2, choose Scale 90% or remove one extra example.</li>
+            </ol>
+          </div>
+          <button type="button" onClick={openPrintDialog}>
+            Save as PDF
+          </button>
         </div>
 
         <div className="takeaway-card">
           <div className="takeaway-header">
-            <div>
+            <img className="snapshot-logo" src="/assets/ecc-logo.png" alt="Emmanuel Catholic College logo" />
+            <div className="snapshot-title-block">
               <p>Year 9 Job Skills</p>
-              <h3>My Employability Snapshot</h3>
+              <h3>My Skills PDF</h3>
+              <span className="snapshot-tagline">Communication + Collaboration profile</span>
             </div>
             <div className="snapshot-meta" aria-label="Student details">
               <span>{student.firstName.trim() || "First name"}</span>

@@ -1074,6 +1074,10 @@ function resetWork() {
   render();
 }
 
+function openPrintDialog() {
+  window.setTimeout(() => window.print(), 60);
+}
+
 async function hydrateVideoSlots() {
   const slots = [...document.querySelectorAll(".video-shell[data-video]")];
 
@@ -1211,8 +1215,10 @@ function bindForm() {
     saveState();
     render();
     maybeCelebrate("unlock");
-    window.setTimeout(() => window.print(), 60);
+    openPrintDialog();
   });
+
+  $("save-pdf-button").addEventListener("click", openPrintDialog);
 
   $("reset-button").addEventListener("click", resetWork);
   $("clear-start-button").addEventListener("click", resetWork);

@@ -378,7 +378,7 @@
           <div class="right-size-feedback" id="feedback-output"></div>
           <div class="button-row">
             <button type="button" id="copy-button">Copy</button>
-            <button type="button" id="print-button">Print</button>
+            <button type="button" id="print-button">Save PDF</button>
             <button type="button" class="secondary" id="reset-button">Reset</button>
           </div>
           <div class="builder-decision" id="builder-decision">
@@ -397,14 +397,29 @@
         <div class="section-heading">
           <p class="eyebrow">Final unlock</p>
           <h2>My Employability Snapshot</h2>
-          <p>This section is designed to print or save as a PDF.</p>
+          <p>This section is designed as a one-page profile to save as a PDF.</p>
+        </div>
+
+        <div class="pdf-action-panel" aria-label="Save your skills PDF">
+          <div>
+            <p class="eyebrow">Save your PDF</p>
+            <h3>Download your one-page skills profile</h3>
+            <ol>
+              <li>Click Save as PDF.</li>
+              <li>In the print window, choose Save as PDF.</li>
+              <li>If it goes onto page 2, choose Scale 90% or remove one extra example.</li>
+            </ol>
+          </div>
+          <button type="button" id="save-pdf-button">Save as PDF</button>
         </div>
 
         <div class="takeaway-card" id="takeaway-card">
           <div class="takeaway-header">
-            <div>
+            <img class="snapshot-logo" src="assets/ecc-logo.png" alt="Emmanuel Catholic College logo">
+            <div class="snapshot-title-block">
               <p>Year 9 Job Skills</p>
               <h3>My Skills PDF</h3>
+              <span class="snapshot-tagline">Communication + Collaboration profile</span>
             </div>
             <div class="snapshot-meta" aria-label="Student details">
               <span id="snapshot-first-name">First name</span>
@@ -412,19 +427,19 @@
           </div>
 
           <div class="takeaway-grid">
-            <section>
-              <h4>My skill examples</h4>
+            <section class="example-section">
+              <h4>Skill examples</h4>
               <div class="snapshot-example-list" id="snapshot-examples"></div>
             </section>
-            <section>
+            <section class="bullet-section">
               <h4>Resume bullets</h4>
               <ul id="resume-bullets"></ul>
             </section>
-            <section>
-              <h4>Interview practice answers</h4>
+            <section class="answer-section">
+              <h4>Interview practice</h4>
               <div class="snapshot-answer-list" id="interview-answers"></div>
             </section>
-            <section>
+            <section class="next-step-section">
               <h4>Skill to build next</h4>
               <label>
                 Focus skill

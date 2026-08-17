@@ -39,6 +39,10 @@ test("server-renders the Year 9 Job Skills app shell", async () => {
   assert.match(html, /Can you spot an employability skill/);
   assert.match(html, /Skill Bot power/);
   assert.match(html, /My Employability Snapshot/);
+  assert.match(html, /My Skills PDF/);
+  assert.match(html, /\/assets\/ecc-logo\.png/);
+  assert.match(html, /Download your one-page skills profile/);
+  assert.match(html, /choose Save as PDF/);
   assert.match(html, /First name only/);
   assert.match(html, /does not send your answers anywhere/);
   assert.match(html, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
@@ -105,6 +109,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Collaboration is teamwork you can explain/);
   assert.match(index, /Where have you already used collaboration/);
   assert.match(index, /My Skills PDF/);
+  assert.match(index, /assets\/ecc-logo\.png/);
+  assert.match(index, /Download your one-page skills profile/);
+  assert.match(index, /save-pdf-button/);
+  assert.match(index, /choose Save as PDF/);
+  assert.match(index, /Scale 90%/);
   assert.match(index, /First name only/);
   assert.match(index, /does not ask for your PC class or surname/);
   assert.match(index, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
@@ -137,6 +146,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /saved-examples-panel/);
   assert.match(css, /builder-decision/);
   assert.match(css, /snapshot-example-list/);
+  assert.match(css, /pdf-action-panel/);
+  assert.match(css, /snapshot-logo/);
+  assert.match(css, /@page/);
+  assert.match(css, /A4 portrait/);
+  assert.match(css, /print-color-adjust/);
   assert.match(css, /handoff-panel/);
   assert.match(css, /form-link-button/);
   assert.match(css, /right-size-note/);
@@ -153,6 +167,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /drafts/);
   assert.match(js, /examples/);
   assert.match(js, /commitDraft/);
+  assert.match(js, /openPrintDialog/);
+  assert.match(js, /save-pdf-button/);
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
   assert.match(js, /Happy/);
@@ -201,4 +217,11 @@ test("GitHub Pages version is present in docs", async () => {
     assert.equal(docsVideo.size, publicVideo.size);
     assert.equal(docsCaptions.size, publicCaptions.size);
   }
+
+  const [docsLogo, publicLogo] = await Promise.all([
+    stat(new URL("../docs/assets/ecc-logo.png", import.meta.url)),
+    stat(new URL("../public/assets/ecc-logo.png", import.meta.url)),
+  ]);
+  assert.ok(docsLogo.size > 10_000, "ECC logo should be available in docs assets");
+  assert.equal(docsLogo.size, publicLogo.size);
 });

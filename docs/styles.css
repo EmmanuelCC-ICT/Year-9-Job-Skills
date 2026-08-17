@@ -1402,6 +1402,50 @@ select:disabled {
   margin: 0 auto 48px;
 }
 
+.pdf-action-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto 18px;
+  padding: 18px;
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(23, 32, 51, 0.08);
+}
+
+.pdf-action-panel h3,
+.pdf-action-panel p,
+.pdf-action-panel ol {
+  margin: 0;
+}
+
+.pdf-action-panel h3 {
+  font-size: 1.18rem;
+  line-height: 1.2;
+}
+
+.pdf-action-panel ol {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.pdf-action-panel button {
+  min-width: 150px;
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--pink);
+  color: #ffffff;
+  font-weight: 900;
+}
+
 .takeaway-card {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -1412,13 +1456,25 @@ select:disabled {
 .takeaway-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 18px;
   padding: 22px;
   color: #ffffff;
   background:
     linear-gradient(90deg, rgba(0, 167, 165, 0.16) 0 35%, transparent 35% 100%),
     #172033;
+}
+
+.snapshot-logo {
+  width: 74px;
+  height: auto;
+  flex: 0 0 auto;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.snapshot-title-block {
+  min-width: 0;
 }
 
 .takeaway-header p,
@@ -1440,7 +1496,16 @@ select:disabled {
   line-height: 1.05;
 }
 
+.snapshot-tagline {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
 .snapshot-meta {
+  margin-left: auto;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -1819,6 +1884,7 @@ select:disabled {
   .student-panel,
   .form-grid,
   .takeaway-grid,
+  .pdf-action-panel,
   .handoff-panel,
   .confidence-row,
   .button-row {
@@ -1830,6 +1896,11 @@ select:disabled {
   }
 
   .handoff-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pdf-action-panel {
     align-items: stretch;
     flex-direction: column;
   }
@@ -1871,13 +1942,25 @@ select:disabled {
   }
 }
 
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
 @media print {
+  html,
+  body {
+    width: 210mm;
+    min-height: 297mm;
+  }
+
   main {
     padding-bottom: 0;
   }
 
   body {
     background: #ffffff;
+    color: #172033;
   }
 
   .hero-section,
@@ -1887,6 +1970,7 @@ select:disabled {
   .quest-hud,
   .mission-nav,
   .celebration-toast,
+  .pdf-action-panel,
   .handoff-panel,
   .takeaway-section > .section-heading {
     display: none;
@@ -1899,10 +1983,89 @@ select:disabled {
   .takeaway-section {
     margin: 0;
     padding: 0;
+    max-width: none;
   }
 
   .takeaway-card {
-    border: 0;
+    min-height: 277mm;
+    border: 2px solid #172033;
     border-radius: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    overflow: hidden;
+  }
+
+  .takeaway-header {
+    gap: 12px;
+    padding: 10mm 9mm 8mm;
+    background: #172033 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .snapshot-logo {
+    width: 18mm;
+  }
+
+  .takeaway-header p {
+    font-size: 8pt;
+  }
+
+  .takeaway-header h3 {
+    margin-top: 2mm;
+    font-size: 20pt;
+  }
+
+  .snapshot-tagline {
+    margin-top: 2mm;
+    font-size: 9pt;
+  }
+
+  .snapshot-meta span {
+    padding: 5px 7px;
+    font-size: 9pt;
+  }
+
+  .takeaway-grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-auto-rows: minmax(0, auto);
+  }
+
+  .takeaway-grid section {
+    min-height: 0;
+    padding: 5mm;
+    break-inside: avoid;
+  }
+
+  .takeaway-grid h4 {
+    margin-bottom: 2.5mm;
+    font-size: 8pt;
+  }
+
+  .takeaway-grid p,
+  .takeaway-grid li {
+    font-size: 9pt;
+    line-height: 1.34;
+  }
+
+  .snapshot-example-list,
+  .snapshot-answer-list {
+    gap: 2.5mm;
+  }
+
+  .snapshot-example-list article,
+  .snapshot-answer-list article {
+    padding: 3mm;
+  }
+
+  .snapshot-example-list strong,
+  .snapshot-answer-list strong {
+    margin-bottom: 1.5mm;
+    font-size: 7.5pt;
+  }
+
+  .next-step-section input {
+    min-height: 8mm;
+    font-size: 9pt;
   }
 }
