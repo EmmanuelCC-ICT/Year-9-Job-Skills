@@ -124,7 +124,7 @@ code {
 
 .mission-rail {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
   gap: 8px;
 }
 
@@ -1364,6 +1364,88 @@ select:disabled {
   line-height: 1.35;
 }
 
+.saved-examples-panel {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.38fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(217, 27, 116, 0.22);
+  border-radius: 8px;
+  background: #fff4f9;
+}
+
+.saved-examples-panel h3,
+.saved-examples-panel p {
+  margin: 0;
+}
+
+.saved-examples-panel h3 {
+  font-size: 1.12rem;
+  line-height: 1.18;
+}
+
+.saved-examples-panel ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.saved-examples-panel li {
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 27, 116, 0.16);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.builder-decision {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(244, 183, 64, 0.36);
+  border-radius: 8px;
+  background: rgba(244, 183, 64, 0.12);
+}
+
+.builder-decision p {
+  margin: 0 0 12px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.decision-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.decision-buttons button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.decision-buttons button:last-child {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.decision-buttons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .takeaway-section {
   max-width: 1250px;
   margin: 0 auto 48px;
@@ -1451,6 +1533,35 @@ select:disabled {
 .takeaway-grid li {
   color: var(--ink);
   line-height: 1.55;
+}
+
+.snapshot-example-list,
+.snapshot-answer-list {
+  display: grid;
+  gap: 12px;
+}
+
+.snapshot-example-list article,
+.snapshot-answer-list article {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.snapshot-example-list strong,
+.snapshot-answer-list strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--teal);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.snapshot-example-list p,
+.snapshot-answer-list p {
+  margin: 0;
 }
 
 .takeaway-grid ul {
@@ -1701,6 +1812,8 @@ select:disabled {
   .sort-stats,
   .clarifying-panel,
   .clarifying-panel ul,
+  .saved-examples-panel,
+  .decision-buttons,
   .right-size-note,
   .student-panel,
   .form-grid,

@@ -35,9 +35,15 @@ type StudentDetails = {
   pcClass: string;
 };
 
+type SkillCheckAnswer = {
+  id: string;
+  answerIsSkill: boolean;
+};
+
 type SavedJobSkillsState = {
   student: StudentDetails;
   selectedExperiences: string[];
+  skillCheckAnswers: SkillCheckAnswer[];
   confidence: Record<string, Confidence>;
   chosenSkillId: string;
   evidence: Evidence;
@@ -187,6 +193,33 @@ const lessonVisuals = [
   },
 ];
 
+const skillCheckCards = [
+  {
+    id: "communication",
+    label: "Communication",
+    clue: "Talking, listening, checking, and explaining clearly.",
+    isSkill: true,
+  },
+  {
+    id: "happy",
+    label: "Happy",
+    clue: "A feeling or emotion someone might have.",
+    isSkill: false,
+  },
+  {
+    id: "collaboration",
+    label: "Collaboration",
+    clue: "Working with others to get something done.",
+    isSkill: true,
+  },
+  {
+    id: "barista-course",
+    label: "Barista course",
+    clue: "Training that teaches someone to make coffee.",
+    isSkill: false,
+  },
+];
+
 const experiences: Experience[] = [
   {
     id: "group-task",
@@ -264,6 +297,7 @@ function readSavedState(): SavedJobSkillsState {
   const fallback = {
     student: initialStudent,
     selectedExperiences: [],
+    skillCheckAnswers: [],
     confidence: {},
     chosenSkillId: "communication",
     evidence: initialEvidence,
@@ -279,6 +313,9 @@ function readSavedState(): SavedJobSkillsState {
     return {
       student: { ...initialStudent, ...parsed.student },
       selectedExperiences: parsed.selectedExperiences ?? [],
+      skillCheckAnswers: Array.isArray(parsed.skillCheckAnswers)
+        ? parsed.skillCheckAnswers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
+        : [],
       confidence: parsed.confidence ?? {},
       chosenSkillId:
         parsed.chosenSkillId && lessonFocusSkillIds.includes(parsed.chosenSkillId)
@@ -306,6 +343,7 @@ function App() {
   const [initialState] = useState(readSavedState);
   const [student, setStudent] = useState<StudentDetails>(initialState.student);
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>(initialState.selectedExperiences);
+  const [skillCheckAnswers, setSkillCheckAnswers] = useState<SkillCheckAnswer[]>(initialState.skillCheckAnswers);
   const [confidence, setConfidence] = useState<Record<string, Confidence>>(initialState.confidence);
   const [chosenSkillId, setChosenSkillId] = useState(initialState.chosenSkillId);
   const [evidence, setEvidence] = useState<Evidence>(initialState.evidence);
@@ -314,9 +352,9 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem(
       "skill-sprint-state",
-      JSON.stringify({ student, selectedExperiences, confidence, chosenSkillId, evidence }),
+      JSON.stringify({ student, selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence }),
     );
-  }, [student, selectedExperiences, confidence, chosenSkillId, evidence]);
+  }, [student, selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence]);
 
   const matchedSkillIds = useMemo(() => {
     const ids = new Set<string>();
@@ -344,10 +382,16 @@ function App() {
     `Used ${chosenSkill.title.toLowerCase()} skills during ${experienceText.toLowerCase()} by ${actionText}.`,
     `Showed I can ${chosenSkill.employerLine} through a real example from my life.`,
   ];
+  const skillCheckScore = skillCheckAnswers.filter((answer) => {
+    const card = skillCheckCards.find((item) => item.id === answer.id);
+    return card?.isSkill === answer.answerIsSkill;
+  }).length;
+  const skillCheckPower = Math.round((skillCheckScore / skillCheckCards.length) * 100);
 
   const progressParts = [
     Boolean(student.firstName.trim()),
     Boolean(student.pcClass),
+    skillCheckAnswers.length === skillCheckCards.length,
     selectedExperiences.length > 0,
     Object.keys(confidence).length >= 2,
     Boolean(evidence.experience),
@@ -370,6 +414,13 @@ function App() {
     setStudent((current) => ({ ...current, [key]: value }));
   }
 
+  function answerSkillCheck(id: string, answerIsSkill: boolean) {
+    setSkillCheckAnswers((current) => {
+      const withoutCurrent = current.filter((answer) => answer.id !== id);
+      return [...withoutCurrent, { id, answerIsSkill }];
+    });
+  }
+
   async function copyJobSpeak() {
     await navigator.clipboard.writeText(jobSpeak);
     setCopied(true);
@@ -379,6 +430,7 @@ function App() {
   function resetWork() {
     setStudent(initialStudent);
     setSelectedExperiences([]);
+    setSkillCheckAnswers([]);
     setConfidence({});
     setChosenSkillId("communication");
     setEvidence(initialEvidence);
@@ -412,25 +464,22 @@ function App() {
           </div>
 
           <div className="video-slot" aria-label="Opening video slot">
-            <img
-              alt="Year 9 students working together around a project table"
-              className="video-poster"
-              src="/assets/video-opener/opener-poster-v1.png"
-            />
-            <div className="video-overlay" />
-            <div className="video-content">
-              <div className="video-label">Opening video</div>
-              <h2>You already have job skills</h2>
-              <p>
-                Introduce all 12 enterprise skills, then zoom in on today&apos;s focus: collaboration and communication.
-              </p>
-              <div className="video-strip">
-                <span>collaboration</span>
-                <span>communication</span>
-                <span>job speak</span>
-                <span>evidence</span>
-              </div>
-            </div>
+            <video
+              className="video-player"
+              controls
+              poster="/assets/video-opener/opener-poster-v1.png"
+              preload="metadata"
+            >
+              <source src="/assets/intro-employability-skills.mp4" type="video/mp4" />
+              <track
+                default
+                kind="captions"
+                label="English"
+                src="/assets/intro-employability-skills.vtt"
+                srcLang="en"
+              />
+            </video>
+            <div className="video-badge">Video 1: What are employability skills?</div>
           </div>
         </div>
       </section>
@@ -448,6 +497,80 @@ function App() {
           <strong>Employers say</strong>
           <p>Values matter: bring yourself, respect others, and add something positive to the group.</p>
         </article>
+      </section>
+
+      <section className="section-shell skill-check-preview">
+        <div className="section-heading">
+          <p className="eyebrow">Quick check</p>
+          <h2>Can you spot an employability skill?</h2>
+          <p>Sort each card. Skills transfer; emotions, courses, and qualifications do not.</p>
+        </div>
+
+        <div className="skill-check-score" aria-label={`${skillCheckScore} of ${skillCheckCards.length} correct`}>
+          <strong>Skill Bot power</strong>
+          <span>{skillCheckScore} correct</span>
+          <div>
+            <i style={{ width: `${skillCheckPower}%` }} />
+          </div>
+        </div>
+
+        <div className="skill-check-board">
+          {skillCheckCards.map((card) => {
+            const answer = skillCheckAnswers.find((item) => item.id === card.id);
+            const isCorrect = answer ? answer.answerIsSkill === card.isSkill : false;
+
+            return (
+              <article
+                className={`skill-check-card ${answer ? (isCorrect ? "correct" : "try-again") : ""}`}
+                key={card.id}
+              >
+                <p>{card.clue}</p>
+                <h3>{card.label}</h3>
+                <div className="sort-mini-actions">
+                  <button
+                    aria-pressed={answer?.answerIsSkill === true}
+                    onClick={() => answerSkillCheck(card.id, true)}
+                    type="button"
+                  >
+                    Skill
+                  </button>
+                  <button
+                    aria-pressed={answer?.answerIsSkill === false}
+                    onClick={() => answerSkillCheck(card.id, false)}
+                    type="button"
+                  >
+                    Not a skill
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="section-shell lesson-video-section">
+        <div className="section-heading">
+          <p className="eyebrow">Skill chunks</p>
+          <h2>Now zoom in on two skills</h2>
+          <p>Watch the short skill intro, then choose the moments you recognise from your own life.</p>
+        </div>
+
+        <div className="lesson-video-grid">
+          <article className="lesson-video-card">
+            <video controls poster="/assets/video-opener/communication-hero-v1.png" preload="metadata">
+              <source src="/assets/communication-explainer.mp4" type="video/mp4" />
+              <track default kind="captions" label="English" src="/assets/communication-explainer.vtt" srcLang="en" />
+            </video>
+            <h3>Video 2: Communication</h3>
+          </article>
+          <article className="lesson-video-card">
+            <video controls poster="/assets/video-opener/collaboration-hero-v1.png" preload="metadata">
+              <source src="/assets/collaboration-explainer.mp4" type="video/mp4" />
+              <track default kind="captions" label="English" src="/assets/collaboration-explainer.vtt" srcLang="en" />
+            </video>
+            <h3>Video 3: Collaboration</h3>
+          </article>
+        </div>
       </section>
 
       <section className="section-shell student-section">

@@ -178,7 +178,15 @@ const clarifyingPrompts = {
   },
 };
 
-const lessonFocusSkillIds = ["collaboration", "communication"];
+const emptyExampleDraft = {
+  savedId: "",
+  experience: "",
+  situation: "",
+  action: "",
+  result: "",
+};
+
+const lessonFocusSkillIds = ["communication", "collaboration"];
 const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
 
 const pcClasses = [
@@ -295,6 +303,13 @@ const stages = [
     hint: "Choose at least one communication example that makes you think, yep, I have done that.",
   },
   {
+    id: "communication-build",
+    short: "Comm Story",
+    title: "Communication Story",
+    subtitle: "Turn one communication moment into job speak.",
+    hint: "Build one honest communication example, then choose whether to add another or move on.",
+  },
+  {
     id: "collaboration",
     short: "Team",
     title: "Collaboration",
@@ -309,11 +324,11 @@ const stages = [
     hint: "Choose at least one teamwork example that makes you think, yep, I have done that.",
   },
   {
-    id: "build",
-    short: "Build",
-    title: "Story Builder",
-    subtitle: "Turn one moment into resume and interview language.",
-    hint: "Choose an experience, then add what you did and what changed.",
+    id: "collaboration-build",
+    short: "Team Story",
+    title: "Teamwork Story",
+    subtitle: "Turn one collaboration moment into job speak.",
+    hint: "Build one honest collaboration example, then choose whether to add another or finish the skills PDF.",
   },
   {
     id: "unlock",
@@ -329,9 +344,10 @@ const celebrationCopy = {
   "skill-check": ["Skill Sorter complete", "You can spot the difference between skills, emotions, and qualifications."],
   communication: ["Communication unlocked", "Speaking and listening both count. You probably use this more than you think."],
   "communication-life": ["Communication evidence found", "That is a real example you could explain to an employer one day."],
+  "communication-build": ["Communication story saved", "That communication example is ready for your skills PDF."],
   collaboration: ["Teamwork unlocked", "Collaboration is teamwork you can point to and explain."],
   "collaboration-life": ["Teamwork evidence found", "You have spotted a real example of working well with others."],
-  build: ["Story builder unlocked", "That example is turning into proper job speak."],
+  "collaboration-build": ["Teamwork story saved", "That collaboration example is ready for your skills PDF."],
   unlock: ["Snapshot unlocked", "Your employability snapshot is ready to use."],
 };
 
@@ -349,13 +365,14 @@ const initialState = {
     answers: [],
     lastFeedback: "",
   },
+  examples: [],
+  drafts: {
+    communication: { ...emptyExampleDraft },
+    collaboration: { ...emptyExampleDraft },
+  },
   confidence: {},
   chosenSkillId: "communication",
-  evidence: {
-    experience: "",
-    situation: "",
-    action: "",
-    result: "",
+  nextStep: {
     improve: "Planning",
     nextStep: "Use a simple checklist before my next group task.",
   },
@@ -372,7 +389,32 @@ function loadState() {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
     parsed.student = { ...initialState.student, ...parsed.student };
-    parsed.evidence = { ...initialState.evidence, ...parsed.evidence };
+    parsed.nextStep = {
+      ...initialState.nextStep,
+      ...parsed.nextStep,
+      improve: parsed.nextStep?.improve || parsed.evidence?.improve || initialState.nextStep.improve,
+      nextStep: parsed.nextStep?.nextStep || parsed.evidence?.nextStep || initialState.nextStep.nextStep,
+    };
+    parsed.drafts = {
+      communication: { ...emptyExampleDraft, ...parsed.drafts?.communication },
+      collaboration: { ...emptyExampleDraft, ...parsed.drafts?.collaboration },
+    };
+    if (parsed.evidence?.experience || parsed.evidence?.situation || parsed.evidence?.action || parsed.evidence?.result) {
+      const legacyExperience = experiences.find((experience) => experience.id === parsed.evidence.experience);
+      const legacySkillId = legacyExperience?.skillId || parsed.chosenSkillId || "communication";
+      if (lessonFocusSkillIds.includes(legacySkillId)) {
+        parsed.drafts[legacySkillId] = {
+          ...emptyExampleDraft,
+          experience: parsed.evidence.experience || "",
+          situation: parsed.evidence.situation || "",
+          action: parsed.evidence.action || "",
+          result: parsed.evidence.result || "",
+        };
+      }
+    }
+    parsed.examples = Array.isArray(parsed.examples)
+      ? parsed.examples.filter((example) => lessonFocusSkillIds.includes(example.skillId))
+      : [];
     parsed.skillCheck = { ...initialState.skillCheck, ...parsed.skillCheck };
     parsed.skillCheck.answers = Array.isArray(parsed.skillCheck.answers)
       ? parsed.skillCheck.answers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
@@ -387,6 +429,9 @@ function loadState() {
     if (parsed.currentStage === "brief") {
       parsed.currentStage = "skill-check";
     }
+    if (parsed.currentStage === "build") {
+      parsed.currentStage = "communication-build";
+    }
     if (!validStageIds.includes(parsed.currentStage)) {
       parsed.currentStage = "start";
     }
@@ -395,14 +440,22 @@ function loadState() {
           ...new Set([
             "start",
             ...parsed.visitedStages
-              .map((stageId) => (stageId === "brief" ? "skill-check" : stageId))
+              .map((stageId) => {
+                if (stageId === "brief") return "skill-check";
+                if (stageId === "build") return "communication-build";
+                return stageId;
+              })
               .filter((stageId) => validStageIds.includes(stageId)),
           ]),
         ]
       : ["start"];
     parsed.celebratedStages = Array.isArray(parsed.celebratedStages)
       ? parsed.celebratedStages
-          .map((stageId) => (stageId === "brief" ? "skill-check" : stageId))
+          .map((stageId) => {
+            if (stageId === "brief") return "skill-check";
+            if (stageId === "build") return "communication-build";
+            return stageId;
+          })
           .filter((stageId) => validStageIds.includes(stageId))
       : [];
     if (!lessonFocusSkillIds.includes(parsed.chosenSkillId)) {
@@ -428,12 +481,50 @@ function firstNameOnly(value) {
   return value.replace(/\s+.*/, "").slice(0, 24);
 }
 
-function chosenSkill() {
-  return lessonFocusSkills.find((skill) => skill.id === state.chosenSkillId) || lessonFocusSkills[0];
+function buildSkillId() {
+  return state.currentStage === "collaboration-build" ? "collaboration" : "communication";
 }
 
-function selectedExperience() {
-  return experiences.find((experience) => experience.id === state.evidence.experience);
+function skillById(skillId) {
+  return lessonFocusSkills.find((skill) => skill.id === skillId) || lessonFocusSkills[0];
+}
+
+function chosenSkill() {
+  return skillById(buildSkillId());
+}
+
+function draftForSkill(skillId) {
+  state.drafts[skillId] = { ...emptyExampleDraft, ...state.drafts[skillId] };
+  return state.drafts[skillId];
+}
+
+function currentDraft() {
+  return draftForSkill(buildSkillId());
+}
+
+function selectedExperience(skillId = buildSkillId()) {
+  return experiences.find((experience) => experience.id === draftForSkill(skillId).experience);
+}
+
+function skillMoments(skillId) {
+  return skillId === "collaboration" ? collaborationMoments : communicationMoments;
+}
+
+function selectedMomentIds(skillId) {
+  return skillId === "collaboration" ? state.selectedCollaborationMoments : state.selectedCommunicationMoments;
+}
+
+function isDraftComplete(skillId) {
+  const draft = draftForSkill(skillId);
+  return Boolean(draft.experience) && Boolean(draft.action.trim()) && Boolean(draft.result.trim());
+}
+
+function savedExamplesFor(skillId) {
+  return state.examples.filter((example) => example.skillId === skillId);
+}
+
+function hasCompleteExample(skillId) {
+  return savedExamplesFor(skillId).length > 0 || isDraftComplete(skillId);
 }
 
 function skillCheckScore() {
@@ -448,17 +539,17 @@ function currentSkillCheckCard() {
   return skillCheckCards[state.skillCheck.answers.length] || null;
 }
 
-function getOutputs() {
-  const skill = chosenSkill();
+function getOutputsForDraft(skillId, draft) {
+  const skill = skillById(skillId);
   const prompt = clarifyingPrompts[skill.id] || clarifyingPrompts.communication;
-  const experience = selectedExperience();
+  const experience = experiences.find((item) => item.id === draft.experience);
   const experienceText = experience ? experience.label : "a school, hobby, home, sport, or community experience";
-  const action = state.evidence.action.trim();
-  const result = state.evidence.result.trim();
+  const action = draft.action.trim();
+  const result = draft.result.trim();
   const actionText = action || "did one specific thing that helped";
   const resultText = result || "there was a small improvement";
   const situationText =
-    sentenceCase(state.evidence.situation) || `In ${experienceText.toLowerCase()}, there was a situation where I had to contribute.`;
+    sentenceCase(draft.situation) || `In ${experienceText.toLowerCase()}, there was a situation where I had to contribute.`;
 
   const jobSpeak = `In ${experienceText.toLowerCase()}, I practised ${skill.simpleTitle.toLowerCase()} when I ${actionText}. This helped because ${resultText}. This is a small but real example of building ${skill.title.toLowerCase()}, which could transfer to work because many jobs need people to ${prompt.transfer}.`;
   const interviewAnswer = `${situationText} I ${actionText}. The small result was that ${resultText}. I would describe this as early evidence of ${skill.title.toLowerCase()} because it connects one real action to one real result.`;
@@ -466,7 +557,7 @@ function getOutputs() {
     `Practised ${skill.title.toLowerCase()} during ${experienceText.toLowerCase()} by ${actionText}.`,
     `Can give a small real example of ${skill.simpleTitle.toLowerCase()} from my own experience.`,
   ];
-  const feedback = !state.evidence.experience
+  const feedback = !draft.experience
     ? "Choose one real moment first. Small examples are fine."
     : !action
       ? "Add one specific thing you actually did. Keep it honest and concrete."
@@ -477,6 +568,52 @@ function getOutputs() {
   return { feedback, jobSpeak, interviewAnswer, resumeBullets };
 }
 
+function getOutputs() {
+  return getOutputsForDraft(buildSkillId(), currentDraft());
+}
+
+function commitDraft(skillId, shouldReset = false) {
+  if (!isDraftComplete(skillId)) return false;
+  const draft = draftForSkill(skillId);
+  const id = draft.savedId || `${skillId}-${Date.now()}`;
+  const example = {
+    id,
+    skillId,
+    experience: draft.experience,
+    situation: draft.situation,
+    action: draft.action,
+    result: draft.result,
+  };
+  const existingIndex = state.examples.findIndex((item) => item.id === id);
+  if (existingIndex >= 0) {
+    state.examples[existingIndex] = example;
+  } else {
+    state.examples = [...state.examples, example];
+  }
+  if (shouldReset) {
+    state.drafts[skillId] = { ...emptyExampleDraft };
+  } else {
+    state.drafts[skillId].savedId = id;
+  }
+  saveState();
+  return true;
+}
+
+function allCompleteExamples() {
+  const draftExamples = lessonFocusSkillIds
+    .filter((skillId) => isDraftComplete(skillId))
+    .map((skillId) => ({
+      id: draftForSkill(skillId).savedId || `${skillId}-draft`,
+      skillId,
+      experience: draftForSkill(skillId).experience,
+      situation: draftForSkill(skillId).situation,
+      action: draftForSkill(skillId).action,
+      result: draftForSkill(skillId).result,
+    }));
+  const draftIds = new Set(draftExamples.map((example) => example.id));
+  return [...state.examples.filter((example) => !draftIds.has(example.id)), ...draftExamples];
+}
+
 function getProgress() {
   const parts = [
     Boolean(state.student.firstName.trim()),
@@ -484,11 +621,10 @@ function getProgress() {
     isSkillCheckComplete(),
     state.visitedStages.includes("communication"),
     state.selectedCommunicationMoments.length > 0,
+    hasCompleteExample("communication"),
     state.visitedStages.includes("collaboration"),
     state.selectedCollaborationMoments.length > 0,
-    Boolean(state.evidence.experience),
-    Boolean(state.evidence.action.trim()),
-    Boolean(state.evidence.result.trim()),
+    hasCompleteExample("collaboration"),
   ];
   return Math.round((parts.filter(Boolean).length / parts.length) * 100);
 }
@@ -510,14 +646,16 @@ function isStageComplete(stageId) {
       return state.visitedStages.includes("communication");
     case "communication-life":
       return state.selectedCommunicationMoments.length > 0;
+    case "communication-build":
+      return hasCompleteExample("communication");
     case "collaboration":
       return state.visitedStages.includes("collaboration");
     case "collaboration-life":
       return state.selectedCollaborationMoments.length > 0;
-    case "build":
-      return Boolean(state.evidence.experience) && Boolean(state.evidence.action.trim()) && Boolean(state.evidence.result.trim());
+    case "collaboration-build":
+      return hasCompleteExample("collaboration");
     case "unlock":
-      return getProgress() === 100;
+      return hasCompleteExample("communication") && hasCompleteExample("collaboration");
     default:
       return false;
   }
@@ -584,13 +722,32 @@ function setStage(stageId, shouldCelebrate = true) {
   });
 }
 
+function stageRequiresCompletion(stageId) {
+  return [
+    "start",
+    "skill-check",
+    "communication-life",
+    "communication-build",
+    "collaboration-life",
+    "collaboration-build",
+  ].includes(stageId);
+}
+
+function nextButtonLabel(stageId) {
+  if (stageId === "communication-build") return "Use the Yes/No choice";
+  if (stageId === "collaboration-build") return "Use the Yes/No choice";
+  if (currentStageIndex() === stages.length - 1) return "Stay here";
+  return "Next mission";
+}
+
 function renderQuest() {
   const progress = getProgress();
   const badges = completedStages();
   const currentStage = stages[currentStageIndex()];
 
   document.querySelectorAll("[data-stage-panel]").forEach((panel) => {
-    const isActive = panel.dataset.stagePanel === state.currentStage;
+    const panelStages = panel.dataset.stagePanel.split(/\s+/);
+    const isActive = panelStages.includes(state.currentStage);
     panel.hidden = !isActive;
     panel.classList.toggle("active-stage", isActive);
   });
@@ -624,7 +781,11 @@ function renderQuest() {
   });
 
   $("back-button").disabled = currentStageIndex() === 0;
-  $("next-button").textContent = currentStageIndex() === stages.length - 1 ? "Stay here" : "Next mission";
+  $("next-button").textContent = nextButtonLabel(currentStage.id);
+  $("next-button").disabled =
+    currentStageIndex() === stages.length - 1 ||
+    currentStage.id.endsWith("-build") ||
+    (stageRequiresCompletion(currentStage.id) && !isStageComplete(currentStage.id));
 }
 
 function renderStudent() {
@@ -666,8 +827,9 @@ function renderMomentGrid(gridId, moments, selectedKey, skillId, celebrationStag
       state[selectedKey] = selected
         ? state[selectedKey].filter((id) => id !== experience.id)
         : [...state[selectedKey], experience.id];
-      if (!selected && !state.evidence.experience) {
-        state.evidence.experience = experience.id;
+      const draft = draftForSkill(skillId);
+      if (!selected && !draft.experience) {
+        draft.experience = experience.id;
         state.chosenSkillId = skillId;
       }
       saveState();
@@ -748,42 +910,40 @@ function renderSkillCheck() {
 function renderSelects() {
   const experienceSelect = $("experience-select");
   const skillSelect = $("skill-select");
+  const skillId = buildSkillId();
+  const skill = skillById(skillId);
+  const draft = draftForSkill(skillId);
+  const selectedIds = selectedMomentIds(skillId);
+  const moments = skillMoments(skillId);
+  const selectedMoments = moments.filter((moment) => selectedIds.includes(moment.id));
+  const otherMoments = moments.filter((moment) => !selectedIds.includes(moment.id));
 
-  if (experienceSelect.options.length === 1) {
-    const groups = [
-      ["Communication examples", communicationMoments],
-      ["Teamwork examples", collaborationMoments],
-    ];
-    groups.forEach(([label, moments]) => {
-      const group = document.createElement("optgroup");
-      group.label = label;
-      moments.forEach((experience) => {
-        const option = document.createElement("option");
-        option.value = experience.id;
-        option.textContent = experience.label;
-        group.append(option);
-      });
-      experienceSelect.append(group);
-    });
-  }
-
-  if (skillSelect.options.length === 0) {
-    lessonFocusSkills.forEach((skill) => {
+  experienceSelect.innerHTML = `<option value="">Choose one</option>`;
+  [
+    [`${skill.title} moments you selected`, selectedMoments],
+    [`Other ${skill.title.toLowerCase()} moments`, otherMoments],
+  ].forEach(([label, options]) => {
+    if (options.length === 0) return;
+    const group = document.createElement("optgroup");
+    group.label = label;
+    options.forEach((experience) => {
       const option = document.createElement("option");
-      option.value = skill.id;
-      option.textContent = `${skill.title} - ${skill.simpleTitle}`;
-      skillSelect.append(option);
+      option.value = experience.id;
+      option.textContent = experience.label;
+      group.append(option);
     });
-  }
+    experienceSelect.append(group);
+  });
 
-  const selected = selectedExperience();
-  if (selected?.skillId && state.chosenSkillId !== selected.skillId) {
-    state.chosenSkillId = selected.skillId;
-  }
+  skillSelect.innerHTML = "";
+  const option = document.createElement("option");
+  option.value = skill.id;
+  option.textContent = `${skill.title} - ${skill.simpleTitle}`;
+  skillSelect.append(option);
 
-  experienceSelect.value = state.evidence.experience;
-  skillSelect.value = state.chosenSkillId;
-  skillSelect.disabled = Boolean(selected?.skillId);
+  experienceSelect.value = draft.experience;
+  skillSelect.value = skillId;
+  skillSelect.disabled = true;
 }
 
 function renderClarifyingQuestions() {
@@ -804,30 +964,101 @@ function renderClarifyingQuestions() {
 }
 
 function renderInputs() {
-  $("situation-input").value = state.evidence.situation;
-  $("action-input").value = state.evidence.action;
-  $("result-input").value = state.evidence.result;
-  $("improve-input").value = state.evidence.improve;
-  $("next-step-input").value = state.evidence.nextStep;
+  const draft = currentDraft();
+  $("situation-input").value = draft.situation;
+  $("action-input").value = draft.action;
+  $("result-input").value = draft.result;
+  $("improve-input").value = state.nextStep.improve;
+  $("next-step-input").value = state.nextStep.nextStep;
+}
+
+function renderBuilderFrame() {
+  const skillId = buildSkillId();
+  const skill = skillById(skillId);
+  const isCommunication = skillId === "communication";
+  const draftComplete = isDraftComplete(skillId);
+
+  $("builder-eyebrow").textContent = `${skill.title} job speak`;
+  $("builder-title").textContent = `Build one strong ${isCommunication ? "communication" : "collaboration"} example`;
+  $("builder-intro").textContent = `Pick one ${isCommunication ? "communication" : "teamwork"} moment. Keep it honest, specific, and right-sized.`;
+  $("saved-examples-title").textContent = `${skill.title} examples saved`;
+  $("builder-decision-text").textContent = `We will build a skills PDF for you. Do you have another ${isCommunication ? "communication" : "collaboration"} example you want to add?`;
+  $("finish-skill-button").textContent = isCommunication ? "No, move to collaboration" : "No, build my skills PDF";
+  $("another-example-button").disabled = !draftComplete;
+  $("finish-skill-button").disabled = !draftComplete;
+
+  const savedList = $("saved-examples-list");
+  savedList.innerHTML = "";
+  const saved = savedExamplesFor(skillId);
+  if (saved.length === 0) {
+    const item = document.createElement("li");
+    item.textContent = "No examples saved yet. Finish one example to add it to your skills PDF.";
+    savedList.append(item);
+    return;
+  }
+
+  saved.forEach((example, index) => {
+    const experience = experiences.find((item) => item.id === example.experience);
+    const item = document.createElement("li");
+    item.textContent = `${index + 1}. ${experience?.label || skill.title}: ${example.action || "one real action"}`;
+    savedList.append(item);
+  });
 }
 
 function renderOutputs() {
   const progress = getProgress();
   const outputs = getOutputs();
+  const examples = allCompleteExamples();
 
   $("progress-percent").textContent = `${progress}%`;
   $("progress-fill").style.width = `${progress}%`;
   $("job-speak-output").textContent = outputs.jobSpeak;
   $("feedback-output").textContent = outputs.feedback;
-  $("snapshot-example").textContent = outputs.jobSpeak;
-  $("interview-answer").textContent = outputs.interviewAnswer;
+
+  const snapshotExamples = $("snapshot-examples");
+  snapshotExamples.innerHTML = "";
+  if (examples.length === 0) {
+    const empty = document.createElement("p");
+    empty.textContent = "Build one communication example and one collaboration example to complete your skills PDF.";
+    snapshotExamples.append(empty);
+  } else {
+    examples.forEach((example) => {
+      const skill = skillById(example.skillId);
+      const output = getOutputsForDraft(example.skillId, example);
+      const article = document.createElement("article");
+      const heading = document.createElement("strong");
+      const paragraph = document.createElement("p");
+      heading.textContent = skill.title;
+      paragraph.textContent = output.jobSpeak;
+      article.append(heading, paragraph);
+      snapshotExamples.append(article);
+    });
+  }
 
   const bullets = $("resume-bullets");
   bullets.innerHTML = "";
-  outputs.resumeBullets.forEach((bullet) => {
-    const item = document.createElement("li");
-    item.textContent = bullet;
-    bullets.append(item);
+  const bulletSource = examples.length > 0 ? examples : [{ ...currentDraft(), skillId: buildSkillId() }];
+  bulletSource.forEach((example) => {
+    const output = getOutputsForDraft(example.skillId, example);
+    output.resumeBullets.forEach((bullet) => {
+      const item = document.createElement("li");
+      item.textContent = bullet;
+      bullets.append(item);
+    });
+  });
+
+  const answers = $("interview-answers");
+  answers.innerHTML = "";
+  (examples.length > 0 ? examples : [{ ...currentDraft(), skillId: buildSkillId() }]).forEach((example) => {
+    const skill = skillById(example.skillId);
+    const output = getOutputsForDraft(example.skillId, example);
+    const answer = document.createElement("article");
+    const heading = document.createElement("strong");
+    const paragraph = document.createElement("p");
+    heading.textContent = skill.title;
+    paragraph.textContent = output.interviewAnswer;
+    answer.append(heading, paragraph);
+    answers.append(answer);
   });
 }
 
@@ -838,6 +1069,7 @@ function render() {
   renderSelects();
   renderClarifyingQuestions();
   renderInputs();
+  renderBuilderFrame();
   renderOutputs();
   renderQuest();
 }
@@ -915,14 +1147,17 @@ function bindForm() {
   });
 
   $("experience-select").addEventListener("change", (event) => {
-    state.evidence.experience = event.target.value;
-    const selected = selectedExperience();
+    const skillId = buildSkillId();
+    const draft = draftForSkill(skillId);
+    draft.experience = event.target.value;
+    draft.savedId = "";
+    const selected = selectedExperience(skillId);
     if (selected?.skillId) {
       state.chosenSkillId = selected.skillId;
     }
     saveState();
     render();
-    maybeCelebrate("build");
+    maybeCelebrate(`${skillId}-build`);
   });
 
   $("skill-select").addEventListener("change", (event) => {
@@ -935,15 +1170,29 @@ function bindForm() {
     ["situation-input", "situation"],
     ["action-input", "action"],
     ["result-input", "result"],
+  ].forEach(([inputId, key]) => {
+    $(inputId).addEventListener("input", (event) => {
+      const skillId = buildSkillId();
+      const draft = draftForSkill(skillId);
+      draft[key] = event.target.value;
+      draft.savedId = "";
+      saveState();
+      renderBuilderFrame();
+      renderOutputs();
+      renderQuest();
+      maybeCelebrate(`${skillId}-build`);
+    });
+  });
+
+  [
     ["improve-input", "improve"],
     ["next-step-input", "nextStep"],
   ].forEach(([inputId, key]) => {
     $(inputId).addEventListener("input", (event) => {
-      state.evidence[key] = event.target.value;
+      state.nextStep[key] = event.target.value;
       saveState();
       renderOutputs();
       renderQuest();
-      maybeCelebrate(key === "action" || key === "result" ? "build" : "unlock");
     });
   });
 
@@ -957,6 +1206,9 @@ function bindForm() {
   });
 
   $("print-button").addEventListener("click", () => {
+    if (state.currentStage.endsWith("-build")) {
+      commitDraft(buildSkillId());
+    }
     state.currentStage = "unlock";
     state.visitedStages = [...new Set([...state.visitedStages, "unlock"])];
     saveState();
@@ -970,6 +1222,18 @@ function bindForm() {
   $("skill-yes-button").addEventListener("click", () => answerSkillCheckCard(true));
   $("skill-no-button").addEventListener("click", () => answerSkillCheckCard(false));
   $("skill-replay-button").addEventListener("click", resetSkillCheck);
+  $("another-example-button").addEventListener("click", () => {
+    const skillId = buildSkillId();
+    if (!commitDraft(skillId, true)) return;
+    render();
+    maybeCelebrate(`${skillId}-build`);
+  });
+  $("finish-skill-button").addEventListener("click", () => {
+    const skillId = buildSkillId();
+    if (!commitDraft(skillId)) return;
+    maybeCelebrate(`${skillId}-build`);
+    setStage(skillId === "communication" ? "collaboration" : "unlock");
+  });
 
   $("back-button").addEventListener("click", () => {
     const index = currentStageIndex();

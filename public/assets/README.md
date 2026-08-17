@@ -2,10 +2,18 @@
 
 Drop final classroom assets into this folder and wire them into the app when ready.
 
-Suggested files:
+Current lesson video files:
 
-- `opener-video.mp4` - 45 to 60 second launch video: "You already have job skills".
-- `opener-poster.jpg` - still frame for the video area.
+- `intro-employability-skills.mp4` - short first explainer video: what employability skills are.
+- `intro-employability-skills.vtt` - captions for the intro video.
+- `communication-explainer.mp4` - short video introducing workplace communication.
+- `communication-explainer.vtt` - captions for the communication video.
+- `collaboration-explainer.mp4` - short video introducing workplace collaboration.
+- `collaboration-explainer.vtt` - captions for the collaboration video.
+
+Suggested next files:
+
+- `opener-poster.jpg` - alternate still frame for the video area.
 - `skill-communication.jpg`
 - `skill-collaboration.jpg`
 - `skill-presentation.jpg`
@@ -20,7 +28,7 @@ Suggested files:
 - `skill-planning.jpg`
 - `takeaway-background.png` - optional subtle print background for the snapshot.
 
-Current generated opener assets:
+Current generated image assets:
 
 - `video-opener/opener-poster-v1.png` - app/video poster for "You already have job skills".
 - `video-opener/collaboration-hero-v1.png` - collaboration lesson hero still.

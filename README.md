@@ -4,8 +4,10 @@ An interactive Year 9 enterprise skills app for turning everyday student experie
 
 Students move through a simple classroom flow:
 
-- choose real experiences from school, sport, home, hobbies, technology, money choices, presenting, or community help
-- see which enterprise skills those experiences demonstrate
+- watch a short employability skills intro
+- complete a quick Skill Sorter check to separate skills from emotions, courses, and qualifications
+- watch short communication and collaboration explainers
+- choose real communication and collaboration experiences from school, sport, home, hobbies, or community help
 - rate confidence using student-friendly language
 - write one short example
 - translate that example into job speak
@@ -23,8 +25,10 @@ This repo is designed to publish from the `docs/` folder:
 
 The app is ready for custom visuals in `docs/assets/`. Start with:
 
-- `opener-video.mp4`
-- `opener-poster.jpg`
+- `intro-employability-skills.mp4`
+- `communication-explainer.mp4`
+- `collaboration-explainer.mp4`
+- matching `.vtt` caption files for each video
 - skill moment images for the 12 enterprise skills
 - `takeaway-background.png`
 

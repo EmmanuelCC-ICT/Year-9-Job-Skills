@@ -1,6 +1,6 @@
 # You Already Have Job Skills
 
-45-60 second opener storyboard and asset plan for the Year 9 Enterprise Skills app.
+Three short explainer videos plus interactive checks for the Year 9 Enterprise Skills app.
 
 ## Core Message
 
@@ -8,7 +8,7 @@ You might not have a job yet. You still have job skills.
 
 In Western Australia, once you are 13 or 14, there are some casual or part-time jobs you may be allowed to do, with parent permission and rules about the type of work and hours. Not everyone will look for work straight away, but it is useful to start thinking about your skills and experience from an employability perspective.
 
-The opener should introduce the full world of enterprise skills, then make the lesson feel achievable by zooming in on two skills for today:
+The first explainer should introduce the full world of employability skills, then pause for an interactive check before the lesson zooms in on two skills for today:
 
 - Collaboration
 - Communication
@@ -47,58 +47,69 @@ Then focus today's activity on:
 - Text overlays should translate life moments into skill names: "helped the group finish" -> "collaboration".
 - Avoid childish cartoons, generic office cliches, fake business suits, fake logos, and overcomplicated audit language.
 
-## Storyboard
+## Lesson Flow
+
+1. Intro video: "You already have job skills"
+2. Skill Sorter check: identify employability skills versus emotions, courses, and qualifications
+3. Communication video
+4. Communication activity
+5. Collaboration video
+6. Collaboration activity
+7. Job Speak Builder and printable snapshot
+
+## Video 1 Storyboard: Employability Skills Intro
 
 | Time | Visual | Voiceover | On-screen text |
 | --- | --- | --- | --- |
-| 0:00-0:06 | Quick cuts: students arriving at school, grabbing a laptop, tying sport shoes, opening a notebook, noticing a part-time job sign or app notification. | As you get closer to 14, casual and part-time work starts becoming real for some people. | Getting close to work age? |
-| 0:06-0:12 | Freeze-frame on a Year 9 student looking thoughtful while job-ad words rush past: experience, teamwork, communication, problem solving. | Not everyone will look for work straight away. But it is useful to start thinking like an employer. | What skills do I already have? |
-| 0:12-0:17 | Fast montage of school, sport, hobby, helping at home, community, gaming, and group work moments. Skill badges flicker in: digital literacy, creativity, planning, initiative, flexibility, problem solving, self-management. | You might not have a job yet. But you already have job skills. | You already have job skills. |
-| 0:17-0:23 | A clean skill map appears with all 12 badges. Collaboration and communication glow brighter than the rest. | Enterprise skills are transferable skills employers look for across lots of different jobs. Today, we are starting with two you use all the time. | Today's focus: Collaboration + Communication |
-| 0:23-0:32 | Group assignment moment: one student checks the task, another organises materials, another helps finish, another encourages the group back on track. | When you help your group get something finished, share the work, and keep everyone moving, that is collaboration. | Helped the group finish -> Collaboration |
-| 0:32-0:41 | Student explains an idea to a small group, then listens while another student speaks; a third student asks a clarifying question. | When you explain your idea clearly, listen properly, and ask questions that help, that is communication. | Explained + listened + asked -> Communication |
-| 0:41-0:48 | Split-screen translation: messy student phrases flip into employer language. | Employers do not just want a list of skills. They want stories that prove them. | Skill + Evidence = Job speak |
-| 0:48-0:54 | App-style dashboard appears: choose an experience, pick collaboration or communication, build a sentence, preview a snapshot. | This app helps you turn everyday experience into resume and interview language. | Build your Job Speak Snapshot |
-| 0:54-0:59 | Hero montage: the group-work and speaking moments return, now with polished collaboration and communication badges. | Start with what you have done. Then learn how to say it like an employer understands it. | What I did -> What it shows -> How to say it |
-| 0:59-1:00 | Clean final title frame with digital glow. | You already have job skills. | You already have job skills |
+| 0:00-0:07 | Students in school/community moments; bright ECC-inspired digital frame. | As you get closer to 14, casual and part-time work can start to feel real. Not everyone will look straight away, and that is okay. | Getting close to work age? |
+| 0:07-0:14 | Everyday moments: classroom, group project, sport/hobby, helping at home. | It is useful to start noticing your skills from an employability perspective. | What can I already do? |
+| 0:14-0:22 | Montage with subtle skill badges over realistic scenes. | Employability skills are transferable skills you can use in school, at home, hobbies, community, and later in lots of jobs. | Employability skills move with you. |
+| 0:22-0:31 | Clean skill map with all 12 badges. | The bigger map includes communication, collaboration, problem solving, planning, creativity, digital literacy, initiative, flexibility, self-management, critical thinking, presentation, and financial literacy. | 12 skills to start noticing |
+| 0:31-0:40 | Three clear cards: Problem solving, Happy, Barista course. | Happy is an emotion. A barista course is training or a qualification. Problem solving is a skill. | Skill or not? |
+| 0:40-0:47 | App/game prompt. | First, check that you can spot the difference. Then we will zoom in on communication and collaboration. | Check your skill radar. |
 
-## Narration Draft
+## Skill Sorter Check
 
-As you get closer to 14, casual and part-time work starts becoming real for some people.
+Students sort cards into "Employability skill" or "Not a skill". Correct answers power up Skill Bot so the activity feels like a quick game, not a worksheet.
 
-Not everyone will look for work straight away.
+Use examples that make the distinction obvious:
 
-But it is useful to start thinking about your skills and experience from an employability perspective.
+- Employability skill: Communication, Collaboration, Problem solving, Listening carefully, Digital literacy, Planning a task.
+- Not a skill: Happy, Nervous, Barista course, Certificate II.
 
-You might not have a job yet.
+## Video 2 Storyboard: Communication
 
-But you already have job skills.
+| Time | Visual | Voiceover | On-screen text |
+| --- | --- | --- | --- |
+| 0:00-0:06 | Student explaining an idea while others listen. | Communication is more than talking. In work, it means helping people understand what is happening. | Communication = more than talking |
+| 0:06-0:12 | Listening close-up with notes/checking. | It can mean listening carefully, asking a question, or checking you understood. | Listen. Ask. Check. |
+| 0:12-0:19 | Student adjusts explanation for a different person. | It can also mean explaining an idea in a way that fits the person in front of you. | Choose words that fit. |
+| 0:19-0:26 | Translation overlay. | Explained, listened, and checked becomes evidence of communication. | Employer speak: Communication |
+| 0:26-0:32 | Activity prompt. | Choose the communication moments you recognise from your own life. | Find your communication evidence. |
 
-Enterprise skills are the transferable skills employers look for across lots of different jobs.
+## Video 3 Storyboard: Collaboration
 
-There are lots of them.
+| Time | Visual | Voiceover | On-screen text |
+| --- | --- | --- | --- |
+| 0:00-0:06 | Students working together around a shared project. | Collaboration is teamwork you can explain. In work, it means working with others so the job gets done. | Collaboration = teamwork in action |
+| 0:06-0:12 | Shared plan, materials, roles. | It is not only being loud in a group. It can be doing your part reliably. | Do your part. |
+| 0:12-0:19 | Students include another idea and adjust plan. | It can mean including someone else's idea, encouraging the group, or asking for help early. | Include. Encourage. Adapt. |
+| 0:19-0:26 | Translation overlay. | Shared the work and helped the group finish becomes evidence of collaboration. | Employer speak: Collaboration |
+| 0:26-0:32 | Activity prompt. | Choose the collaboration moments that feel true for you. | Find your collaboration evidence. |
 
-Communication. Collaboration. Problem solving. Planning. Creativity. Digital literacy. Initiative. Flexibility. Self-management. Critical thinking. Presentation. Financial literacy.
+## Narration Drafts
 
-But today, we are starting with two you use all the time.
+### Intro
 
-Collaboration and communication.
+As you get closer to 14, casual and part-time work can start to feel real. Not everyone will look for work straight away, and that is okay. But it is useful to start noticing your skills from an employability perspective. Employability skills are transferable skills. You can use them in school, at home, in sport, in hobbies, in community groups, and later in lots of different jobs. The bigger map includes communication, collaboration, problem solving, planning, creativity, digital literacy, initiative, flexibility, self-management, critical thinking, presentation, and financial literacy. A feeling like happy is not an employability skill. A barista course is training or a qualification. But listening clearly, solving a problem, or helping a team finish can be skills. First, check that you can spot the difference. Then we will zoom in on communication and collaboration.
 
-When you help your group get something finished, share the work, and keep everyone moving, that is collaboration.
+### Communication
 
-When you explain your idea clearly, listen properly, and ask questions that help, that is communication.
+Communication is more than talking. In work, communication means helping people understand what is happening. That can mean listening carefully before you answer, asking a question when something is unclear, or checking that you understood the instruction. It can also mean explaining an idea in a way that fits the person in front of you. At school, you might already do this when you explain a task, help a friend, message responsibly, ask a coach a question, or speak to a group. In the next activity, choose the communication moments you recognise from your own life.
 
-Employers do not just want a list of skills.
+### Collaboration
 
-They want stories that prove them.
-
-This app helps you turn everyday experience into resume and interview language.
-
-Start with what you have done.
-
-Then learn how to say it like an employer understands it.
-
-You already have job skills.
+Collaboration is teamwork you can explain. In work, collaboration means working with other people so the job gets done. It is not only being loud in a group. It can be doing your part reliably, sharing materials, including someone else's idea, encouraging the group, or letting people know when you need help. You might already show collaboration in a group assignment, team sport, production, club, volunteering, home job, or project with friends. In the next activity, choose the collaboration moments that feel true for you.
 
 ## Overlay Text Pack
 
@@ -107,6 +118,9 @@ You already have job skills.
 - You might not have a job yet.
 - You already have job skills.
 - Enterprise skills = transferable skills
+- Happy = emotion
+- Barista course = training
+- Problem solving = employability skill
 - Today's focus: Collaboration + Communication
 - Helped the group finish -> Collaboration
 - Shared the work -> Collaboration
@@ -119,11 +133,11 @@ You already have job skills.
 
 ## Asset Production Plan
 
-### 1. Opening Video
+### 1. Lesson Videos
 
 Purpose:
 
-45-60 second opener for the top of the app.
+Three short videos that keep the lesson moving: employability skills intro, communication intro, collaboration intro.
 
 Look:
 
@@ -131,9 +145,19 @@ Energetic documentary montage, modern Australian school and community spaces, di
 
 Priority:
 
-High. This sets the emotional hook and tells students the lesson is about skills they already have.
+High. These set the emotional hook, then give each skill its own focused chunk.
 
-### 2. Skill Moment Stills
+### 2. Skill Sorter Check
+
+Purpose:
+
+Short interactive check for understanding after the intro video.
+
+Activity:
+
+Students sort examples into "employability skill" or "not a skill". Correct answers power up Skill Bot. It checks that students understand the difference between transferable skills, emotions, and qualifications before they start building evidence.
+
+### 3. Skill Moment Stills
 
 Purpose:
 
@@ -143,7 +167,7 @@ Priority:
 
 Make collaboration and communication first for this lesson. The other 10 can be lighter placeholders or generated after the first lesson flow works.
 
-### 3. Skill Badge Icons
+### 4. Skill Badge Icons
 
 Purpose:
 
@@ -153,7 +177,7 @@ Priority:
 
 Make all 12 badge icons early because they help introduce the full map, even while the lesson focuses on two skills.
 
-### 4. Opener Poster
+### 5. Opener Poster
 
 Purpose:
 
@@ -163,7 +187,7 @@ Recommended image:
 
 A diverse group of Year 9 students around a table, with collaboration and communication badges glowing gently, plus a faint ring of the other 10 skill badges in the background.
 
-### 5. Takeaway Background
+### 6. Takeaway Background
 
 Purpose:
 

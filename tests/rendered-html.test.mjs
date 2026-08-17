@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import test from "node:test";
 
 async function render() {
@@ -33,6 +33,11 @@ test("server-renders the Year 9 Job Skills app shell", async () => {
   assert.match(html, /Year 9 enterprise skills/);
   assert.match(html, /https:\/\/emmanuelcc-ict\.github\.io\/Year-9-Job-Skills\//);
   assert.match(html, /Job speak translator/);
+  assert.match(html, /\/assets\/intro-employability-skills\.mp4/);
+  assert.match(html, /\/assets\/communication-explainer\.mp4/);
+  assert.match(html, /\/assets\/collaboration-explainer\.mp4/);
+  assert.match(html, /Can you spot an employability skill/);
+  assert.match(html, /Skill Bot power/);
   assert.match(html, /My Employability Snapshot/);
   assert.match(html, /First name and PC class/);
   assert.match(html, /does not send your answers anywhere/);
@@ -53,7 +58,10 @@ test("starter preview files are no longer part of the product", async () => {
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview|react-loading-skeleton/);
   assert.match(layout, /Year 9 Job Skills/);
   assert.doesNotMatch(packageJson, /site-creator-vinext-starter|react-loading-skeleton/);
-  assert.match(assetReadme, /opener-video\.mp4/);
+  assert.match(assetReadme, /intro-employability-skills\.mp4/);
+  assert.match(assetReadme, /communication-explainer\.mp4/);
+  assert.match(assetReadme, /collaboration-explainer\.mp4/);
+  assert.doesNotMatch(assetReadme, /opener-video\.mp4/);
 });
 
 test("GitHub Pages version is present in docs", async () => {
@@ -67,21 +75,34 @@ test("GitHub Pages version is present in docs", async () => {
 
   assert.match(index, /<title>Year 9 Job Skills<\/title>/);
   assert.match(index, /https:\/\/emmanuelcc-ict\.github\.io\/Year-9-Job-Skills\//);
+  assert.match(index, /<video[\s\S]*controls/);
   assert.match(index, /video-shell/);
   assert.match(index, /opener-poster-v1\.png/);
   assert.match(index, /intro-employability-skills\.mp4/);
   assert.match(index, /communication-explainer\.mp4/);
   assert.match(index, /collaboration-explainer\.mp4/);
+  assert.match(index, /intro-employability-skills\.vtt/);
+  assert.match(index, /communication-explainer\.vtt/);
+  assert.match(index, /collaboration-explainer\.vtt/);
+  assert.doesNotMatch(index, /opener-video\.mp4/);
   assert.match(index, /collaboration-hero-v1\.png/);
   assert.match(index, /communication-hero-v1\.png/);
   assert.match(index, /Skill Sorter/);
   assert.match(index, /skill-yes-button/);
   assert.match(index, /skill-bot/);
+  assert.match(index, /Employability skill/);
+  assert.match(index, /Not a skill/);
   assert.doesNotMatch(index, /data-stage-panel="brief"/);
   assert.match(index, /Communication is more than talking/);
   assert.match(index, /Where have you already used communication/);
+  assert.match(index, /data-stage-panel="communication-build collaboration-build"/);
+  assert.match(index, /Build one strong communication example/);
+  assert.match(index, /saved-examples-panel/);
+  assert.match(index, /another-example-button/);
+  assert.match(index, /finish-skill-button/);
   assert.match(index, /Collaboration is teamwork you can explain/);
   assert.match(index, /Where have you already used collaboration/);
+  assert.match(index, /My Skills PDF/);
   assert.match(index, /First name only/);
   assert.match(index, /pc-grid/);
   assert.match(index, /Skill Quest/);
@@ -95,7 +116,10 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Do not include private details/);
   assert.match(index, /Clear work/);
   assert.match(index, /does not send your answers to AI or the internet/);
-  assert.match(index, /data-stage-panel="build"/);
+  assert.doesNotMatch(index, /data-stage-panel="build"/);
+  assert.match(index, /data-stage-panel="communication-build collaboration-build"/);
+  assert.match(index, /Yes, build another/);
+  assert.match(index, /No, move on/);
   assert.match(index, /app\.js/);
   assert.match(css, /video-player/);
   assert.match(css, /unpack-grid/);
@@ -104,6 +128,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /skill-bot/);
   assert.match(css, /compact-video-shell/);
   assert.match(css, /clarifying-panel/);
+  assert.match(css, /saved-examples-panel/);
+  assert.match(css, /builder-decision/);
+  assert.match(css, /snapshot-example-list/);
   assert.match(css, /right-size-note/);
   assert.match(css, /clear-work-button/);
   assert.match(css, /privacy-note/);
@@ -113,8 +140,16 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /@media print/);
   assert.match(js, /year-9-job-skills-state/);
   assert.match(js, /lessonFocusSkillIds/);
+  assert.match(js, /communication-build/);
+  assert.match(js, /collaboration-build/);
+  assert.match(js, /drafts/);
+  assert.match(js, /examples/);
+  assert.match(js, /commitDraft/);
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
+  assert.match(js, /Happy/);
+  assert.match(js, /Barista course/);
+  assert.match(js, /Certificate II/);
   assert.match(js, /hydrateVideoSlots/);
   assert.match(js, /9 Teresa/);
   assert.match(js, /firstNameOnly/);
@@ -128,6 +163,29 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(assetReadme, /intro-employability-skills\.mp4/);
   assert.match(assetReadme, /communication-explainer\.mp4/);
   assert.match(assetReadme, /collaboration-explainer\.mp4/);
+  assert.doesNotMatch(assetReadme, /opener-video\.mp4/);
   assert.match(assetReadme, /opener-poster-v1\.png/);
   assert.match(storyboard, /Collaboration \+ Communication/);
+  assert.match(storyboard, /Three short explainer videos/);
+  assert.match(storyboard, /Skill Sorter Check/);
+
+  const videoNames = [
+    "intro-employability-skills",
+    "communication-explainer",
+    "collaboration-explainer",
+  ];
+
+  for (const videoName of videoNames) {
+    const [docsVideo, publicVideo, docsCaptions, publicCaptions] = await Promise.all([
+      stat(new URL(`../docs/assets/${videoName}.mp4`, import.meta.url)),
+      stat(new URL(`../public/assets/${videoName}.mp4`, import.meta.url)),
+      stat(new URL(`../docs/assets/${videoName}.vtt`, import.meta.url)),
+      stat(new URL(`../public/assets/${videoName}.vtt`, import.meta.url)),
+    ]);
+
+    assert.ok(docsVideo.size > 300_000, `${videoName}.mp4 should contain rendered video`);
+    assert.ok(docsCaptions.size > 200, `${videoName}.vtt should contain captions`);
+    assert.equal(docsVideo.size, publicVideo.size);
+    assert.equal(docsCaptions.size, publicCaptions.size);
+  }
 });
