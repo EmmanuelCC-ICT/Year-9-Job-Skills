@@ -330,6 +330,29 @@ code {
   grid-column: 1 / -1;
 }
 
+.starter-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.clear-work-button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(23, 32, 51, 0.16);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.clear-work-button:hover,
+.clear-work-button:focus-visible {
+  border-color: var(--teal);
+  outline: 3px solid rgba(0, 167, 165, 0.16);
+}
+
 .video-slot {
   position: relative;
   min-height: 430px;
@@ -830,6 +853,13 @@ code {
 .translation-panel h2 {
   margin: 0 0 16px;
   font-size: clamp(1.6rem, 2.4vw, 2.4rem);
+}
+
+.translator-note {
+  margin: -6px 0 14px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .translation-output {

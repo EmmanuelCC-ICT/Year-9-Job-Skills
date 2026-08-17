@@ -659,6 +659,12 @@ function render() {
   renderQuest();
 }
 
+function resetWork() {
+  state = structuredClone(initialState);
+  window.localStorage.removeItem("year-9-job-skills-state");
+  render();
+}
+
 function bindForm() {
   $("first-name-input").addEventListener("input", (event) => {
     state.student.firstName = firstNameOnly(event.target.value);
@@ -718,11 +724,8 @@ function bindForm() {
     window.setTimeout(() => window.print(), 60);
   });
 
-  $("reset-button").addEventListener("click", () => {
-    state = structuredClone(initialState);
-    window.localStorage.removeItem("year-9-job-skills-state");
-    render();
-  });
+  $("reset-button").addEventListener("click", resetWork);
+  $("clear-start-button").addEventListener("click", resetWork);
 
   $("back-button").addEventListener("click", () => {
     const index = currentStageIndex();
