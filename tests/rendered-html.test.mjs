@@ -194,7 +194,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /grid-auto-flow: column/);
   assert.match(css, /quest-meter/);
   assert.match(css, /mission-token/);
-  assert.match(css, /unpack-card:not\(\.media-card\)::before/);
+  assert.match(index, /visual-card listen-card/);
+  assert.match(index, /visual-card speak-card/);
+  assert.match(index, /visual-card reliable-card/);
+  assert.match(index, /visual-card include-card/);
+  assert.match(css, /card-visual/);
   assert.match(css, /card-fly-in/);
   assert.match(css, /card-sort-left/);
   assert.match(css, /card-sort-right/);

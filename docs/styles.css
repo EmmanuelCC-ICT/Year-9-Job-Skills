@@ -1563,32 +1563,223 @@ body[data-theme="space"] .scene-badge {
   box-shadow: 0 14px 30px rgba(23, 32, 51, 0.08);
 }
 
-.unpack-card:not(.media-card)::before {
-  content: "";
-  width: 58px;
-  height: 58px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  background:
-    linear-gradient(90deg, transparent 0 35%, rgba(255, 255, 255, 0.55) 35% 45%, transparent 45% 100%),
-    linear-gradient(135deg, rgba(0, 167, 165, 0.95), rgba(40, 100, 216, 0.84));
-  box-shadow: 0 12px 26px rgba(0, 167, 165, 0.18);
-}
-
-.unpack-card:not(.media-card)::after {
-  content: "";
-  position: absolute;
-  right: 18px;
-  top: 34px;
-  width: 86px;
-  height: 18px;
-  border-top: 4px solid rgba(0, 167, 165, 0.18);
-  border-bottom: 4px solid rgba(244, 183, 64, 0.22);
-}
-
 .unpack-card.media-card {
   overflow: hidden;
   padding: 0;
+}
+
+.unpack-card.visual-card {
+  overflow: hidden;
+  padding-top: 0;
+}
+
+.card-visual {
+  position: relative;
+  min-height: 118px;
+  margin: 0 -18px 8px;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  background:
+    radial-gradient(circle at 16% 28%, rgba(255, 255, 255, 0.8), transparent 14%),
+    radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.5), transparent 18%),
+    linear-gradient(135deg, #0aa9b2, #2864d8 52%, #e11d72);
+}
+
+.card-visual::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 8px;
+}
+
+.card-visual::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 44%;
+  background:
+    linear-gradient(90deg, transparent 0 16%, rgba(255, 255, 255, 0.38) 16% 17%, transparent 17% 100%),
+    linear-gradient(180deg, transparent, rgba(8, 24, 39, 0.26));
+}
+
+.listen-card .card-visual {
+  background:
+    radial-gradient(circle at 30% 42%, rgba(255, 255, 255, 0.9), transparent 8%),
+    radial-gradient(circle at 70% 38%, rgba(255, 255, 255, 0.65), transparent 10%),
+    linear-gradient(135deg, #0aa9b2, #1a9bd4 48%, #f4b740);
+}
+
+.speak-card .card-visual {
+  background:
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.78), transparent 12%),
+    linear-gradient(135deg, #2864d8, #0aa9b2 58%, #f4b740);
+}
+
+.reliable-card .card-visual {
+  background:
+    radial-gradient(circle at 76% 22%, rgba(255, 255, 255, 0.76), transparent 12%),
+    linear-gradient(135deg, #172033, #2864d8 54%, #0aa9b2);
+}
+
+.include-card .card-visual {
+  background:
+    radial-gradient(circle at 70% 22%, rgba(255, 255, 255, 0.7), transparent 12%),
+    linear-gradient(135deg, #e11d72, #2864d8 50%, #0aa9b2);
+}
+
+.sound-line,
+.speech-card,
+.task-card,
+.people-dot,
+.connection-line,
+.check-dot,
+.idea-line {
+  position: absolute;
+  z-index: 2;
+  display: block;
+}
+
+.sound-line {
+  left: 26%;
+  width: 46%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 10px 28px rgba(23, 32, 51, 0.18);
+}
+
+.sound-line.one {
+  top: 34%;
+}
+
+.sound-line.two {
+  top: 49%;
+  left: 20%;
+  width: 58%;
+}
+
+.sound-line.three {
+  top: 64%;
+  left: 30%;
+  width: 38%;
+}
+
+.check-dot {
+  right: 18%;
+  bottom: 22%;
+  width: 34px;
+  height: 34px;
+  border: 5px solid #ffffff;
+  border-radius: 50%;
+}
+
+.check-dot::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 14px;
+  height: 8px;
+  border-left: 4px solid #ffffff;
+  border-bottom: 4px solid #ffffff;
+  transform: rotate(-45deg);
+}
+
+.speech-card {
+  width: 42%;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 14px 28px rgba(23, 32, 51, 0.16);
+}
+
+.speech-card::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: -8px;
+  border-width: 9px 8px 0 0;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent;
+}
+
+.speech-card.one {
+  left: 16%;
+  top: 28%;
+}
+
+.speech-card.two {
+  right: 14%;
+  top: 52%;
+  width: 36%;
+  opacity: 0.78;
+}
+
+.idea-line {
+  left: 18%;
+  bottom: 22%;
+  width: 64%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(244, 183, 64, 0.92);
+}
+
+.task-card {
+  left: 18%;
+  width: 64%;
+  height: 18px;
+  border-radius: 7px;
+  background:
+    linear-gradient(90deg, #48d976 0 18%, rgba(255, 255, 255, 0.92) 18% 100%);
+  box-shadow: 0 12px 24px rgba(23, 32, 51, 0.16);
+}
+
+.task-card.one {
+  top: 28%;
+}
+
+.task-card.two {
+  top: 48%;
+  width: 54%;
+}
+
+.task-card.three {
+  top: 68%;
+  width: 44%;
+}
+
+.people-dot {
+  width: 36px;
+  height: 36px;
+  border: 5px solid rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow: 0 12px 24px rgba(23, 32, 51, 0.18);
+}
+
+.people-dot.one {
+  left: 22%;
+  top: 34%;
+}
+
+.people-dot.two {
+  left: 45%;
+  top: 24%;
+}
+
+.people-dot.three {
+  right: 22%;
+  top: 42%;
+}
+
+.connection-line {
+  left: 28%;
+  top: 56%;
+  width: 46%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  transform: rotate(-8deg);
 }
 
 .unpack-card img {
