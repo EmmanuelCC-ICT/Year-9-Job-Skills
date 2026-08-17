@@ -94,6 +94,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /career-quest-communication-v1\.png/);
   assert.match(index, /career-quest-collaboration-v1\.png/);
   assert.match(index, /data-theme-choice="city"/);
+  assert.match(index, /data-theme-choice="space"/);
+  assert.doesNotMatch(index, /data-theme-choice="space" disabled/);
   assert.match(index, /Mission Control/);
   assert.match(index, /Skill Sorter/);
   assert.match(index, /skill-yes-button/);
@@ -158,6 +160,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /picture-puzzle/);
   assert.match(css, /picture-tile/);
   assert.match(css, /city-shift-hidden-picture-v1\.png/);
+  assert.match(css, /mission-control-hidden-picture-v1\.png/);
   assert.match(css, /sort-feedback-animation/);
   assert.match(css, /feedback-flyout/);
   assert.match(css, /compact-video-shell/);
@@ -205,12 +208,14 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /answerSkillCheckCard/);
   assert.match(js, /showSortPulse/);
   assert.match(js, /feedbackAssets/);
+  assert.match(js, /mission-control-well-done-v1\.gif/);
+  assert.match(js, /mission-control-try-again-v1\.gif/);
   assert.match(js, /showFeedbackAnimation/);
   assert.match(js, /revealedTileIds/);
   assert.match(js, /data-picture-tile/);
   assert.match(js, /Replay to reveal missing tiles/);
   assert.match(js, /stageRailLabels/);
-  assert.match(js, /themeChoices/);
+  assert.match(js, /liveThemeChoices/);
   assert.match(js, /renderTheme/);
   assert.match(js, /quest-meter-fill/);
   assert.match(js, /mission-token/);
@@ -242,10 +247,13 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(assetReadme, /collaboration-explainer\.mp4/);
   assert.match(assetReadme, /career-quest-sorter-arena-v1\.png/);
   assert.match(assetReadme, /city-shift-hidden-picture-v1\.png/);
+  assert.match(assetReadme, /mission-control-hidden-picture-v1\.png/);
   assert.match(assetReadme, /career-quest-communication-v1\.png/);
   assert.match(assetReadme, /career-quest-collaboration-v1\.png/);
   assert.match(assetReadme, /city-well-done-v1\.gif/);
   assert.match(assetReadme, /city-try-again-v1\.gif/);
+  assert.match(assetReadme, /mission-control-well-done-v1\.gif/);
+  assert.match(assetReadme, /mission-control-try-again-v1\.gif/);
   assert.doesNotMatch(assetReadme, /opener-video\.mp4/);
   assert.match(assetReadme, /opener-poster-v1\.png/);
   assert.match(storyboard, /Collaboration \+ Communication/);
@@ -275,6 +283,7 @@ test("GitHub Pages version is present in docs", async () => {
   const questImages = [
     "career-quest-sorter-arena-v1",
     "city-shift-hidden-picture-v1",
+    "mission-control-hidden-picture-v1",
     "career-quest-communication-v1",
     "career-quest-collaboration-v1",
   ];
@@ -292,6 +301,8 @@ test("GitHub Pages version is present in docs", async () => {
   const feedbackGifs = [
     "city-well-done-v1",
     "city-try-again-v1",
+    "mission-control-well-done-v1",
+    "mission-control-try-again-v1",
   ];
 
   for (const gifName of feedbackGifs) {

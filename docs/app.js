@@ -388,8 +388,7 @@ const stageRailLabels = {
   unlock: "Skills PDF",
 };
 
-const themeChoices = ["city", "space", "studio"];
-const liveThemeChoices = ["city"];
+const liveThemeChoices = ["city", "space"];
 
 const feedbackAssets = {
   city: {
@@ -397,8 +396,8 @@ const feedbackAssets = {
     incorrect: "assets/feedback/city-try-again-v1.gif",
   },
   space: {
-    correct: "assets/feedback/city-well-done-v1.gif",
-    incorrect: "assets/feedback/city-try-again-v1.gif",
+    correct: "assets/feedback/mission-control-well-done-v1.gif",
+    incorrect: "assets/feedback/mission-control-try-again-v1.gif",
   },
   studio: {
     correct: "assets/feedback/city-well-done-v1.gif",

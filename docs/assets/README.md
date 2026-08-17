@@ -18,10 +18,13 @@ Recommended files:
 - `video-opener/collaboration-communication-contact-sheet-v1.png` - current storyboard placeholder.
 - `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
 - `quest/city-shift-hidden-picture-v1.png` - City Shift 10-tile hidden-picture reveal mural for the Skill Sorter.
+- `quest/mission-control-hidden-picture-v1.png` - Mission Control 10-tile hidden-picture reveal mural for the Skill Sorter.
 - `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
 - `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
 - `feedback/city-well-done-v1.gif` - City Shift fly-in celebration feedback.
 - `feedback/city-try-again-v1.gif` - City Shift fly-in retry feedback.
+- `feedback/mission-control-well-done-v1.gif` - Mission Control fly-in celebration feedback.
+- `feedback/mission-control-try-again-v1.gif` - Mission Control fly-in retry feedback.
 - `takeaway-background.png` - optional subtle print background.
 - skill badges or stills for the 12 enterprise skills.
 
