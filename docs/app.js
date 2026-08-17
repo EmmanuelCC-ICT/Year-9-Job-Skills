@@ -97,62 +97,61 @@ const skills = [
   },
 ];
 
-const experiences = [
+const communicationMoments = [
   {
-    id: "group-task",
-    label: "Finished a group assignment",
-    detail: "Shared jobs, checked progress, or helped the group get unstuck.",
-    skills: ["collaboration", "communication", "planning", "problem"],
+    id: "communication-question",
+    label: "Asked a question when something was unclear",
+    detail: "In class, at training, at home, or when learning a new task.",
+    skillId: "communication",
   },
   {
-    id: "sport",
-    label: "Played team sport or coached someone",
-    detail: "Listened, practised, encouraged others, or changed tactics.",
-    skills: ["collaboration", "communication", "flexibility", "self"],
+    id: "communication-explained",
+    label: "Explained an idea so someone else understood",
+    detail: "Helped a friend, sibling, teammate, or group member follow what to do.",
+    skillId: "communication",
   },
   {
-    id: "home",
-    label: "Helped at home or cared for someone",
-    detail: "Handled responsibility, followed routines, or stayed calm under pressure.",
-    skills: ["self", "planning", "initiative", "communication"],
+    id: "communication-listened",
+    label: "Listened properly before replying",
+    detail: "Paid attention, remembered details, or checked you understood.",
+    skillId: "communication",
   },
   {
-    id: "creative",
-    label: "Made something creative",
-    detail: "Designed, wrote, built, edited, cooked, performed, or made content.",
-    skills: ["creativity", "planning", "digital", "presentation"],
-  },
-  {
-    id: "tech",
-    label: "Solved a tech problem",
-    detail: "Worked out a fix, found a tutorial, or helped someone use a tool.",
-    skills: ["digital", "problem", "thinking", "initiative"],
-  },
-  {
-    id: "money-choice",
-    label: "Made a smart money choice",
-    detail: "Compared prices, saved for something, or avoided wasting money.",
-    skills: ["money", "thinking", "planning", "self"],
-  },
-  {
-    id: "presentation",
-    label: "Presented or performed",
-    detail: "Spoke to a class, audience, team, family, or online community.",
-    skills: ["presentation", "communication", "self", "creativity"],
-  },
-  {
-    id: "volunteer",
-    label: "Helped in the community",
-    detail: "Volunteered, helped at school, supported a club, or took a useful role.",
-    skills: ["initiative", "collaboration", "communication", "flexibility"],
+    id: "communication-adjusted",
+    label: "Changed how you said something for the person",
+    detail: "Used different words with a teacher, coach, customer, younger child, or friend.",
+    skillId: "communication",
   },
 ];
 
-const confidenceLabels = {
-  strong: "I can do this",
-  help: "With help",
-  practice: "Practise next",
-};
+const collaborationMoments = [
+  {
+    id: "collaboration-group-task",
+    label: "Worked with others to finish a task",
+    detail: "Shared jobs, checked progress, or helped the group stay on track.",
+    skillId: "collaboration",
+  },
+  {
+    id: "collaboration-responsibility",
+    label: "Took responsibility for your part",
+    detail: "Completed your job, turned up prepared, or kept to time.",
+    skillId: "collaboration",
+  },
+  {
+    id: "collaboration-supported",
+    label: "Supported someone else in the group",
+    detail: "Encouraged them, helped them practise, or noticed when they needed a hand.",
+    skillId: "collaboration",
+  },
+  {
+    id: "collaboration-valued-ideas",
+    label: "Used someone else's idea to improve the result",
+    detail: "Listened, included their suggestion, or helped the group choose the best option.",
+    skillId: "collaboration",
+  },
+];
+
+const experiences = [...communicationMoments, ...collaborationMoments];
 
 const lessonFocusSkillIds = ["collaboration", "communication"];
 const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
@@ -179,23 +178,37 @@ const stages = [
   {
     id: "brief",
     short: "Brief",
-    title: "Employer Brief",
+    title: "Big Picture",
     subtitle: "Spot what employers mean when they ask for enterprise skills.",
-    hint: "Scan the employer messages, then move to your own examples.",
+    hint: "Start with the overall idea, then unpack two skills you already use.",
   },
   {
-    id: "match",
-    short: "Match",
-    title: "Match Moments",
-    subtitle: "Find everyday experiences that already show useful skills.",
-    hint: "Choose at least one real-life moment that matches you.",
+    id: "communication",
+    short: "Comm",
+    title: "Communication",
+    subtitle: "Notice that communication is listening, speaking, checking, and choosing words.",
+    hint: "Look for familiar communication moves you have already used.",
   },
   {
-    id: "power",
-    short: "Power Up",
-    title: "Power Up",
-    subtitle: "Rate your focus skills without turning it into a test.",
-    hint: "Rate collaboration and communication to earn the power-up badge.",
+    id: "communication-life",
+    short: "My Comm",
+    title: "My Communication",
+    subtitle: "Pick the communication moments you recognise from your life.",
+    hint: "Choose at least one communication example that makes you think, yep, I have done that.",
+  },
+  {
+    id: "collaboration",
+    short: "Team",
+    title: "Collaboration",
+    subtitle: "Notice that collaboration is teamwork you can explain.",
+    hint: "Look for familiar teamwork moves you have already used.",
+  },
+  {
+    id: "collaboration-life",
+    short: "My Team",
+    title: "My Teamwork",
+    subtitle: "Pick the teamwork moments you recognise from your life.",
+    hint: "Choose at least one teamwork example that makes you think, yep, I have done that.",
   },
   {
     id: "build",
@@ -215,9 +228,11 @@ const stages = [
 
 const celebrationCopy = {
   start: ["Launch badge unlocked", "First name only and PC class are set. Good privacy choices."],
-  brief: ["Employer radar unlocked", "You have spotted the language employers use for skills."],
-  match: ["Moment matcher unlocked", "Everyday experience counts when you can explain the skill behind it."],
-  power: ["Power-up badge unlocked", "You have checked your focus skills without making it a test."],
+  brief: ["Big picture unlocked", "Enterprise skills are just useful skills you can take into different settings."],
+  communication: ["Communication unlocked", "Speaking and listening both count. You probably use this more than you think."],
+  "communication-life": ["Communication evidence found", "That is a real example you could explain to an employer one day."],
+  collaboration: ["Teamwork unlocked", "Collaboration is teamwork you can point to and explain."],
+  "collaboration-life": ["Teamwork evidence found", "You have spotted a real example of working well with others."],
   build: ["Story builder unlocked", "That example is turning into proper job speak."],
   unlock: ["Snapshot unlocked", "Your employability snapshot is ready to use."],
 };
@@ -230,7 +245,8 @@ const initialState = {
     firstName: "",
     pcClass: "",
   },
-  selectedExperiences: [],
+  selectedCommunicationMoments: [],
+  selectedCollaborationMoments: [],
   confidence: {},
   chosenSkillId: "communication",
   evidence: {
@@ -255,6 +271,12 @@ function loadState() {
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
     parsed.student = { ...initialState.student, ...parsed.student };
     parsed.evidence = { ...initialState.evidence, ...parsed.evidence };
+    parsed.selectedCommunicationMoments = Array.isArray(parsed.selectedCommunicationMoments)
+      ? parsed.selectedCommunicationMoments
+      : (parsed.selectedExperiences || []).filter((id) => communicationMoments.some((moment) => moment.id === id));
+    parsed.selectedCollaborationMoments = Array.isArray(parsed.selectedCollaborationMoments)
+      ? parsed.selectedCollaborationMoments
+      : (parsed.selectedExperiences || []).filter((id) => collaborationMoments.some((moment) => moment.id === id));
     const validStageIds = stages.map((stage) => stage.id);
     if (!validStageIds.includes(parsed.currentStage)) {
       parsed.currentStage = "start";
@@ -296,21 +318,6 @@ function selectedExperience() {
   return experiences.find((experience) => experience.id === state.evidence.experience);
 }
 
-function getMatchedSkillIds() {
-  const ids = new Set();
-  state.selectedExperiences.forEach((experienceId) => {
-    const experience = experiences.find((item) => item.id === experienceId);
-    if (experience) experience.skills.forEach((skillId) => ids.add(skillId));
-  });
-  return ids;
-}
-
-function getSpotlightSkills() {
-  const ids = getMatchedSkillIds();
-  const matchedFocusSkills = lessonFocusSkills.filter((skill) => ids.has(skill.id));
-  return matchedFocusSkills.length ? matchedFocusSkills : lessonFocusSkills;
-}
-
 function getOutputs() {
   const skill = chosenSkill();
   const experience = selectedExperience();
@@ -334,8 +341,11 @@ function getProgress() {
   const parts = [
     Boolean(state.student.firstName.trim()),
     Boolean(state.student.pcClass),
-    state.selectedExperiences.length > 0,
-    Object.keys(state.confidence).length >= 2,
+    state.visitedStages.includes("brief"),
+    state.visitedStages.includes("communication"),
+    state.selectedCommunicationMoments.length > 0,
+    state.visitedStages.includes("collaboration"),
+    state.selectedCollaborationMoments.length > 0,
     Boolean(state.evidence.experience),
     Boolean(state.evidence.action.trim()),
     Boolean(state.evidence.result.trim()),
@@ -356,10 +366,14 @@ function isStageComplete(stageId) {
       return Boolean(state.student.firstName.trim()) && Boolean(state.student.pcClass);
     case "brief":
       return state.visitedStages.includes("brief");
-    case "match":
-      return state.selectedExperiences.length > 0;
-    case "power":
-      return lessonFocusSkillIds.every((skillId) => Boolean(state.confidence[skillId]));
+    case "communication":
+      return state.visitedStages.includes("communication");
+    case "communication-life":
+      return state.selectedCommunicationMoments.length > 0;
+    case "collaboration":
+      return state.visitedStages.includes("collaboration");
+    case "collaboration-life":
+      return state.selectedCollaborationMoments.length > 0;
     case "build":
       return Boolean(state.evidence.experience) && Boolean(state.evidence.action.trim()) && Boolean(state.evidence.result.trim());
     case "unlock":
@@ -470,66 +484,48 @@ function renderStudent() {
   });
 }
 
-function renderExperiences() {
-  const grid = $("experience-grid");
+function renderMomentGrid(gridId, moments, selectedKey, skillId, celebrationStage) {
+  const grid = $(gridId);
   grid.innerHTML = "";
 
-  experiences.forEach((experience) => {
+  moments.forEach((experience) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `experience-card ${state.selectedExperiences.includes(experience.id) ? "selected" : ""}`;
-    button.setAttribute("aria-pressed", String(state.selectedExperiences.includes(experience.id)));
+    button.className = `experience-card ${state[selectedKey].includes(experience.id) ? "selected" : ""}`;
+    button.setAttribute("aria-pressed", String(state[selectedKey].includes(experience.id)));
     button.innerHTML = `<span>${experience.label}</span><small>${experience.detail}</small>`;
     button.addEventListener("click", () => {
-      const selected = state.selectedExperiences.includes(experience.id);
-      state.selectedExperiences = selected
-        ? state.selectedExperiences.filter((id) => id !== experience.id)
-        : [...state.selectedExperiences, experience.id];
+      const selected = state[selectedKey].includes(experience.id);
+      state[selectedKey] = selected
+        ? state[selectedKey].filter((id) => id !== experience.id)
+        : [...state[selectedKey], experience.id];
       if (!selected && !state.evidence.experience) {
         state.evidence.experience = experience.id;
+        state.chosenSkillId = skillId;
       }
       saveState();
       render();
-      maybeCelebrate("match");
+      maybeCelebrate(celebrationStage);
     });
     grid.append(button);
   });
 }
 
-function renderSkills() {
-  const grid = $("skill-grid");
-  grid.innerHTML = "";
-
-  getSpotlightSkills().forEach((skill) => {
-    const card = document.createElement("article");
-    card.className = `skill-card colour-${skill.colour}`;
-    card.innerHTML = `
-      <div class="skill-card-top">
-        <span class="skill-mark">${skill.title.slice(0, 2)}</span>
-        <strong>${skill.title}</strong>
-      </div>
-      <h3>${skill.simpleTitle}</h3>
-      <p>${skill.description}</p>
-      <div class="confidence-row" aria-label="${skill.title} confidence"></div>
-    `;
-
-    const row = card.querySelector(".confidence-row");
-    Object.entries(confidenceLabels).forEach(([level, label]) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = label;
-      button.className = state.confidence[skill.id] === level ? "active" : "";
-      button.addEventListener("click", () => {
-        state.confidence[skill.id] = level;
-        saveState();
-        render();
-        maybeCelebrate("power");
-      });
-      row.append(button);
-    });
-
-    grid.append(card);
-  });
+function renderExperiences() {
+  renderMomentGrid(
+    "communication-experience-grid",
+    communicationMoments,
+    "selectedCommunicationMoments",
+    "communication",
+    "communication-life",
+  );
+  renderMomentGrid(
+    "collaboration-experience-grid",
+    collaborationMoments,
+    "selectedCollaborationMoments",
+    "collaboration",
+    "collaboration-life",
+  );
 }
 
 function renderSelects() {
@@ -537,11 +533,20 @@ function renderSelects() {
   const skillSelect = $("skill-select");
 
   if (experienceSelect.options.length === 1) {
-    experiences.forEach((experience) => {
-      const option = document.createElement("option");
-      option.value = experience.id;
-      option.textContent = experience.label;
-      experienceSelect.append(option);
+    const groups = [
+      ["Communication examples", communicationMoments],
+      ["Teamwork examples", collaborationMoments],
+    ];
+    groups.forEach(([label, moments]) => {
+      const group = document.createElement("optgroup");
+      group.label = label;
+      moments.forEach((experience) => {
+        const option = document.createElement("option");
+        option.value = experience.id;
+        option.textContent = experience.label;
+        group.append(option);
+      });
+      experienceSelect.append(group);
     });
   }
 
@@ -552,6 +557,11 @@ function renderSelects() {
       option.textContent = `${skill.title} - ${skill.simpleTitle}`;
       skillSelect.append(option);
     });
+  }
+
+  const selected = selectedExperience();
+  if (selected?.skillId && state.chosenSkillId !== selected.skillId) {
+    state.chosenSkillId = selected.skillId;
   }
 
   experienceSelect.value = state.evidence.experience;
@@ -588,7 +598,6 @@ function renderOutputs() {
 function render() {
   renderStudent();
   renderExperiences();
-  renderSkills();
   renderSelects();
   renderInputs();
   renderOutputs();
@@ -605,9 +614,12 @@ function bindForm() {
 
   $("experience-select").addEventListener("change", (event) => {
     state.evidence.experience = event.target.value;
+    const selected = selectedExperience();
+    if (selected?.skillId) {
+      state.chosenSkillId = selected.skillId;
+    }
     saveState();
-    renderOutputs();
-    renderQuest();
+    render();
     maybeCelebrate("build");
   });
 
