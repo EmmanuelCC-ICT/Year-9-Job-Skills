@@ -192,6 +192,79 @@ const pcClasses = [
   "9 Teresa",
 ];
 
+const skillCheckCards = [
+  {
+    id: "sort-communication",
+    label: "Communication",
+    clue: "Talking, listening, checking, and explaining clearly.",
+    isSkill: true,
+    explanation: "Communication is an employability skill because it can transfer across many jobs.",
+  },
+  {
+    id: "sort-happy",
+    label: "Happy",
+    clue: "A feeling or emotion someone might have.",
+    isSkill: false,
+    explanation: "Happy is an emotion. A related skill might be self-management or communication.",
+  },
+  {
+    id: "sort-teamwork",
+    label: "Teamwork",
+    clue: "Working with others to get something done.",
+    isSkill: true,
+    explanation: "Teamwork is an employability skill because most workplaces involve other people.",
+  },
+  {
+    id: "sort-barista-course",
+    label: "Barista course",
+    clue: "Training that teaches someone to make coffee.",
+    isSkill: false,
+    explanation: "A barista course is training or a qualification. It may help build skills, but it is not the skill itself.",
+  },
+  {
+    id: "sort-problem-solving",
+    label: "Problem solving",
+    clue: "Working out what to try when something gets tricky.",
+    isSkill: true,
+    explanation: "Problem solving is an employability skill because jobs often need people to figure things out.",
+  },
+  {
+    id: "sort-certificate",
+    label: "Certificate II",
+    clue: "A formal course result or qualification.",
+    isSkill: false,
+    explanation: "A certificate is a qualification. The skills might be what you practised while earning it.",
+  },
+  {
+    id: "sort-listening",
+    label: "Listening carefully",
+    clue: "Paying attention and checking you understood.",
+    isSkill: true,
+    explanation: "Listening carefully is part of communication, so it can transfer into work.",
+  },
+  {
+    id: "sort-nervous",
+    label: "Nervous",
+    clue: "A feeling someone might have before a new task.",
+    isSkill: false,
+    explanation: "Nervous is a feeling. Managing nerves could show self-management, but the feeling is not the skill.",
+  },
+  {
+    id: "sort-digital",
+    label: "Digital literacy",
+    clue: "Using technology safely, responsibly, and effectively.",
+    isSkill: true,
+    explanation: "Digital literacy is an employability skill because many jobs use technology.",
+  },
+  {
+    id: "sort-planning",
+    label: "Planning a task",
+    clue: "Breaking a job into steps and checking progress.",
+    isSkill: true,
+    explanation: "Planning a task is an employability skill because it helps people get work done reliably.",
+  },
+];
+
 const stages = [
   {
     id: "start",
@@ -201,11 +274,11 @@ const stages = [
     hint: "Add a first name and PC class to earn the launch badge.",
   },
   {
-    id: "brief",
-    short: "Brief",
-    title: "Big Picture",
-    subtitle: "Spot what employers mean when they ask for enterprise skills.",
-    hint: "Start with the overall idea, then unpack two skills you already use.",
+    id: "skill-check",
+    short: "Sort",
+    title: "Skill Sorter",
+    subtitle: "Check that you can spot employability skills.",
+    hint: "Sort each card into skill or not a skill to power up Skill Bot.",
   },
   {
     id: "communication",
@@ -253,7 +326,7 @@ const stages = [
 
 const celebrationCopy = {
   start: ["Launch badge unlocked", "First name only and PC class are set. Good privacy choices."],
-  brief: ["Big picture unlocked", "Enterprise skills are just useful skills you can take into different settings."],
+  "skill-check": ["Skill Sorter complete", "You can spot the difference between skills, emotions, and qualifications."],
   communication: ["Communication unlocked", "Speaking and listening both count. You probably use this more than you think."],
   "communication-life": ["Communication evidence found", "That is a real example you could explain to an employer one day."],
   collaboration: ["Teamwork unlocked", "Collaboration is teamwork you can point to and explain."],
@@ -272,6 +345,10 @@ const initialState = {
   },
   selectedCommunicationMoments: [],
   selectedCollaborationMoments: [],
+  skillCheck: {
+    answers: [],
+    lastFeedback: "",
+  },
   confidence: {},
   chosenSkillId: "communication",
   evidence: {
@@ -296,6 +373,10 @@ function loadState() {
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
     parsed.student = { ...initialState.student, ...parsed.student };
     parsed.evidence = { ...initialState.evidence, ...parsed.evidence };
+    parsed.skillCheck = { ...initialState.skillCheck, ...parsed.skillCheck };
+    parsed.skillCheck.answers = Array.isArray(parsed.skillCheck.answers)
+      ? parsed.skillCheck.answers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
+      : [];
     parsed.selectedCommunicationMoments = Array.isArray(parsed.selectedCommunicationMoments)
       ? parsed.selectedCommunicationMoments
       : (parsed.selectedExperiences || []).filter((id) => communicationMoments.some((moment) => moment.id === id));
@@ -303,14 +384,26 @@ function loadState() {
       ? parsed.selectedCollaborationMoments
       : (parsed.selectedExperiences || []).filter((id) => collaborationMoments.some((moment) => moment.id === id));
     const validStageIds = stages.map((stage) => stage.id);
+    if (parsed.currentStage === "brief") {
+      parsed.currentStage = "skill-check";
+    }
     if (!validStageIds.includes(parsed.currentStage)) {
       parsed.currentStage = "start";
     }
     parsed.visitedStages = Array.isArray(parsed.visitedStages)
-      ? [...new Set(["start", ...parsed.visitedStages.filter((stageId) => validStageIds.includes(stageId))])]
+      ? [
+          ...new Set([
+            "start",
+            ...parsed.visitedStages
+              .map((stageId) => (stageId === "brief" ? "skill-check" : stageId))
+              .filter((stageId) => validStageIds.includes(stageId)),
+          ]),
+        ]
       : ["start"];
     parsed.celebratedStages = Array.isArray(parsed.celebratedStages)
-      ? parsed.celebratedStages.filter((stageId) => validStageIds.includes(stageId))
+      ? parsed.celebratedStages
+          .map((stageId) => (stageId === "brief" ? "skill-check" : stageId))
+          .filter((stageId) => validStageIds.includes(stageId))
       : [];
     if (!lessonFocusSkillIds.includes(parsed.chosenSkillId)) {
       parsed.chosenSkillId = "communication";
@@ -341,6 +434,18 @@ function chosenSkill() {
 
 function selectedExperience() {
   return experiences.find((experience) => experience.id === state.evidence.experience);
+}
+
+function skillCheckScore() {
+  return state.skillCheck.answers.filter((answer) => answer.correct).length;
+}
+
+function isSkillCheckComplete() {
+  return state.skillCheck.answers.length >= skillCheckCards.length;
+}
+
+function currentSkillCheckCard() {
+  return skillCheckCards[state.skillCheck.answers.length] || null;
 }
 
 function getOutputs() {
@@ -376,7 +481,7 @@ function getProgress() {
   const parts = [
     Boolean(state.student.firstName.trim()),
     Boolean(state.student.pcClass),
-    state.visitedStages.includes("brief"),
+    isSkillCheckComplete(),
     state.visitedStages.includes("communication"),
     state.selectedCommunicationMoments.length > 0,
     state.visitedStages.includes("collaboration"),
@@ -399,8 +504,8 @@ function isStageComplete(stageId) {
   switch (stageId) {
     case "start":
       return Boolean(state.student.firstName.trim()) && Boolean(state.student.pcClass);
-    case "brief":
-      return state.visitedStages.includes("brief");
+    case "skill-check":
+      return isSkillCheckComplete();
     case "communication":
       return state.visitedStages.includes("communication");
     case "communication-life":
@@ -420,6 +525,33 @@ function isStageComplete(stageId) {
 
 function completedStages() {
   return stages.filter((stage) => isStageComplete(stage.id));
+}
+
+function answerSkillCheckCard(answerIsSkill) {
+  const card = currentSkillCheckCard();
+  if (!card) return;
+
+  const correct = card.isSkill === answerIsSkill;
+  state.skillCheck.answers = [
+    ...state.skillCheck.answers,
+    {
+      id: card.id,
+      answerIsSkill,
+      correct,
+    },
+  ];
+  state.skillCheck.lastFeedback = `${correct ? "Correct" : "Not quite"}. ${card.explanation}`;
+  saveState();
+  render();
+  if (isSkillCheckComplete()) {
+    maybeCelebrate("skill-check");
+  }
+}
+
+function resetSkillCheck() {
+  state.skillCheck = structuredClone(initialState.skillCheck);
+  saveState();
+  render();
 }
 
 function showCelebration(title, message) {
@@ -563,6 +695,56 @@ function renderExperiences() {
   );
 }
 
+function renderSkillCheck() {
+  const answeredCount = state.skillCheck.answers.length;
+  const correctCount = skillCheckScore();
+  const complete = isSkillCheckComplete();
+  const currentCard = currentSkillCheckCard();
+  const power = Math.round((correctCount / skillCheckCards.length) * 100);
+  const botLevel = Math.min(5, Math.ceil((correctCount / skillCheckCards.length) * 5));
+
+  $("skill-bot").className = `skill-bot level-${botLevel} ${complete ? "complete" : ""}`;
+  $("bot-power-fill").style.width = `${power}%`;
+  $("sort-progress").textContent = `${Math.min(answeredCount, skillCheckCards.length)} of ${skillCheckCards.length}`;
+  $("sort-score").textContent = `${correctCount}`;
+  $("bot-status").textContent = complete
+    ? correctCount >= 8
+      ? "Skill Bot is fully charged."
+      : "Skill Bot is charged. Replay to boost your score."
+    : `Power ${power}%. Keep sorting.`;
+
+  $("sort-card").classList.toggle("complete", complete);
+  $("skill-yes-button").disabled = complete;
+  $("skill-no-button").disabled = complete;
+
+  if (currentCard) {
+    $("sort-card-kicker").textContent = `Card ${answeredCount + 1} of ${skillCheckCards.length}`;
+    $("sort-card-label").textContent = currentCard.label;
+    $("sort-card-clue").textContent = currentCard.clue;
+  } else {
+    $("sort-card-kicker").textContent = "Round complete";
+    $("sort-card-label").textContent = `${correctCount} of ${skillCheckCards.length} correct`;
+    $("sort-card-clue").textContent =
+      correctCount >= 8
+        ? "You have the idea: employability skills are useful across different jobs."
+        : "Replay once if you want a stronger check before moving on.";
+  }
+
+  $("sort-feedback").textContent =
+    state.skillCheck.lastFeedback || "Choose where the card belongs. Skills transfer; emotions and qualifications do not.";
+
+  const pile = $("answer-pile");
+  pile.innerHTML = "";
+  state.skillCheck.answers.forEach((answer) => {
+    const card = skillCheckCards.find((item) => item.id === answer.id);
+    if (!card) return;
+    const chip = document.createElement("span");
+    chip.className = answer.correct ? "correct" : "try-again";
+    chip.textContent = `${answer.correct ? "✓" : "•"} ${card.label}`;
+    pile.append(chip);
+  });
+}
+
 function renderSelects() {
   const experienceSelect = $("experience-select");
   const skillSelect = $("skill-select");
@@ -651,6 +833,7 @@ function renderOutputs() {
 
 function render() {
   renderStudent();
+  renderSkillCheck();
   renderExperiences();
   renderSelects();
   renderClarifyingQuestions();
@@ -663,6 +846,64 @@ function resetWork() {
   state = structuredClone(initialState);
   window.localStorage.removeItem("year-9-job-skills-state");
   render();
+}
+
+async function hydrateVideoSlots() {
+  const slots = [...document.querySelectorAll(".video-shell[data-video]")];
+
+  await Promise.all(
+    slots.map(async (slot) => {
+      const videoSrc = slot.dataset.video;
+      if (!videoSrc) return;
+
+      try {
+        const response = await fetch(videoSrc, { method: "HEAD" });
+        if (!response.ok) return;
+      } catch {
+        return;
+      }
+
+      const poster = slot.dataset.poster || "";
+      const captions = slot.dataset.captions || "";
+      const label = slot.querySelector(".video-label")?.textContent || "Lesson video";
+      const video = document.createElement("video");
+      video.className = "video-player";
+      video.controls = true;
+      video.preload = "metadata";
+      if (poster) video.poster = poster;
+
+      const source = document.createElement("source");
+      source.src = videoSrc;
+      source.type = "video/mp4";
+      video.append(source);
+
+      let captionsAvailable = false;
+      if (captions) {
+        try {
+          const captionsResponse = await fetch(captions, { method: "HEAD" });
+          captionsAvailable = captionsResponse.ok;
+        } catch {
+          captionsAvailable = false;
+        }
+      }
+
+      if (captionsAvailable) {
+        const track = document.createElement("track");
+        track.default = true;
+        track.kind = "captions";
+        track.label = "English";
+        track.src = captions;
+        track.srclang = "en";
+        video.append(track);
+      }
+
+      const badge = document.createElement("div");
+      badge.className = "video-badge";
+      badge.textContent = label;
+
+      slot.replaceChildren(video, badge);
+    }),
+  );
 }
 
 function bindForm() {
@@ -726,6 +967,9 @@ function bindForm() {
 
   $("reset-button").addEventListener("click", resetWork);
   $("clear-start-button").addEventListener("click", resetWork);
+  $("skill-yes-button").addEventListener("click", () => answerSkillCheckCard(true));
+  $("skill-no-button").addEventListener("click", () => answerSkillCheckCard(false));
+  $("skill-replay-button").addEventListener("click", resetSkillCheck);
 
   $("back-button").addEventListener("click", () => {
     const index = currentStageIndex();
@@ -743,3 +987,4 @@ function bindForm() {
 
 bindForm();
 render();
+hydrateVideoSlots();

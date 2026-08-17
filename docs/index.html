@@ -75,42 +75,76 @@
             </div>
           </div>
 
-          <div class="video-slot" aria-label="Opening video area">
+          <div
+            class="video-slot video-shell"
+            data-video="assets/intro-employability-skills.mp4"
+            data-captions="assets/intro-employability-skills.vtt"
+            data-poster="assets/video-opener/opener-poster-v1.png"
+            aria-label="Opening video area"
+          >
             <img
               src="assets/video-opener/opener-poster-v1.png"
-              alt="Year 9 students working together around a project table"
+              alt="Students connecting everyday experiences to employability skills"
             >
             <div class="video-overlay">
-              <div class="video-label">Opening video</div>
+              <div class="video-label">Intro video</div>
               <h2>You already have job skills</h2>
-              <p>
-                Introduce all 12 enterprise skills, then zoom in on today's focus:
-                collaboration and communication.
-              </p>
-              <div class="video-strip">
-                <span>collaboration</span>
-                <span>communication</span>
-                <span>evidence</span>
-                <span>job speak</span>
-              </div>
+              <p>Employability skills are useful skills you can take into lots of jobs.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="quote-band stage-panel" data-stage-panel="brief" aria-label="Employer messages">
-        <article>
-          <strong>Big idea</strong>
-          <p>Enterprise skills are useful skills you can take from school, home, sport, hobbies, or volunteering into work.</p>
-        </article>
-        <article>
-          <strong>Workplace link</strong>
-          <p>Employers often ask for communication and teamwork because jobs involve people, instructions, customers, and shared tasks.</p>
-        </article>
-        <article>
-          <strong>Confidence check</strong>
-          <p>You do not need a job yet to have job skills. You need examples you can recognise and explain.</p>
-        </article>
+      <section class="section-shell skill-check-section stage-panel" data-stage-panel="skill-check">
+        <div class="section-heading">
+          <p class="eyebrow">Arcade check</p>
+          <h2>Skill Sorter</h2>
+          <p>
+            Spot the employability skills and separate them from emotions, courses, and qualifications.
+          </p>
+        </div>
+
+        <div class="arcade-grid">
+          <aside class="skill-bot-panel" aria-label="Skill Bot progress">
+            <div class="skill-bot" id="skill-bot" aria-hidden="true">
+              <span class="bot-antenna"></span>
+              <span class="bot-eye left"></span>
+              <span class="bot-eye right"></span>
+              <span class="bot-mouth"></span>
+            </div>
+            <div>
+              <p class="bot-status" id="bot-status">Skill Bot is warming up.</p>
+              <div class="bot-power-track" aria-label="Skill Bot power">
+                <span id="bot-power-fill"></span>
+              </div>
+            </div>
+            <dl class="sort-stats">
+              <div>
+                <dt>Sorted</dt>
+                <dd id="sort-progress">0 of 10</dd>
+              </div>
+              <div>
+                <dt>Correct</dt>
+                <dd id="sort-score">0</dd>
+              </div>
+            </dl>
+          </aside>
+
+          <div class="arcade-panel">
+            <div class="sort-card" id="sort-card" aria-live="polite">
+              <p id="sort-card-kicker">Card 1</p>
+              <h3 id="sort-card-label">Communication</h3>
+              <span id="sort-card-clue">Is this an employability skill?</span>
+            </div>
+            <div class="sort-actions" aria-label="Sort this card">
+              <button type="button" id="skill-yes-button">Employability skill</button>
+              <button type="button" id="skill-no-button">Not a skill</button>
+            </div>
+            <p class="sort-feedback" id="sort-feedback">Choose where the card belongs.</p>
+            <div class="answer-pile" id="answer-pile" aria-label="Sorted cards"></div>
+            <button type="button" class="replay-button" id="skill-replay-button">Replay round</button>
+          </div>
+        </div>
       </section>
 
       <section class="section-shell focus-section skill-unpack stage-panel" data-stage-panel="communication">
@@ -121,6 +155,24 @@
             In a workplace, communication means helping people understand what is happening. It includes listening,
             speaking, checking, and choosing words that fit the situation.
           </p>
+        </div>
+
+        <div
+          class="video-shell compact-video-shell"
+          data-video="assets/communication-explainer.mp4"
+          data-captions="assets/communication-explainer.vtt"
+          data-poster="assets/video-opener/communication-hero-v1.png"
+          aria-label="Communication explainer video area"
+        >
+          <img
+            src="assets/video-opener/communication-hero-v1.png"
+            alt="Student explaining an idea while classmates listen"
+          >
+          <div class="video-overlay">
+            <div class="video-label">Communication video</div>
+            <h2>Listening + speaking</h2>
+            <p>Unpack what communication looks like before choosing your own examples.</p>
+          </div>
         </div>
 
         <div class="unpack-grid">
@@ -166,6 +218,24 @@
             In a workplace, teamwork means working with other people so the job gets done. It can be quiet,
             practical, helpful, and reliable.
           </p>
+        </div>
+
+        <div
+          class="video-shell compact-video-shell"
+          data-video="assets/collaboration-explainer.mp4"
+          data-captions="assets/collaboration-explainer.vtt"
+          data-poster="assets/video-opener/collaboration-hero-v1.png"
+          aria-label="Collaboration explainer video area"
+        >
+          <img
+            src="assets/video-opener/collaboration-hero-v1.png"
+            alt="Students collaborating on a group project"
+          >
+          <div class="video-overlay">
+            <div class="video-label">Collaboration video</div>
+            <h2>Teamwork you can explain</h2>
+            <p>Unpack what collaboration looks like before choosing your own examples.</p>
+          </div>
         </div>
 
         <div class="unpack-grid">

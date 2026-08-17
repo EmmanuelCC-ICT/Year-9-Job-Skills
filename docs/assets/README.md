@@ -4,8 +4,12 @@ GitHub Pages serves this folder directly.
 
 Recommended files:
 
-- `opener-video.mp4` - final 45 to 60 second launch video.
-- `opener-poster.jpg` - still frame for the video area.
+- `intro-employability-skills.mp4` - short first explainer video: what employability skills are.
+- `intro-employability-skills.vtt` - captions for the intro video.
+- `communication-explainer.mp4` - short video introducing workplace communication.
+- `communication-explainer.vtt` - captions for the communication video.
+- `collaboration-explainer.mp4` - short video introducing workplace collaboration.
+- `collaboration-explainer.vtt` - captions for the collaboration video.
 - `video-opener/opener-poster-v1.png` - current opener poster wired into the GitHub Pages app.
 - `video-opener/collaboration-hero-v1.png` - collaboration lesson hero still.
 - `video-opener/communication-hero-v1.png` - communication lesson hero still.
