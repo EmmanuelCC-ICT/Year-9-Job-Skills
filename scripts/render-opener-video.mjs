@@ -124,7 +124,7 @@ const videos = [
     scenes: [
       {
         duration: 6,
-        image: "communication-hero-v1.png",
+        motion: "communication-motion/communication-s01-more-than-talking.mp4",
         label: "Communication",
         title: "More than talking",
         subtitle: "It means helping people understand what is happening.",
@@ -135,7 +135,7 @@ const videos = [
       },
       {
         duration: 6,
-        image: "communication-detail-v1.png",
+        motion: "communication-motion/communication-s02-listen-first.mp4",
         label: "Listen first",
         title: "Pay attention before replying.",
         subtitle: "Notice the important details, then check you understood.",
@@ -146,7 +146,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "communication-hero-v1.png",
+        motion: "communication-motion/communication-s03-explain-clearly.mp4",
         label: "Explain clearly",
         title: "Choose words that fit.",
         subtitle: "A friend, coach, teacher, customer or younger child may all need different wording.",
@@ -157,7 +157,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "communication-detail-v1.png",
+        motion: "communication-motion/communication-s04-employer-speak.mp4",
         label: "Employer speak",
         title: "Explained + listened + checked",
         subtitle: "That becomes evidence of communication.",
@@ -169,7 +169,7 @@ const videos = [
       },
       {
         duration: 6,
-        image: "communication-hero-v1.png",
+        motion: "communication-motion/communication-s05-your-activity.mp4",
         label: "Your activity",
         title: "Find your communication evidence.",
         subtitle: "Choose moments that make you think: yes, I have done that before.",
