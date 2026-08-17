@@ -377,47 +377,6 @@ main {
   background: #ffffff;
 }
 
-.pc-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pc-picker > span {
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 850;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.pc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.pc-grid button {
-  min-height: 46px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--ink);
-  font-weight: 850;
-}
-
-.pc-grid button:hover,
-.pc-grid button:focus-visible {
-  border-color: var(--teal);
-  outline: 3px solid rgba(0, 167, 165, 0.16);
-}
-
-.pc-grid button.selected {
-  border-color: var(--teal);
-  background: var(--teal);
-  color: #ffffff;
-}
-
 .privacy-note {
   grid-column: 1 / -1;
   margin: 0;
@@ -892,6 +851,55 @@ input:focus {
   padding-left: 18px;
 }
 
+.handoff-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid rgba(0, 167, 165, 0.24);
+  border-radius: 8px;
+  background: #eef6f4;
+}
+
+.handoff-panel h3,
+.handoff-panel p {
+  margin: 0;
+}
+
+.handoff-panel h3 {
+  font-size: 1.18rem;
+  line-height: 1.2;
+}
+
+.handoff-panel p:not(.eyebrow) {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.form-link-button {
+  display: inline-flex;
+  min-width: 170px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #ffffff;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.form-link-button:hover,
+.form-link-button:focus-visible {
+  background: #087b83;
+  outline: 3px solid rgba(0, 167, 165, 0.18);
+}
+
 .takeaway-grid label + label {
   margin-top: 12px;
 }
@@ -948,6 +956,7 @@ input:focus {
   .lesson-video-grid,
   .student-panel,
   .form-grid,
+  .handoff-panel,
   .takeaway-grid {
     grid-template-columns: 1fr;
   }
@@ -956,8 +965,9 @@ input:focus {
     grid-template-columns: 1fr;
   }
 
-  .pc-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .handoff-panel {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .confidence-row,
@@ -979,6 +989,7 @@ input:focus {
   .quote-band,
   .section-shell,
   .builder-section,
+  .handoff-panel,
   .takeaway-section > .section-heading {
     display: none;
   }

@@ -39,8 +39,10 @@ test("server-renders the Year 9 Job Skills app shell", async () => {
   assert.match(html, /Can you spot an employability skill/);
   assert.match(html, /Skill Bot power/);
   assert.match(html, /My Employability Snapshot/);
-  assert.match(html, /First name and PC class/);
+  assert.match(html, /First name only/);
   assert.match(html, /does not send your answers anywhere/);
+  assert.match(html, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
+  assert.doesNotMatch(html, /pc-grid|pc-picker|pcClass|First name and PC class/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -104,7 +106,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Where have you already used collaboration/);
   assert.match(index, /My Skills PDF/);
   assert.match(index, /First name only/);
-  assert.match(index, /pc-grid/);
+  assert.match(index, /does not ask for your PC class or surname/);
+  assert.match(index, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
+  assert.match(index, /Upload your snapshot in Microsoft Forms/);
+  assert.match(index, /form-link-button/);
+  assert.doesNotMatch(index, /pc-grid|pc-picker|snapshot-pc-class|First name and PC class/);
   assert.match(index, /Skill Quest/);
   assert.match(index, /mission-rail/);
   assert.match(index, /celebration-toast/);
@@ -131,6 +137,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /saved-examples-panel/);
   assert.match(css, /builder-decision/);
   assert.match(css, /snapshot-example-list/);
+  assert.match(css, /handoff-panel/);
+  assert.match(css, /form-link-button/);
   assert.match(css, /right-size-note/);
   assert.match(css, /clear-work-button/);
   assert.match(css, /privacy-note/);
@@ -151,7 +159,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /Barista course/);
   assert.match(js, /Certificate II/);
   assert.match(js, /hydrateVideoSlots/);
-  assert.match(js, /9 Teresa/);
+  assert.doesNotMatch(js, /pcClasses|pcClass|9 Teresa|snapshot-pc-class|pc-grid/);
   assert.match(js, /firstNameOnly/);
   assert.match(js, /communicationMoments/);
   assert.match(js, /collaborationMoments/);

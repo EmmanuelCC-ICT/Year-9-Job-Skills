@@ -189,17 +189,6 @@ const emptyExampleDraft = {
 const lessonFocusSkillIds = ["communication", "collaboration"];
 const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
 
-const pcClasses = [
-  "9 Francis",
-  "9 Frassati",
-  "9 Lisieux",
-  "9 MacKillop",
-  "9 More",
-  "9 Romero",
-  "9 Siena",
-  "9 Teresa",
-];
-
 const skillCheckCards = [
   {
     id: "sort-communication",
@@ -279,7 +268,7 @@ const stages = [
     short: "Launch",
     title: "Launch",
     subtitle: "Start your private job-skills snapshot.",
-    hint: "Add a first name and PC class to earn the launch badge.",
+    hint: "Add a first name only to earn the launch badge.",
   },
   {
     id: "skill-check",
@@ -340,7 +329,7 @@ const stages = [
 ];
 
 const celebrationCopy = {
-  start: ["Launch badge unlocked", "First name only and PC class are set. Good privacy choices."],
+  start: ["Launch badge unlocked", "First name only is set. Good privacy choice."],
   "skill-check": ["Skill Sorter complete", "You can spot the difference between skills, emotions, and qualifications."],
   communication: ["Communication unlocked", "Speaking and listening both count. You probably use this more than you think."],
   "communication-life": ["Communication evidence found", "That is a real example you could explain to an employer one day."],
@@ -357,7 +346,6 @@ const initialState = {
   celebratedStages: [],
   student: {
     firstName: "",
-    pcClass: "",
   },
   selectedCommunicationMoments: [],
   selectedCollaborationMoments: [],
@@ -388,7 +376,9 @@ function loadState() {
   try {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
-    parsed.student = { ...initialState.student, ...parsed.student };
+    parsed.student = {
+      firstName: firstNameOnly(parsed.student?.firstName || ""),
+    };
     parsed.nextStep = {
       ...initialState.nextStep,
       ...parsed.nextStep,
@@ -617,7 +607,6 @@ function allCompleteExamples() {
 function getProgress() {
   const parts = [
     Boolean(state.student.firstName.trim()),
-    Boolean(state.student.pcClass),
     isSkillCheckComplete(),
     state.visitedStages.includes("communication"),
     state.selectedCommunicationMoments.length > 0,
@@ -639,7 +628,7 @@ function currentStageIndex() {
 function isStageComplete(stageId) {
   switch (stageId) {
     case "start":
-      return Boolean(state.student.firstName.trim()) && Boolean(state.student.pcClass);
+      return Boolean(state.student.firstName.trim());
     case "skill-check":
       return isSkillCheckComplete();
     case "communication":
@@ -791,25 +780,6 @@ function renderQuest() {
 function renderStudent() {
   $("first-name-input").value = state.student.firstName;
   $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
-  $("snapshot-pc-class").textContent = state.student.pcClass || "PC class";
-
-  const pcGrid = $("pc-grid");
-  pcGrid.innerHTML = "";
-
-  pcClasses.forEach((pcClass) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = pcClass;
-    button.className = state.student.pcClass === pcClass ? "selected" : "";
-    button.setAttribute("aria-pressed", String(state.student.pcClass === pcClass));
-    button.addEventListener("click", () => {
-      state.student.pcClass = pcClass;
-      saveState();
-      render();
-      maybeCelebrate("start");
-    });
-    pcGrid.append(button);
-  });
 }
 
 function renderMomentGrid(gridId, moments, selectedKey, skillId, celebrationStage) {

@@ -32,7 +32,6 @@ type Evidence = {
 
 type StudentDetails = {
   firstName: string;
-  pcClass: string;
 };
 
 type SkillCheckAnswer = {
@@ -48,17 +47,6 @@ type SavedJobSkillsState = {
   chosenSkillId: string;
   evidence: Evidence;
 };
-
-const pcClasses = [
-  "9 Francis",
-  "9 Frassati",
-  "9 Lisieux",
-  "9 MacKillop",
-  "9 More",
-  "9 Romero",
-  "9 Siena",
-  "9 Teresa",
-];
 
 const skills: Skill[] = [
   {
@@ -288,10 +276,10 @@ const initialEvidence: Evidence = {
 
 const initialStudent: StudentDetails = {
   firstName: "",
-  pcClass: "",
 };
 
 const githubPagesUrl = "https://emmanuelcc-ict.github.io/Year-9-Job-Skills/";
+const microsoftFormsUrl = "https://forms.cloud.microsoft/r/g0w8hFceqZ";
 
 function readSavedState(): SavedJobSkillsState {
   const fallback = {
@@ -311,7 +299,7 @@ function readSavedState(): SavedJobSkillsState {
   try {
     const parsed = JSON.parse(saved) as Partial<SavedJobSkillsState>;
     return {
-      student: { ...initialStudent, ...parsed.student },
+      student: { firstName: firstNameOnly(parsed.student?.firstName ?? "") },
       selectedExperiences: parsed.selectedExperiences ?? [],
       skillCheckAnswers: Array.isArray(parsed.skillCheckAnswers)
         ? parsed.skillCheckAnswers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
@@ -390,7 +378,6 @@ function App() {
 
   const progressParts = [
     Boolean(student.firstName.trim()),
-    Boolean(student.pcClass),
     skillCheckAnswers.length === skillCheckCards.length,
     selectedExperiences.length > 0,
     Object.keys(confidence).length >= 2,
@@ -576,8 +563,8 @@ function App() {
       <section className="section-shell student-section">
         <div className="section-heading compact-heading">
           <p className="eyebrow">Before you start</p>
-          <h2>First name and PC class</h2>
-          <p>First name only. Do not enter a surname.</p>
+          <h2>First name only</h2>
+          <p>This only labels your draft while you work. Do not enter a surname.</p>
         </div>
 
         <div className="student-panel">
@@ -592,26 +579,9 @@ function App() {
             />
           </label>
 
-          <div className="pc-picker" role="group" aria-label="PC class">
-            <span>PC class</span>
-            <div className="pc-grid">
-              {pcClasses.map((pcClass) => (
-                <button
-                  aria-pressed={student.pcClass === pcClass}
-                  className={student.pcClass === pcClass ? "selected" : ""}
-                  key={pcClass}
-                  onClick={() => updateStudent("pcClass", pcClass)}
-                  type="button"
-                >
-                  {pcClass}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <p className="privacy-note">
             Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
-            print, save, or share it.
+            print, save, or share it. It does not ask for your PC class or surname.
           </p>
         </div>
       </section>
@@ -790,7 +760,6 @@ function App() {
             </div>
             <div className="snapshot-meta" aria-label="Student details">
               <span>{student.firstName.trim() || "First name"}</span>
-              <span>{student.pcClass || "PC class"}</span>
             </div>
           </div>
 
@@ -823,6 +792,20 @@ function App() {
               </label>
             </section>
           </div>
+        </div>
+
+        <div className="handoff-panel" aria-label="Submit your snapshot">
+          <div>
+            <p className="eyebrow">Teacher hand-in</p>
+            <h3>Upload your snapshot in Microsoft Forms</h3>
+            <p>
+              Save or print your skills PDF first. Then use the Microsoft Form to upload it and enter your name and PC
+              class in the approved school system.
+            </p>
+          </div>
+          <a className="form-link-button" href={microsoftFormsUrl} rel="noopener" target="_blank">
+            Open upload form
+          </a>
         </div>
       </section>
     </main>

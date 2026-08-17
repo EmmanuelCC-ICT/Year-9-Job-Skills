@@ -290,9 +290,9 @@ code {
 
 .starter-card {
   display: grid;
-  grid-template-columns: minmax(170px, 0.72fr) minmax(180px, 1fr);
+  grid-template-columns: minmax(190px, 0.72fr) minmax(220px, 1fr);
   gap: 14px;
-  max-width: 680px;
+  max-width: 640px;
   margin-top: 20px;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -300,10 +300,6 @@ code {
   background: rgba(255, 255, 255, 0.94);
   color: var(--ink);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
-}
-
-.starter-card > div:first-child {
-  grid-row: span 2;
 }
 
 .starter-card h2,
@@ -320,10 +316,6 @@ code {
   margin-top: 8px;
   color: var(--muted);
   line-height: 1.42;
-}
-
-.starter-card .pc-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .starter-card .privacy-note {
@@ -479,47 +471,6 @@ code {
   margin: 10px 0 0;
   color: var(--muted);
   line-height: 1.5;
-}
-
-.pc-picker {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pc-picker > span {
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 850;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.pc-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.pc-grid button {
-  min-height: 46px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--ink);
-  font-weight: 850;
-}
-
-.pc-grid button:hover,
-.pc-grid button:focus-visible {
-  border-color: var(--teal);
-  outline: 3px solid rgba(0, 167, 165, 0.16);
-}
-
-.pc-grid button.selected {
-  border-color: var(--teal);
-  background: var(--teal);
-  color: #ffffff;
 }
 
 .privacy-note {
@@ -1569,6 +1520,56 @@ select:disabled {
   padding-left: 18px;
 }
 
+.handoff-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1100px;
+  margin: 18px auto 0;
+  padding: 18px;
+  border: 1px solid rgba(0, 167, 165, 0.24);
+  border-radius: 8px;
+  background: #eef6f4;
+}
+
+.handoff-panel h3,
+.handoff-panel p {
+  margin: 0;
+}
+
+.handoff-panel h3 {
+  font-size: 1.18rem;
+  line-height: 1.2;
+}
+
+.handoff-panel p:not(.eyebrow) {
+  margin-top: 8px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.form-link-button {
+  display: inline-flex;
+  min-width: 170px;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 8px;
+  background: var(--teal);
+  color: #ffffff;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.form-link-button:hover,
+.form-link-button:focus-visible {
+  background: #087b83;
+  outline: 3px solid rgba(0, 167, 165, 0.18);
+}
+
 .takeaway-grid label + label {
   margin-top: 12px;
 }
@@ -1818,6 +1819,7 @@ select:disabled {
   .student-panel,
   .form-grid,
   .takeaway-grid,
+  .handoff-panel,
   .confidence-row,
   .button-row {
     grid-template-columns: 1fr;
@@ -1827,8 +1829,9 @@ select:disabled {
     width: min(180px, 70vw);
   }
 
-  .pc-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .handoff-panel {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .takeaway-grid section {
@@ -1884,6 +1887,7 @@ select:disabled {
   .quest-hud,
   .mission-nav,
   .celebration-toast,
+  .handoff-panel,
   .takeaway-section > .section-heading {
     display: none;
   }
