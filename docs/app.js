@@ -168,7 +168,64 @@ const pcClasses = [
   "9 Teresa",
 ];
 
+const stages = [
+  {
+    id: "start",
+    short: "Launch",
+    title: "Launch",
+    subtitle: "Start your private job-skills snapshot.",
+    hint: "Add a first name and PC class to earn the launch badge.",
+  },
+  {
+    id: "brief",
+    short: "Brief",
+    title: "Employer Brief",
+    subtitle: "Spot what employers mean when they ask for enterprise skills.",
+    hint: "Scan the employer messages, then move to your own examples.",
+  },
+  {
+    id: "match",
+    short: "Match",
+    title: "Match Moments",
+    subtitle: "Find everyday experiences that already show useful skills.",
+    hint: "Choose at least one real-life moment that matches you.",
+  },
+  {
+    id: "power",
+    short: "Power Up",
+    title: "Power Up",
+    subtitle: "Rate your focus skills without turning it into a test.",
+    hint: "Rate collaboration and communication to earn the power-up badge.",
+  },
+  {
+    id: "build",
+    short: "Build",
+    title: "Story Builder",
+    subtitle: "Turn one moment into resume and interview language.",
+    hint: "Choose an experience, then add what you did and what changed.",
+  },
+  {
+    id: "unlock",
+    short: "Unlock",
+    title: "Snapshot Unlocked",
+    subtitle: "Use your finished job-speak example as a take-away.",
+    hint: "Print or save the snapshot when it is ready.",
+  },
+];
+
+const celebrationCopy = {
+  start: ["Launch badge unlocked", "First name only and PC class are set. Good privacy choices."],
+  brief: ["Employer radar unlocked", "You have spotted the language employers use for skills."],
+  match: ["Moment matcher unlocked", "Everyday experience counts when you can explain the skill behind it."],
+  power: ["Power-up badge unlocked", "You have checked your focus skills without making it a test."],
+  build: ["Story builder unlocked", "That example is turning into proper job speak."],
+  unlock: ["Snapshot unlocked", "Your employability snapshot is ready to use."],
+};
+
 const initialState = {
+  currentStage: "start",
+  visitedStages: ["start"],
+  celebratedStages: [],
   student: {
     firstName: "",
     pcClass: "",
@@ -198,6 +255,16 @@ function loadState() {
     const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
     parsed.student = { ...initialState.student, ...parsed.student };
     parsed.evidence = { ...initialState.evidence, ...parsed.evidence };
+    const validStageIds = stages.map((stage) => stage.id);
+    if (!validStageIds.includes(parsed.currentStage)) {
+      parsed.currentStage = "start";
+    }
+    parsed.visitedStages = Array.isArray(parsed.visitedStages)
+      ? [...new Set(["start", ...parsed.visitedStages.filter((stageId) => validStageIds.includes(stageId))])]
+      : ["start"];
+    parsed.celebratedStages = Array.isArray(parsed.celebratedStages)
+      ? parsed.celebratedStages.filter((stageId) => validStageIds.includes(stageId))
+      : [];
     if (!lessonFocusSkillIds.includes(parsed.chosenSkillId)) {
       parsed.chosenSkillId = "communication";
     }
@@ -276,6 +343,109 @@ function getProgress() {
   return Math.round((parts.filter(Boolean).length / parts.length) * 100);
 }
 
+function currentStageIndex() {
+  return Math.max(
+    0,
+    stages.findIndex((stage) => stage.id === state.currentStage),
+  );
+}
+
+function isStageComplete(stageId) {
+  switch (stageId) {
+    case "start":
+      return Boolean(state.student.firstName.trim()) && Boolean(state.student.pcClass);
+    case "brief":
+      return state.visitedStages.includes("brief");
+    case "match":
+      return state.selectedExperiences.length > 0;
+    case "power":
+      return lessonFocusSkillIds.every((skillId) => Boolean(state.confidence[skillId]));
+    case "build":
+      return Boolean(state.evidence.experience) && Boolean(state.evidence.action.trim()) && Boolean(state.evidence.result.trim());
+    case "unlock":
+      return getProgress() === 100;
+    default:
+      return false;
+  }
+}
+
+function completedStages() {
+  return stages.filter((stage) => isStageComplete(stage.id));
+}
+
+function showCelebration(title, message) {
+  const toast = $("celebration-toast");
+  $("celebration-title").textContent = title;
+  $("celebration-message").textContent = message;
+  toast.classList.remove("show");
+  window.setTimeout(() => toast.classList.add("show"), 20);
+  window.clearTimeout(showCelebration.timeout);
+  showCelebration.timeout = window.setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+function maybeCelebrate(stageId) {
+  if (!isStageComplete(stageId) || state.celebratedStages.includes(stageId)) return;
+  state.celebratedStages = [...state.celebratedStages, stageId];
+  saveState();
+  const [title, message] = celebrationCopy[stageId] || ["Badge unlocked", "Your snapshot is getting stronger."];
+  showCelebration(title, message);
+}
+
+function setStage(stageId, shouldCelebrate = true) {
+  if (!stages.some((stage) => stage.id === stageId)) return;
+  state.currentStage = stageId;
+  state.visitedStages = [...new Set([...state.visitedStages, stageId])];
+  saveState();
+  render();
+  if (shouldCelebrate) maybeCelebrate(stageId);
+  window.requestAnimationFrame(() => {
+    $("mission-title").closest(".quest-hud").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function renderQuest() {
+  const progress = getProgress();
+  const badges = completedStages();
+  const currentStage = stages[currentStageIndex()];
+
+  document.querySelectorAll("[data-stage-panel]").forEach((panel) => {
+    const isActive = panel.dataset.stagePanel === state.currentStage;
+    panel.hidden = !isActive;
+    panel.classList.toggle("active-stage", isActive);
+  });
+
+  $("mission-title").textContent = currentStage.title;
+  $("mission-subtitle").textContent = currentStage.subtitle;
+  $("mission-hint").textContent = currentStage.hint;
+  $("xp-points").textContent = `${progress * 10} XP`;
+  $("badge-count").textContent = `${badges.length} of ${stages.length} badges`;
+
+  const rail = $("mission-rail");
+  rail.innerHTML = "";
+  stages.forEach((stage, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = [
+      "mission-pill",
+      stage.id === state.currentStage ? "active" : "",
+      isStageComplete(stage.id) ? "complete" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    button.setAttribute("aria-pressed", String(stage.id === state.currentStage));
+    button.innerHTML = `
+      <span>${index + 1}</span>
+      <strong>${stage.short}</strong>
+      <small>${isStageComplete(stage.id) ? "Badge earned" : "In progress"}</small>
+    `;
+    button.addEventListener("click", () => setStage(stage.id));
+    rail.append(button);
+  });
+
+  $("back-button").disabled = currentStageIndex() === 0;
+  $("next-button").textContent = currentStageIndex() === stages.length - 1 ? "Stay here" : "Next mission";
+}
+
 function renderStudent() {
   $("first-name-input").value = state.student.firstName;
   $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
@@ -294,6 +464,7 @@ function renderStudent() {
       state.student.pcClass = pcClass;
       saveState();
       render();
+      maybeCelebrate("start");
     });
     pcGrid.append(button);
   });
@@ -314,8 +485,12 @@ function renderExperiences() {
       state.selectedExperiences = selected
         ? state.selectedExperiences.filter((id) => id !== experience.id)
         : [...state.selectedExperiences, experience.id];
+      if (!selected && !state.evidence.experience) {
+        state.evidence.experience = experience.id;
+      }
       saveState();
       render();
+      maybeCelebrate("match");
     });
     grid.append(button);
   });
@@ -348,6 +523,7 @@ function renderSkills() {
         state.confidence[skill.id] = level;
         saveState();
         render();
+        maybeCelebrate("power");
       });
       row.append(button);
     });
@@ -416,20 +592,23 @@ function render() {
   renderSelects();
   renderInputs();
   renderOutputs();
+  renderQuest();
 }
 
 function bindForm() {
   $("first-name-input").addEventListener("input", (event) => {
     state.student.firstName = firstNameOnly(event.target.value);
     saveState();
-    renderStudent();
-    renderOutputs();
+    render();
+    maybeCelebrate("start");
   });
 
   $("experience-select").addEventListener("change", (event) => {
     state.evidence.experience = event.target.value;
     saveState();
     renderOutputs();
+    renderQuest();
+    maybeCelebrate("build");
   });
 
   $("skill-select").addEventListener("change", (event) => {
@@ -449,6 +628,8 @@ function bindForm() {
       state.evidence[key] = event.target.value;
       saveState();
       renderOutputs();
+      renderQuest();
+      maybeCelebrate(key === "action" || key === "result" ? "build" : "unlock");
     });
   });
 
@@ -461,12 +642,32 @@ function bindForm() {
     }, 1500);
   });
 
-  $("print-button").addEventListener("click", () => window.print());
+  $("print-button").addEventListener("click", () => {
+    state.currentStage = "unlock";
+    state.visitedStages = [...new Set([...state.visitedStages, "unlock"])];
+    saveState();
+    render();
+    maybeCelebrate("unlock");
+    window.setTimeout(() => window.print(), 60);
+  });
 
   $("reset-button").addEventListener("click", () => {
     state = structuredClone(initialState);
     window.localStorage.removeItem("year-9-job-skills-state");
     render();
+  });
+
+  $("back-button").addEventListener("click", () => {
+    const index = currentStageIndex();
+    if (index > 0) setStage(stages[index - 1].id, false);
+  });
+
+  $("next-button").addEventListener("click", () => {
+    const index = currentStageIndex();
+    maybeCelebrate(stages[index].id);
+    if (index < stages.length - 1) {
+      setStage(stages[index + 1].id);
+    }
   });
 }
 

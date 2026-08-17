@@ -13,7 +13,20 @@
   </head>
   <body>
     <main>
-      <section class="hero-section">
+      <section class="quest-hud" aria-label="Skill quest progress">
+        <div>
+          <p class="eyebrow">Skill Quest</p>
+          <h2 id="mission-title">Launch</h2>
+          <p id="mission-subtitle">Start your private job-skills snapshot.</p>
+        </div>
+        <div class="quest-score" aria-label="Quest score">
+          <span id="xp-points">0 XP</span>
+          <strong id="badge-count">0 badges</strong>
+        </div>
+        <div class="mission-rail" id="mission-rail" aria-label="Missions"></div>
+      </section>
+
+      <section class="hero-section stage-panel" data-stage-panel="start">
         <div class="hero-grid">
           <div class="hero-copy">
             <p class="eyebrow">Year 9 job skills</p>
@@ -23,17 +36,37 @@
               Not everyone will look for work straight away, but it is useful to start thinking about your skills
               and experience from an employability perspective.
             </p>
-            <a class="repo-link" href="https://emmanuelcc-ict.github.io/Year-9-Job-Skills/">
-              GitHub Pages version
-            </a>
             <div class="progress-wrap" aria-label="Takeaway progress">
               <div class="progress-top">
-                <span>Takeaway progress</span>
+                <span>Quest progress</span>
                 <strong id="progress-percent">0%</strong>
               </div>
               <div class="progress-track">
                 <div class="progress-fill" id="progress-fill"></div>
               </div>
+            </div>
+
+            <div class="starter-card">
+              <div>
+                <p class="eyebrow">Private setup</p>
+                <h2>First name and PC class</h2>
+                <p>First name only. Do not enter a surname.</p>
+              </div>
+
+              <label>
+                First name
+                <input id="first-name-input" autocomplete="given-name" maxlength="24" placeholder="First name only">
+              </label>
+
+              <div class="pc-picker" role="group" aria-label="PC class">
+                <span>PC class</span>
+                <div class="pc-grid" id="pc-grid"></div>
+              </div>
+
+              <p class="privacy-note">
+                Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
+                print, save, or share it.
+              </p>
             </div>
           </div>
 
@@ -60,7 +93,7 @@
         </div>
       </section>
 
-      <section class="quote-band" aria-label="Employer messages">
+      <section class="quote-band stage-panel" data-stage-panel="brief" aria-label="Employer messages">
         <article>
           <strong>Employers say</strong>
           <p>Speak clearly, listen properly, and think about what the other person needs to understand.</p>
@@ -75,32 +108,7 @@
         </article>
       </section>
 
-      <section class="section-shell student-section">
-        <div class="section-heading compact-heading">
-          <p class="eyebrow">Before you start</p>
-          <h2>First name and PC class</h2>
-          <p>First name only. Do not enter a surname.</p>
-        </div>
-
-        <div class="student-panel">
-          <label>
-            First name
-            <input id="first-name-input" autocomplete="given-name" maxlength="24" placeholder="First name only">
-          </label>
-
-          <div class="pc-picker" role="group" aria-label="PC class">
-            <span>PC class</span>
-            <div class="pc-grid" id="pc-grid"></div>
-          </div>
-
-          <p class="privacy-note">
-            Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
-            print, save, or share it.
-          </p>
-        </div>
-      </section>
-
-      <section class="section-shell focus-section">
+      <section class="section-shell focus-section stage-panel" data-stage-panel="brief">
         <div class="section-heading">
           <p class="eyebrow">Today's focus</p>
           <h2>Start with collaboration and communication</h2>
@@ -146,28 +154,28 @@
         </div>
       </section>
 
-      <section class="section-shell" id="experiences-section">
+      <section class="section-shell stage-panel" id="experiences-section" data-stage-panel="match">
         <div class="section-heading">
-          <p class="eyebrow">Step 1</p>
+          <p class="eyebrow">Mission 3</p>
           <h2>Pick moments from your life</h2>
           <p>Everyday activities count. Choose any that match you.</p>
         </div>
         <div class="experience-grid" id="experience-grid"></div>
       </section>
 
-      <section class="section-shell tone-light">
+      <section class="section-shell tone-light stage-panel" data-stage-panel="power">
         <div class="section-heading">
-          <p class="eyebrow">Step 2</p>
+          <p class="eyebrow">Mission 4</p>
           <h2>Your matched skills</h2>
           <p>Rate a few quickly. This is not a test; it is a confidence check.</p>
         </div>
         <div class="skill-grid" id="skill-grid"></div>
       </section>
 
-      <section class="builder-section">
+      <section class="builder-section stage-panel" data-stage-panel="build">
         <div class="builder-panel">
           <div class="section-heading">
-            <p class="eyebrow">Step 3</p>
+            <p class="eyebrow">Mission 5</p>
             <h2>Build one strong example</h2>
             <p>Use one real moment. Short answers are fine.</p>
           </div>
@@ -212,7 +220,7 @@
         </div>
 
         <aside class="translation-panel" aria-label="Job speak translation">
-          <p class="eyebrow">Step 4</p>
+          <p class="eyebrow">Live upgrade</p>
           <h2>Job speak translator</h2>
           <div class="translation-output" id="job-speak-output"></div>
           <div class="button-row">
@@ -223,9 +231,9 @@
         </aside>
       </section>
 
-      <section class="takeaway-section">
+      <section class="takeaway-section stage-panel" data-stage-panel="unlock">
         <div class="section-heading">
-          <p class="eyebrow">Takeaway</p>
+          <p class="eyebrow">Final unlock</p>
           <h2>My Employability Snapshot</h2>
           <p>This section is designed to print or save as a PDF.</p>
         </div>
@@ -269,6 +277,20 @@
           </div>
         </div>
       </section>
+
+      <section class="mission-nav" aria-label="Mission controls">
+        <button type="button" class="nav-button secondary" id="back-button">Back</button>
+        <p id="mission-hint">Complete a small step to earn the first badge.</p>
+        <button type="button" class="nav-button" id="next-button">Next mission</button>
+      </section>
+
+      <div class="celebration-toast" id="celebration-toast" role="status" aria-live="polite">
+        <div class="confetti-burst" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <strong id="celebration-title">Badge unlocked</strong>
+        <p id="celebration-message">Nice work. Your snapshot is getting stronger.</p>
+      </div>
     </main>
     <script src="app.js"></script>
   </body>
