@@ -1003,14 +1003,23 @@ function loadVideoOnDevice(key) {
   badge.className = "video-badge";
   badge.textContent = badgeText;
 
+  const checkpointStrip = document.createElement("div");
+  checkpointStrip.className = "video-checkpoint-strip";
+  checkpointStrip.dataset.videoCheckpointStrip = key;
+  const checkpointText = document.createElement("span");
+  checkpointText.textContent = "When your class has watched the video, tick this to unlock the next activity.";
   const checkpointButton = document.createElement("button");
   checkpointButton.type = "button";
   checkpointButton.className = "video-complete-button";
   checkpointButton.dataset.videoCheckpoint = key;
   checkpointButton.textContent = isVideoCheckpointComplete(key) ? "Class video done" : "My class watched this";
   checkpointButton.addEventListener("click", () => completeVideoCheckpoint(key));
+  checkpointStrip.append(checkpointText, checkpointButton);
 
-  slot.replaceChildren(video, badge, checkpointButton);
+  const oldStrip = slot.nextElementSibling;
+  if (oldStrip?.dataset.videoCheckpointStrip === key) oldStrip.remove();
+  slot.replaceChildren(video, badge);
+  slot.insertAdjacentElement("afterend", checkpointStrip);
 }
 
 function completeVideoCheckpoint(key) {

@@ -159,6 +159,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /video-player/);
   assert.match(css, /video-actions/);
   assert.match(css, /video-complete-button/);
+  assert.match(css, /video-checkpoint-strip/);
+  assert.doesNotMatch(css, /\.video-complete-button\s*\{[^}]*position:\s*absolute/s);
   assert.match(css, /hud-theme-switch/);
   assert.match(css, /class-mode-note/);
   assert.match(css, /unpack-grid/);
@@ -217,6 +219,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /videoCheckpoints/);
   assert.match(js, /isVideoCheckpointComplete/);
   assert.match(js, /loadVideoOnDevice/);
+  assert.match(js, /video-checkpoint-strip/);
+  assert.match(js, /insertAdjacentElement\("afterend", checkpointStrip\)/);
   assert.match(js, /completeVideoCheckpoint/);
   assert.match(js, /isSnapshotReady/);
   assert.match(js, /Finish examples first/);
