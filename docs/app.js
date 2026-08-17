@@ -1097,7 +1097,10 @@ async function hydrateVideoSlots() {
 
       const poster = slot.dataset.poster || "";
       const captions = slot.dataset.captions || "";
-      const label = slot.querySelector(".video-label")?.textContent || "Lesson video";
+      const label =
+        slot.querySelector(".video-badge")?.textContent ||
+        slot.querySelector(".video-label")?.textContent ||
+        "Lesson video";
       const video = document.createElement("video");
       video.className = "video-player";
       video.controls = true;
