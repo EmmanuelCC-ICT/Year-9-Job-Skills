@@ -122,6 +122,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.doesNotMatch(index, /pc-grid|pc-picker|snapshot-pc-class|First name and PC class/);
   assert.match(index, /Skill Quest/);
   assert.match(index, /mission-rail/);
+  assert.match(index, /quest-meter-fill/);
   assert.match(index, /celebration-toast/);
   assert.match(index, /communication-experience-grid/);
   assert.match(index, /collaboration-experience-grid/);
@@ -157,6 +158,15 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /clear-work-button/);
   assert.match(css, /privacy-note/);
   assert.match(css, /mission-nav/);
+  assert.match(css, /grid-auto-flow: column/);
+  assert.match(css, /quest-meter/);
+  assert.match(css, /mission-token/);
+  assert.match(css, /sort-correct/);
+  assert.match(css, /sort-wrong/);
+  assert.match(css, /feedback-pop/);
+  assert.match(css, /toast-pop/);
+  assert.match(css, /celebrate-screen/);
+  assert.match(css, /screen-sparkle/);
   assert.match(css, /confetti-pop/);
   assert.match(css, /prefers-reduced-motion/);
   assert.match(css, /@media print/);
@@ -171,6 +181,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /save-pdf-button/);
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
+  assert.match(js, /showSortPulse/);
+  assert.match(js, /stageRailLabels/);
+  assert.match(js, /quest-meter-fill/);
+  assert.match(js, /mission-token/);
+  assert.match(js, /celebrate-screen/);
   assert.match(js, /Happy/);
   assert.match(js, /Barista course/);
   assert.match(js, /Certificate II/);

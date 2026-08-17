@@ -364,6 +364,30 @@ const celebrationCopy = {
   unlock: ["Snapshot unlocked", "Your employability snapshot is ready to use."],
 };
 
+const stageTokens = {
+  start: "GO",
+  "skill-check": "01",
+  communication: "02",
+  "communication-life": "03",
+  "communication-build": "04",
+  collaboration: "05",
+  "collaboration-life": "06",
+  "collaboration-build": "07",
+  unlock: "PDF",
+};
+
+const stageRailLabels = {
+  start: "Launch",
+  "skill-check": "Check Skills",
+  communication: "Communication",
+  "communication-life": "Find Examples",
+  "communication-build": "Build Story",
+  collaboration: "Collaboration",
+  "collaboration-life": "Find Teamwork",
+  "collaboration-build": "Build Story",
+  unlock: "Skills PDF",
+};
+
 const initialState = {
   currentStage: "start",
   visitedStages: ["start"],
@@ -694,6 +718,7 @@ function answerSkillCheckCard(answerIsSkill) {
   state.skillCheck.lastFeedback = `${correct ? "Correct" : "Not quite"}. ${card.explanation}`;
   saveState();
   render();
+  showSortPulse(correct);
   if (isSkillCheckComplete()) {
     maybeCelebrate("skill-check");
   }
@@ -710,9 +735,15 @@ function showCelebration(title, message) {
   $("celebration-title").textContent = title;
   $("celebration-message").textContent = message;
   toast.classList.remove("show");
+  document.body.classList.remove("celebrate-screen");
   window.setTimeout(() => toast.classList.add("show"), 20);
+  window.requestAnimationFrame(() => document.body.classList.add("celebrate-screen"));
   window.clearTimeout(showCelebration.timeout);
   showCelebration.timeout = window.setTimeout(() => toast.classList.remove("show"), 2600);
+  window.clearTimeout(showCelebration.screenTimeout);
+  showCelebration.screenTimeout = window.setTimeout(() => {
+    document.body.classList.remove("celebrate-screen");
+  }, 1200);
 }
 
 function maybeCelebrate(stageId) {
@@ -770,24 +801,31 @@ function renderQuest() {
   $("mission-hint").textContent = currentStage.hint;
   $("xp-points").textContent = `${progress * 10} XP`;
   $("badge-count").textContent = `${badges.length} of ${stages.length} badges`;
+  $("quest-meter-fill").style.width = `${Math.round((badges.length / stages.length) * 100)}%`;
 
   const rail = $("mission-rail");
   rail.innerHTML = "";
   stages.forEach((stage, index) => {
+    const complete = isStageComplete(stage.id);
+    const active = stage.id === state.currentStage;
     const button = document.createElement("button");
     button.type = "button";
     button.className = [
       "mission-pill",
-      stage.id === state.currentStage ? "active" : "",
-      isStageComplete(stage.id) ? "complete" : "",
+      active ? "active" : "",
+      complete ? "complete" : "",
     ]
       .filter(Boolean)
       .join(" ");
     button.setAttribute("aria-pressed", String(stage.id === state.currentStage));
+    button.setAttribute(
+      "aria-label",
+      `${index + 1}. ${stageRailLabels[stage.id] || stage.short}. ${complete ? "Badge earned" : active ? "Current mission" : "Not complete yet"}`,
+    );
     button.innerHTML = `
-      <span>${index + 1}</span>
-      <strong>${stage.short}</strong>
-      <small>${isStageComplete(stage.id) ? "Badge earned" : "In progress"}</small>
+      <span class="mission-token">${stageTokens[stage.id] || String(index + 1).padStart(2, "0")}</span>
+      <strong>${stageRailLabels[stage.id] || stage.short}</strong>
+      <small>${complete ? "Badge earned" : active ? "Current mission" : "Locked by progress"}</small>
     `;
     button.addEventListener("click", () => setStage(stage.id));
     rail.append(button);
@@ -799,6 +837,24 @@ function renderQuest() {
     currentStageIndex() === stages.length - 1 ||
     currentStage.id.endsWith("-build") ||
     (stageRequiresCompletion(currentStage.id) && !isStageComplete(currentStage.id));
+}
+
+function showSortPulse(correct) {
+  const card = $("sort-card");
+  const feedback = $("sort-feedback");
+  card.classList.remove("sort-correct", "sort-wrong");
+  feedback.classList.remove("correct", "try-again", "pulse");
+
+  window.requestAnimationFrame(() => {
+    card.classList.add(correct ? "sort-correct" : "sort-wrong");
+    feedback.classList.add(correct ? "correct" : "try-again", "pulse");
+  });
+
+  window.clearTimeout(showSortPulse.timeout);
+  showSortPulse.timeout = window.setTimeout(() => {
+    card.classList.remove("sort-correct", "sort-wrong");
+    feedback.classList.remove("pulse");
+  }, 760);
 }
 
 function renderStudent() {
