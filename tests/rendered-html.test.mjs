@@ -81,9 +81,14 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /celebration-toast/);
   assert.match(index, /communication-experience-grid/);
   assert.match(index, /collaboration-experience-grid/);
+  assert.match(index, /Keep it real/);
+  assert.match(index, /clarifying-questions/);
+  assert.match(index, /right-size-feedback/);
   assert.match(index, /data-stage-panel="build"/);
   assert.match(index, /app\.js/);
   assert.match(css, /unpack-grid/);
+  assert.match(css, /clarifying-panel/);
+  assert.match(css, /right-size-note/);
   assert.match(css, /privacy-note/);
   assert.match(css, /mission-nav/);
   assert.match(css, /confetti-pop/);
@@ -95,6 +100,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /firstNameOnly/);
   assert.match(js, /communicationMoments/);
   assert.match(js, /collaborationMoments/);
+  assert.match(js, /clarifyingPrompts/);
+  assert.match(js, /small but real example/);
   assert.match(js, /celebrationCopy/);
   assert.match(js, /maybeCelebrate/);
   assert.match(assetReadme, /opener-video\.mp4/);

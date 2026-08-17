@@ -153,6 +153,31 @@ const collaborationMoments = [
 
 const experiences = [...communicationMoments, ...collaborationMoments];
 
+const clarifyingPrompts = {
+  communication: {
+    questions: [
+      "Who needed to understand you?",
+      "What did you listen for, say, ask, or check?",
+      "How did that help, even in a small way?",
+    ],
+    situation: "Example: Someone needed instructions, help, or a clearer explanation.",
+    action: "Example: I asked a question, explained the next step, or checked I understood.",
+    result: "Example: They knew what to do next, or the task was less confusing.",
+    transfer: "listen, ask questions, check details, and explain small things clearly",
+  },
+  collaboration: {
+    questions: [
+      "Who were you working with?",
+      "What was your part or helpful action?",
+      "What did the group get done or improve?",
+    ],
+    situation: "Example: Our group had to finish something together.",
+    action: "Example: I did my part, helped someone, shared an idea, or kept the group moving.",
+    result: "Example: We finished a small part, worked more fairly, or understood the plan better.",
+    transfer: "do their part, include others, support the group, and help a task move forward",
+  },
+};
+
 const lessonFocusSkillIds = ["collaboration", "communication"];
 const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
 
@@ -320,21 +345,31 @@ function selectedExperience() {
 
 function getOutputs() {
   const skill = chosenSkill();
+  const prompt = clarifyingPrompts[skill.id] || clarifyingPrompts.communication;
   const experience = selectedExperience();
   const experienceText = experience ? experience.label : "a school, hobby, home, sport, or community experience";
-  const actionText = state.evidence.action.trim() || "took action, worked with others, and kept the task moving";
-  const resultText = state.evidence.result.trim() || "the task moved forward and I learned what to try next";
+  const action = state.evidence.action.trim();
+  const result = state.evidence.result.trim();
+  const actionText = action || "did one specific thing that helped";
+  const resultText = result || "there was a small improvement";
   const situationText =
-    sentenceCase(state.evidence.situation) || `In ${experienceText.toLowerCase()}, there was a task that needed to be done.`;
+    sentenceCase(state.evidence.situation) || `In ${experienceText.toLowerCase()}, there was a situation where I had to contribute.`;
 
-  const jobSpeak = `In ${experienceText.toLowerCase()}, I used ${skill.simpleTitle.toLowerCase()} when I ${actionText}. This helped because ${resultText}. This shows I can ${skill.employerLine}.`;
-  const interviewAnswer = `${situationText} My role was to help move it forward. I ${actionText}. As a result, ${resultText}.`;
+  const jobSpeak = `In ${experienceText.toLowerCase()}, I practised ${skill.simpleTitle.toLowerCase()} when I ${actionText}. This helped because ${resultText}. This is a small but real example of building ${skill.title.toLowerCase()}, which could transfer to work because many jobs need people to ${prompt.transfer}.`;
+  const interviewAnswer = `${situationText} I ${actionText}. The small result was that ${resultText}. I would describe this as early evidence of ${skill.title.toLowerCase()} because it connects one real action to one real result.`;
   const resumeBullets = [
-    `Used ${skill.title.toLowerCase()} skills during ${experienceText.toLowerCase()} by ${actionText}.`,
-    `Showed I can ${skill.employerLine} through a real example from my life.`,
+    `Practised ${skill.title.toLowerCase()} during ${experienceText.toLowerCase()} by ${actionText}.`,
+    `Can give a small real example of ${skill.simpleTitle.toLowerCase()} from my own experience.`,
   ];
+  const feedback = !state.evidence.experience
+    ? "Choose one real moment first. Small examples are fine."
+    : !action
+      ? "Add one specific thing you actually did. Keep it honest and concrete."
+      : !result
+        ? "Add the small result. It does not need to be dramatic; it just needs to be real."
+        : "Good: this is right-sized because it links one real action to one real result.";
 
-  return { jobSpeak, interviewAnswer, resumeBullets };
+  return { feedback, jobSpeak, interviewAnswer, resumeBullets };
 }
 
 function getProgress() {
@@ -566,6 +601,24 @@ function renderSelects() {
 
   experienceSelect.value = state.evidence.experience;
   skillSelect.value = state.chosenSkillId;
+  skillSelect.disabled = Boolean(selected?.skillId);
+}
+
+function renderClarifyingQuestions() {
+  const skill = chosenSkill();
+  const prompt = clarifyingPrompts[skill.id] || clarifyingPrompts.communication;
+  const list = $("clarifying-questions");
+  list.innerHTML = "";
+
+  prompt.questions.forEach((question) => {
+    const item = document.createElement("li");
+    item.textContent = question;
+    list.append(item);
+  });
+
+  $("situation-input").placeholder = prompt.situation;
+  $("action-input").placeholder = prompt.action;
+  $("result-input").placeholder = prompt.result;
 }
 
 function renderInputs() {
@@ -583,6 +636,7 @@ function renderOutputs() {
   $("progress-percent").textContent = `${progress}%`;
   $("progress-fill").style.width = `${progress}%`;
   $("job-speak-output").textContent = outputs.jobSpeak;
+  $("feedback-output").textContent = outputs.feedback;
   $("snapshot-example").textContent = outputs.jobSpeak;
   $("interview-answer").textContent = outputs.interviewAnswer;
 
@@ -599,6 +653,7 @@ function render() {
   renderStudent();
   renderExperiences();
   renderSelects();
+  renderClarifyingQuestions();
   renderInputs();
   renderOutputs();
   renderQuest();
@@ -626,7 +681,7 @@ function bindForm() {
   $("skill-select").addEventListener("change", (event) => {
     state.chosenSkillId = event.target.value;
     saveState();
-    renderOutputs();
+    render();
   });
 
   [

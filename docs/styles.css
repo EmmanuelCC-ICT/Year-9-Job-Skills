@@ -792,6 +792,31 @@ code {
   background: #ffffff;
 }
 
+.right-size-note {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid rgba(0, 167, 165, 0.26);
+  border-left: 4px solid var(--teal);
+  border-radius: 8px;
+  background: #eef6f4;
+}
+
+.right-size-note strong {
+  color: var(--ink);
+  font-size: 0.84rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.right-size-note span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .translation-panel {
   align-self: start;
   color: #ffffff;
@@ -815,6 +840,17 @@ code {
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.6;
+}
+
+.right-size-feedback {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(244, 183, 64, 0.36);
+  border-radius: 8px;
+  background: rgba(244, 183, 64, 0.12);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .button-row {
@@ -886,6 +922,55 @@ textarea:focus,
 input:focus {
   border-color: var(--teal);
   outline: 3px solid rgba(0, 167, 165, 0.18);
+}
+
+select:disabled {
+  color: var(--muted);
+  background: #f4f7fb;
+}
+
+.clarifying-panel {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.52fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.clarifying-panel h3,
+.clarifying-panel p {
+  margin: 0;
+}
+
+.clarifying-panel h3 {
+  font-size: 1.14rem;
+  line-height: 1.18;
+}
+
+.clarifying-panel ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clarifying-panel li {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.35;
 }
 
 .takeaway-section {
@@ -1159,7 +1244,8 @@ input:focus {
   .experience-grid,
   .skill-grid,
   .visual-grid,
-  .unpack-grid {
+  .unpack-grid,
+  .clarifying-panel ul {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1214,6 +1300,9 @@ input:focus {
   .skill-grid,
   .visual-grid,
   .unpack-grid,
+  .clarifying-panel,
+  .clarifying-panel ul,
+  .right-size-note,
   .student-panel,
   .form-grid,
   .takeaway-grid,
