@@ -8,6 +8,7 @@
       name="description"
       content="A Year 9 enterprise skills app for turning everyday experiences into resume and interview language."
     >
+    <link rel="canonical" href="https://emmanuelcc-ict.github.io/Year-9-Job-Skills/">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -18,9 +19,13 @@
             <p class="eyebrow">Year 9 job skills</p>
             <h1>Turn everyday experience into job speak</h1>
             <p class="hero-lede">
-              You might not have a job yet, but you already have skills employers care about.
-              Build one clear example you can use for a resume or interview.
+              As you get closer to 14, casual and part-time work starts becoming real for some people.
+              Not everyone will look for work straight away, but it is useful to start thinking about your skills
+              and experience from an employability perspective.
             </p>
+            <a class="repo-link" href="https://emmanuelcc-ict.github.io/Year-9-Job-Skills/">
+              GitHub Pages version
+            </a>
             <div class="progress-wrap" aria-label="Takeaway progress">
               <div class="progress-top">
                 <span>Takeaway progress</span>
@@ -34,15 +39,15 @@
 
           <div class="video-slot" aria-label="Opening video area">
             <img
-              src="assets/video-opener/collaboration-communication-contact-sheet-v1.png"
-              alt="Storyboard frames showing collaboration and communication skill moments"
+              src="assets/video-opener/opener-poster-v1.png"
+              alt="Year 9 students working together around a project table"
             >
             <div class="video-overlay">
               <div class="video-label">Opening video</div>
               <h2>You already have job skills</h2>
               <p>
-                Add the final video as <code>docs/assets/opener-video.mp4</code>.
-                This storyboard still holds the space for now.
+                Introduce all 12 enterprise skills, then zoom in on today's focus:
+                collaboration and communication.
               </p>
               <div class="video-strip">
                 <span>collaboration</span>
@@ -68,6 +73,77 @@
           <strong>Employers say</strong>
           <p>Values matter: bring yourself, respect others, and add something positive to the group.</p>
         </article>
+      </section>
+
+      <section class="section-shell student-section">
+        <div class="section-heading compact-heading">
+          <p class="eyebrow">Before you start</p>
+          <h2>First name and PC class</h2>
+          <p>First name only. Do not enter a surname.</p>
+        </div>
+
+        <div class="student-panel">
+          <label>
+            First name
+            <input id="first-name-input" autocomplete="given-name" maxlength="24" placeholder="First name only">
+          </label>
+
+          <div class="pc-picker" role="group" aria-label="PC class">
+            <span>PC class</span>
+            <div class="pc-grid" id="pc-grid"></div>
+          </div>
+
+          <p class="privacy-note">
+            Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
+            print, save, or share it.
+          </p>
+        </div>
+      </section>
+
+      <section class="section-shell focus-section">
+        <div class="section-heading">
+          <p class="eyebrow">Today's focus</p>
+          <h2>Start with collaboration and communication</h2>
+          <p>
+            We will introduce all 12 enterprise skills, but this lesson builds two strong examples students can
+            actually explain: how they work with others, and how they communicate.
+          </p>
+        </div>
+
+        <div class="visual-grid">
+          <article class="visual-card">
+            <img src="assets/video-opener/collaboration-hero-v1.png" alt="Students collaborating on a group project">
+            <div>
+              <p>Helped the group finish</p>
+              <h3>Collaboration</h3>
+              <span>Sharing roles, checking progress, encouraging others, and helping the team complete the task.</span>
+            </div>
+          </article>
+          <article class="visual-card">
+            <img src="assets/video-opener/communication-hero-v1.png" alt="Student explaining an idea while classmates listen">
+            <div>
+              <p>Explained, listened, asked</p>
+              <h3>Communication</h3>
+              <span>Explaining ideas clearly, listening properly, and asking questions that help the group understand.</span>
+            </div>
+          </article>
+          <article class="visual-card">
+            <img src="assets/video-opener/collaboration-detail-v1.png" alt="Hands arranging a shared project plan">
+            <div>
+              <p>Collaboration evidence</p>
+              <h3>Shared Roles</h3>
+              <span>Look for the proof: divided tasks, shared planning, useful support, and everyone contributing.</span>
+            </div>
+          </article>
+          <article class="visual-card">
+            <img src="assets/video-opener/communication-detail-v1.png" alt="Students listening and asking questions in a group discussion">
+            <div>
+              <p>Communication evidence</p>
+              <h3>Active Listening</h3>
+              <span>Look for the proof: eye contact, note-taking, turn-taking, and questions that move the idea forward.</span>
+            </div>
+          </article>
+        </div>
       </section>
 
       <section class="section-shell" id="experiences-section">
@@ -160,7 +236,10 @@
               <p>Year 9 Job Skills</p>
               <h3>My Employability Snapshot</h3>
             </div>
-            <span>Year 9</span>
+            <div class="snapshot-meta" aria-label="Student details">
+              <span id="snapshot-first-name">First name</span>
+              <span id="snapshot-pc-class">PC class</span>
+            </div>
           </div>
 
           <div class="takeaway-grid">

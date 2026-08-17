@@ -94,6 +94,25 @@ code {
   line-height: 1.6;
 }
 
+.repo-link {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.86rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.repo-link:hover,
+.repo-link:focus-visible {
+  border-color: var(--gold);
+  outline: none;
+}
+
 .eyebrow {
   margin: 0 0 12px;
   color: var(--orange);
@@ -233,6 +252,129 @@ code {
   margin: 10px 0 0;
   color: var(--muted);
   line-height: 1.5;
+}
+
+.student-section {
+  padding-top: 46px;
+}
+
+.compact-heading h2 {
+  font-size: clamp(1.6rem, 2.4vw, 2.5rem);
+}
+
+.student-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.pc-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pc-picker > span {
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pc-grid button {
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.pc-grid button:hover,
+.pc-grid button:focus-visible {
+  border-color: var(--teal);
+  outline: 3px solid rgba(0, 167, 165, 0.16);
+}
+
+.pc-grid button.selected {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #ffffff;
+}
+
+.privacy-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--teal);
+  border-radius: 8px;
+  background: #eef6f4;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.focus-section {
+  padding-top: 46px;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.visual-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 30px rgba(23, 32, 51, 0.08);
+}
+
+.visual-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+}
+
+.visual-card div {
+  padding: 16px;
+}
+
+.visual-card p {
+  margin: 0 0 8px;
+  color: var(--teal);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.visual-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+  line-height: 1.15;
+}
+
+.visual-card span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.42;
 }
 
 .section-shell {
@@ -556,7 +698,15 @@ input:focus {
   line-height: 1.05;
 }
 
-.takeaway-header span {
+.snapshot-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.takeaway-header span,
+.snapshot-meta span {
   padding: 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 6px;
@@ -610,7 +760,8 @@ input:focus {
   }
 
   .experience-grid,
-  .skill-grid {
+  .skill-grid,
+  .visual-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -638,11 +789,17 @@ input:focus {
 
   .experience-grid,
   .skill-grid,
+  .visual-grid,
+  .student-panel,
   .form-grid,
   .takeaway-grid,
   .confidence-row,
   .button-row {
     grid-template-columns: 1fr;
+  }
+
+  .pc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .takeaway-grid section {

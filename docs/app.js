@@ -154,7 +154,25 @@ const confidenceLabels = {
   practice: "Practise next",
 };
 
+const lessonFocusSkillIds = ["collaboration", "communication"];
+const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
+
+const pcClasses = [
+  "9 Francis",
+  "9 Frassati",
+  "9 Lisieux",
+  "9 MacKillop",
+  "9 More",
+  "9 Romero",
+  "9 Siena",
+  "9 Teresa",
+];
+
 const initialState = {
+  student: {
+    firstName: "",
+    pcClass: "",
+  },
   selectedExperiences: [],
   confidence: {},
   chosenSkillId: "communication",
@@ -177,7 +195,13 @@ function $(id) {
 function loadState() {
   try {
     const saved = window.localStorage.getItem("year-9-job-skills-state");
-    return saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
+    const parsed = saved ? { ...initialState, ...JSON.parse(saved) } : structuredClone(initialState);
+    parsed.student = { ...initialState.student, ...parsed.student };
+    parsed.evidence = { ...initialState.evidence, ...parsed.evidence };
+    if (!lessonFocusSkillIds.includes(parsed.chosenSkillId)) {
+      parsed.chosenSkillId = "communication";
+    }
+    return parsed;
   } catch {
     return structuredClone(initialState);
   }
@@ -193,8 +217,12 @@ function sentenceCase(value) {
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
+function firstNameOnly(value) {
+  return value.replace(/\s+.*/, "").slice(0, 24);
+}
+
 function chosenSkill() {
-  return skills.find((skill) => skill.id === state.chosenSkillId) || skills[0];
+  return lessonFocusSkills.find((skill) => skill.id === state.chosenSkillId) || lessonFocusSkills[0];
 }
 
 function selectedExperience() {
@@ -212,8 +240,8 @@ function getMatchedSkillIds() {
 
 function getSpotlightSkills() {
   const ids = getMatchedSkillIds();
-  if (!ids.size) return skills.slice(0, 6);
-  return skills.filter((skill) => ids.has(skill.id));
+  const matchedFocusSkills = lessonFocusSkills.filter((skill) => ids.has(skill.id));
+  return matchedFocusSkills.length ? matchedFocusSkills : lessonFocusSkills;
 }
 
 function getOutputs() {
@@ -237,13 +265,38 @@ function getOutputs() {
 
 function getProgress() {
   const parts = [
+    Boolean(state.student.firstName.trim()),
+    Boolean(state.student.pcClass),
     state.selectedExperiences.length > 0,
-    Object.keys(state.confidence).length >= 3,
+    Object.keys(state.confidence).length >= 2,
     Boolean(state.evidence.experience),
     Boolean(state.evidence.action.trim()),
     Boolean(state.evidence.result.trim()),
   ];
   return Math.round((parts.filter(Boolean).length / parts.length) * 100);
+}
+
+function renderStudent() {
+  $("first-name-input").value = state.student.firstName;
+  $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
+  $("snapshot-pc-class").textContent = state.student.pcClass || "PC class";
+
+  const pcGrid = $("pc-grid");
+  pcGrid.innerHTML = "";
+
+  pcClasses.forEach((pcClass) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = pcClass;
+    button.className = state.student.pcClass === pcClass ? "selected" : "";
+    button.setAttribute("aria-pressed", String(state.student.pcClass === pcClass));
+    button.addEventListener("click", () => {
+      state.student.pcClass = pcClass;
+      saveState();
+      render();
+    });
+    pcGrid.append(button);
+  });
 }
 
 function renderExperiences() {
@@ -317,7 +370,7 @@ function renderSelects() {
   }
 
   if (skillSelect.options.length === 0) {
-    skills.forEach((skill) => {
+    lessonFocusSkills.forEach((skill) => {
       const option = document.createElement("option");
       option.value = skill.id;
       option.textContent = `${skill.title} - ${skill.simpleTitle}`;
@@ -357,6 +410,7 @@ function renderOutputs() {
 }
 
 function render() {
+  renderStudent();
   renderExperiences();
   renderSkills();
   renderSelects();
@@ -365,6 +419,13 @@ function render() {
 }
 
 function bindForm() {
+  $("first-name-input").addEventListener("input", (event) => {
+    state.student.firstName = firstNameOnly(event.target.value);
+    saveState();
+    renderStudent();
+    renderOutputs();
+  });
+
   $("experience-select").addEventListener("change", (event) => {
     state.evidence.experience = event.target.value;
     saveState();

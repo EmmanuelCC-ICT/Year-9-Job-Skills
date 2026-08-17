@@ -31,6 +31,7 @@ test("server-renders the Year 9 Job Skills app shell", async () => {
   const html = await response.text();
   assert.match(html, /<title>Year 9 Job Skills<\/title>/i);
   assert.match(html, /Year 9 enterprise skills/);
+  assert.match(html, /https:\/\/emmanuelcc-ict\.github\.io\/Year-9-Job-Skills\//);
   assert.match(html, /Job speak translator/);
   assert.match(html, /My Employability Snapshot/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
@@ -63,9 +64,17 @@ test("GitHub Pages version is present in docs", async () => {
   ]);
 
   assert.match(index, /<title>Year 9 Job Skills<\/title>/);
+  assert.match(index, /https:\/\/emmanuelcc-ict\.github\.io\/Year-9-Job-Skills\//);
+  assert.match(index, /opener-poster-v1\.png/);
+  assert.match(index, /collaboration-hero-v1\.png/);
+  assert.match(index, /communication-hero-v1\.png/);
+  assert.match(index, /Today's focus/);
   assert.match(index, /app\.js/);
+  assert.match(css, /visual-grid/);
   assert.match(css, /@media print/);
   assert.match(js, /year-9-job-skills-state/);
+  assert.match(js, /lessonFocusSkillIds/);
   assert.match(assetReadme, /opener-video\.mp4/);
+  assert.match(assetReadme, /opener-poster-v1\.png/);
   assert.match(storyboard, /Collaboration \+ Communication/);
 });

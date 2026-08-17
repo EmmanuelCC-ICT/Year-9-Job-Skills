@@ -30,12 +30,29 @@ type Evidence = {
   nextStep: string;
 };
 
+type StudentDetails = {
+  firstName: string;
+  pcClass: string;
+};
+
 type SavedJobSkillsState = {
+  student: StudentDetails;
   selectedExperiences: string[];
   confidence: Record<string, Confidence>;
   chosenSkillId: string;
   evidence: Evidence;
 };
+
+const pcClasses = [
+  "9 Francis",
+  "9 Frassati",
+  "9 Lisieux",
+  "9 MacKillop",
+  "9 More",
+  "9 Romero",
+  "9 Siena",
+  "9 Teresa",
+];
 
 const skills: Skill[] = [
   {
@@ -236,8 +253,16 @@ const initialEvidence: Evidence = {
   nextStep: "Use a simple checklist before my next group task.",
 };
 
+const initialStudent: StudentDetails = {
+  firstName: "",
+  pcClass: "",
+};
+
+const githubPagesUrl = "https://emmanuelcc-ict.github.io/Year-9-Job-Skills/";
+
 function readSavedState(): SavedJobSkillsState {
   const fallback = {
+    student: initialStudent,
     selectedExperiences: [],
     confidence: {},
     chosenSkillId: "communication",
@@ -252,6 +277,7 @@ function readSavedState(): SavedJobSkillsState {
   try {
     const parsed = JSON.parse(saved) as Partial<SavedJobSkillsState>;
     return {
+      student: { ...initialStudent, ...parsed.student },
       selectedExperiences: parsed.selectedExperiences ?? [],
       confidence: parsed.confidence ?? {},
       chosenSkillId:
@@ -272,8 +298,13 @@ function sentenceCase(value: string) {
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
+function firstNameOnly(value: string) {
+  return value.replace(/\s+.*/, "").slice(0, 24);
+}
+
 function App() {
   const [initialState] = useState(readSavedState);
+  const [student, setStudent] = useState<StudentDetails>(initialState.student);
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>(initialState.selectedExperiences);
   const [confidence, setConfidence] = useState<Record<string, Confidence>>(initialState.confidence);
   const [chosenSkillId, setChosenSkillId] = useState(initialState.chosenSkillId);
@@ -283,9 +314,9 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem(
       "skill-sprint-state",
-      JSON.stringify({ selectedExperiences, confidence, chosenSkillId, evidence }),
+      JSON.stringify({ student, selectedExperiences, confidence, chosenSkillId, evidence }),
     );
-  }, [selectedExperiences, confidence, chosenSkillId, evidence]);
+  }, [student, selectedExperiences, confidence, chosenSkillId, evidence]);
 
   const matchedSkillIds = useMemo(() => {
     const ids = new Set<string>();
@@ -315,8 +346,10 @@ function App() {
   ];
 
   const progressParts = [
+    Boolean(student.firstName.trim()),
+    Boolean(student.pcClass),
     selectedExperiences.length > 0,
-    Object.keys(confidence).length >= 3,
+    Object.keys(confidence).length >= 2,
     Boolean(evidence.experience),
     Boolean(evidence.action.trim()),
     Boolean(evidence.result.trim()),
@@ -333,6 +366,10 @@ function App() {
     setEvidence((current) => ({ ...current, [key]: value }));
   }
 
+  function updateStudent(key: keyof StudentDetails, value: string) {
+    setStudent((current) => ({ ...current, [key]: value }));
+  }
+
   async function copyJobSpeak() {
     await navigator.clipboard.writeText(jobSpeak);
     setCopied(true);
@@ -340,6 +377,7 @@ function App() {
   }
 
   function resetWork() {
+    setStudent(initialStudent);
     setSelectedExperiences([]);
     setConfidence({});
     setChosenSkillId("communication");
@@ -355,9 +393,13 @@ function App() {
             <p className="eyebrow">Year 9 enterprise skills</p>
             <h1>Year 9 Job Skills: turn everyday experience into job speak</h1>
             <p className="hero-lede">
-              Students collect evidence from school, sport, home, hobbies, and community life, then translate it into
-              resume and interview language.
+              As you get closer to 14, casual and part-time work starts becoming real for some people. Not everyone
+              will look for work straight away, but it is useful to start thinking about your skills and experience from
+              an employability perspective.
             </p>
+            <a className="repo-link" href={githubPagesUrl}>
+              GitHub Pages version
+            </a>
             <div className="progress-wrap" aria-label={`Progress ${progress} percent`}>
               <div className="progress-top">
                 <span>Takeaway progress</span>
@@ -406,6 +448,49 @@ function App() {
           <strong>Employers say</strong>
           <p>Values matter: bring yourself, respect others, and add something positive to the group.</p>
         </article>
+      </section>
+
+      <section className="section-shell student-section">
+        <div className="section-heading compact-heading">
+          <p className="eyebrow">Before you start</p>
+          <h2>First name and PC class</h2>
+          <p>First name only. Do not enter a surname.</p>
+        </div>
+
+        <div className="student-panel">
+          <label>
+            First name
+            <input
+              autoComplete="given-name"
+              maxLength={24}
+              onChange={(event) => updateStudent("firstName", firstNameOnly(event.target.value))}
+              placeholder="First name only"
+              value={student.firstName}
+            />
+          </label>
+
+          <div className="pc-picker" role="group" aria-label="PC class">
+            <span>PC class</span>
+            <div className="pc-grid">
+              {pcClasses.map((pcClass) => (
+                <button
+                  aria-pressed={student.pcClass === pcClass}
+                  className={student.pcClass === pcClass ? "selected" : ""}
+                  key={pcClass}
+                  onClick={() => updateStudent("pcClass", pcClass)}
+                  type="button"
+                >
+                  {pcClass}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p className="privacy-note">
+            Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
+            print, save, or share it.
+          </p>
+        </div>
       </section>
 
       <section className="section-shell focus-section">
@@ -580,7 +665,10 @@ function App() {
               <p>Year 9 Job Skills</p>
               <h3>My Employability Snapshot</h3>
             </div>
-            <span>Year 9</span>
+            <div className="snapshot-meta" aria-label="Student details">
+              <span>{student.firstName.trim() || "First name"}</span>
+              <span>{student.pcClass || "PC class"}</span>
+            </div>
           </div>
 
           <div className="takeaway-grid">

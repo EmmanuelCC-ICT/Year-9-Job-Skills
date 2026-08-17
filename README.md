@@ -16,7 +16,7 @@ Students move through a simple classroom flow:
 This repo is designed to publish from the `docs/` folder:
 
 - local static page: `docs/index.html`
-- Pages URL: `https://emmanuel-ict-support.github.io/Year-9-Job-Skills/`
+- Pages URL: `https://emmanuelcc-ict.github.io/Year-9-Job-Skills/`
 - Pages source: `main` branch, `/docs` folder
 
 ## Visual assets
