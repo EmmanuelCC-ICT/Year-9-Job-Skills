@@ -42,7 +42,7 @@ const videos = [
     scenes: [
       {
         duration: 7,
-        image: "opener-poster-v1.png",
+        motion: "intro-motion/intro-s01-school-group.mp4",
         label: "Year 9 job skills",
         title: "Getting close to work age?",
         subtitle: "Casual and part-time work can start to feel real once you turn 14.",
@@ -53,7 +53,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "communication-hero-v1.png",
+        motion: "intro-motion/intro-s02-bike-fix.mp4",
         label: "Employability perspective",
         title: "What can I already do?",
         subtitle: "School, home, sport, hobbies and community life can all show useful skills.",
@@ -64,7 +64,7 @@ const videos = [
       },
       {
         duration: 8,
-        image: "collaboration-communication-contact-sheet-v1.png",
+        motion: "intro-motion/intro-s03-transferable-skills.mp4",
         label: "Transferable skills",
         title: "Employability skills move with you.",
         subtitle: "You can use them in lots of different jobs, not just one course or one workplace.",
@@ -86,6 +86,7 @@ const videos = [
       },
       {
         duration: 9,
+        motion: "intro-motion/intro-s05-training-barista.mp4",
         label: "Skill or not?",
         title: "Sort the difference.",
         subtitle: "A skill transfers. A feeling is an emotion. A course is training or a qualification.",
@@ -97,7 +98,7 @@ const videos = [
       },
       {
         duration: 7,
-        image: "opener-poster-v1.png",
+        motion: "intro-motion/intro-s06-communication-bridge.mp4",
         label: "Your turn",
         title: "Check your skill radar.",
         subtitle: "Spot the employability skills, then zoom in on communication and collaboration.",
@@ -412,6 +413,10 @@ function imageDataUri(fileName) {
   return `data:image/png;base64,${encoded}`;
 }
 
+function videoAssetPath(fileName) {
+  return join(videoDir, fileName);
+}
+
 function skillBadges() {
   const skills = [
     ["Communication", 250, 318, "#00e7ff", true],
@@ -462,7 +467,26 @@ function sortExamples() {
     .join("");
 }
 
-function sceneSvg(scene) {
+function videoOverlayPanel(scene) {
+  if (!scene.motion) {
+    return "";
+  }
+
+  if (scene.align === "center") {
+    return `
+      <rect x="74" y="126" width="1132" height="532" rx="14" fill="#122139" stroke="#00e7ff" stroke-opacity="0.28" stroke-width="2"/>
+    `;
+  }
+
+  const panelX = scene.align === "right" ? 470 : 44;
+  return `
+    <rect x="${panelX}" y="374" width="766" height="298" rx="14" fill="#122139" stroke="#00e7ff" stroke-opacity="0.24" stroke-width="2"/>
+  `;
+}
+
+function sceneSvg(scene, options = {}) {
+  const { overlay = false } = options;
+  const isMotionOverlay = Boolean(overlay && scene.motion);
   const anchor = scene.align === "right" ? "end" : scene.align === "center" ? "middle" : "start";
   const textX = scene.align === "center" ? width / 2 : scene.align === "right" ? 1212 : 68;
   const titleY = scene.align === "center" ? (scene.skillMap ? 148 : 155) : 438;
@@ -473,10 +497,17 @@ function sceneSvg(scene) {
   const labelWidth = Math.max(220, label.length * 13);
   const labelRectX = scene.align === "right" ? 1212 - labelWidth : scene.align === "center" ? width / 2 - labelWidth / 2 : 54;
   const labelTextX = scene.align === "right" ? 1194 : scene.align === "center" ? width / 2 : 78;
-  const image = scene.image
+  const image = !overlay && scene.image
     ? `<image href="${imageDataUri(scene.image)}" x="0" y="0" width="${width}" height="${height}" preserveAspectRatio="xMidYMid slice"/>`
     : "";
-  const focusSkill = scene.skill
+  const background = overlay
+    ? `<rect width="${width}" height="${height}" fill="#00ff00"/>`
+    : `
+  <rect width="${width}" height="${height}" fill="#172033"/>
+  ${image}
+  <rect width="${width}" height="${height}" fill="url(#heroShade)"/>
+  <rect width="${width}" height="${height}" fill="url(#bottomShade)"/>`;
+  const focusSkill = !isMotionOverlay && scene.skill
     ? `
       <g transform="translate(${scene.align === "right" ? 812 : 72},92)">
         <rect width="396" height="112" rx="10" fill="#25334c" stroke="${scene.skill === "Collaboration" ? "#ffd100" : "#00e7ff"}" stroke-width="3"/>
@@ -485,11 +516,17 @@ function sceneSvg(scene) {
       </g>
     `
     : "";
-  const skillMap = scene.skillMap ? `<g>${skillBadges()}</g>` : "";
-  const sortMap = scene.sortExamples ? `<g>${sortExamples()}</g>` : "";
+  const skillMap = !isMotionOverlay && scene.skillMap ? `<g>${skillBadges()}</g>` : "";
+  const sortMap = !isMotionOverlay && scene.sortExamples ? `<g>${sortExamples()}</g>` : "";
   const footerMax = scene.align === "center" ? 48 : 58;
   const titleMaxChars = scene.skillMap ? 34 : scene.align === "center" ? 24 : 25;
   const subtitleMaxChars = scene.skillMap ? 82 : scene.sortExamples ? 58 : scene.align === "center" ? 52 : 38;
+  const sceneText = isMotionOverlay
+    ? ""
+    : `
+  ${textBlock(scene.title, textX, titleY, { anchor, className: "title", maxChars: titleMaxChars })}
+  ${textBlock(scene.subtitle, textX, subY, { anchor, className: "copy", maxChars: subtitleMaxChars })}
+  ${textBlock(scene.footer, textX, footerY, { anchor, className: "footer", maxChars: footerMax })}`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
@@ -517,10 +554,8 @@ function sceneSvg(scene) {
       .badgeTextFocus { fill: #ffffff; font-size: 24px; font-weight: 900; }
     </style>
   </defs>
-  <rect width="${width}" height="${height}" fill="#172033"/>
-  ${image}
-  <rect width="${width}" height="${height}" fill="url(#heroShade)"/>
-  <rect width="${width}" height="${height}" fill="url(#bottomShade)"/>
+  ${background}
+  ${isMotionOverlay ? "" : videoOverlayPanel(scene)}
   <path d="M24 42 H348 M24 42 V192 M932 678 H1256 M1256 528 V678" fill="none" stroke="#00e7ff" stroke-width="4" stroke-opacity="0.72"/>
   <path d="M54 70 H308 M974 650 H1226" fill="none" stroke="#ffd100" stroke-width="3" stroke-opacity="0.82"/>
   <rect x="${labelRectX}" y="54" width="${labelWidth}" height="54" rx="8" fill="#445067" stroke="#6d788f"/>
@@ -528,18 +563,17 @@ function sceneSvg(scene) {
   ${skillMap}
   ${sortMap}
   ${focusSkill}
-  ${textBlock(scene.title, textX, titleY, { anchor, className: "title", maxChars: titleMaxChars })}
-  ${textBlock(scene.subtitle, textX, subY, { anchor, className: "copy", maxChars: subtitleMaxChars })}
-  ${textBlock(scene.footer, textX, footerY, { anchor, className: "footer", maxChars: footerMax })}
+  ${sceneText}
   <rect x="28" y="28" width="1224" height="664" rx="18" fill="none" stroke="#156b86" stroke-width="2"/>
 </svg>`;
 }
 
-function renderPng(scene, index, workDir) {
-  const svg = join(workDir, `scene-${String(index).padStart(2, "0")}.svg`);
-  const png = join(workDir, `scene-${String(index).padStart(2, "0")}.png`);
+function renderPng(scene, index, workDir, options = {}) {
+  const suffix = options.overlay ? "-overlay" : "";
+  const svg = join(workDir, `scene-${String(index).padStart(2, "0")}${suffix}.svg`);
+  const png = join(workDir, `scene-${String(index).padStart(2, "0")}${suffix}.png`);
 
-  writeFileSync(svg, sceneSvg(scene), "utf8");
+  writeFileSync(svg, sceneSvg(scene, options), "utf8");
   run("sips", ["-s", "format", "png", svg, "--out", png]);
 
   if (!existsSync(png)) {
@@ -547,6 +581,15 @@ function renderPng(scene, index, workDir) {
   }
 
   return png;
+}
+
+function accentFilters(scene) {
+  return [
+    `drawbox=x='mod(t*210\\,${width + 260})-220':y=${height - 48}:w=210:h=4:color=0x00e7ff@0.46:t=fill`,
+    `drawbox=x='${width}-mod(t*160\\,${width + 260})':y=42:w=160:h=3:color=0xffd100@0.42:t=fill`,
+    "fade=t=in:st=0:d=0.18",
+    `fade=t=out:st=${Math.max(0, scene.duration - 0.2).toFixed(2)}:d=0.2`,
+  ];
 }
 
 function sceneMotionFilters(scene, index) {
@@ -563,15 +606,66 @@ function sceneMotionFilters(scene, index) {
       `x='(iw-ow)/2+sin(t*0.42+${phase})*${horizontalDrift}'`,
       `y='(ih-oh)/2+cos(t*0.34+${phase})*${verticalDrift}'`,
     ].join(":"),
-    `drawbox=x='mod(t*210\\,${width + 260})-220':y=${height - 48}:w=210:h=4:color=0x00e7ff@0.46:t=fill`,
-    `drawbox=x='${width}-mod(t*160\\,${width + 260})':y=42:w=160:h=3:color=0xffd100@0.42:t=fill`,
+    ...accentFilters(scene),
     "format=yuv420p",
-    "fade=t=in:st=0:d=0.18",
-    `fade=t=out:st=${Math.max(0, scene.duration - 0.2).toFixed(2)}:d=0.2`,
   ];
 }
 
+function renderVideoScene(scene, index, workDir) {
+  const overlayPng = renderPng(scene, index, workDir, { overlay: true });
+  const output = join(workDir, `scene-${String(index).padStart(2, "0")}.mp4`);
+  const background = [
+    `scale=${width}:${height}:force_original_aspect_ratio=increase`,
+    `crop=${width}:${height}`,
+    `fps=${fps}`,
+    "setsar=1",
+    "format=rgba",
+  ].join(",");
+  const final = [
+    ...accentFilters(scene),
+    "format=yuv420p",
+  ].join(",");
+
+  run("ffmpeg", [
+    "-y",
+    "-stream_loop",
+    "-1",
+    "-i",
+    videoAssetPath(scene.motion),
+    "-loop",
+    "1",
+    "-framerate",
+    String(fps),
+    "-t",
+    String(scene.duration),
+    "-i",
+    overlayPng,
+    "-filter_complex",
+    `[0:v]${background}[bg];[1:v]format=rgba,colorkey=0x00ff00:0.28:0.08[ov];[bg][ov]overlay=0:0,${final}[v]`,
+    "-map",
+    "[v]",
+    "-t",
+    String(scene.duration),
+    "-an",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "medium",
+    "-crf",
+    "22",
+    "-pix_fmt",
+    "yuv420p",
+    output,
+  ]);
+
+  return output;
+}
+
 function renderScene(scene, index, workDir) {
+  if (scene.motion) {
+    return renderVideoScene(scene, index, workDir);
+  }
+
   const png = renderPng(scene, index, workDir);
   const output = join(workDir, `scene-${String(index).padStart(2, "0")}.mp4`);
 
