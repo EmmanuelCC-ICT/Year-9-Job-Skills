@@ -210,6 +210,7 @@ const emptyExampleDraft = {
   result: "",
 };
 
+const minimumSnapshotExamples = 3;
 const lessonFocusSkillIds = ["communication", "collaboration"];
 const lessonFocusSkills = skills.filter((skill) => lessonFocusSkillIds.includes(skill.id));
 
@@ -615,12 +616,25 @@ function isDraftComplete(skillId) {
   return Boolean(draft.experience) && Boolean(draft.action.trim()) && Boolean(draft.result.trim());
 }
 
+function draftHasStudentWriting(skillId) {
+  const draft = draftForSkill(skillId);
+  return Boolean(draft.situation.trim() || draft.action.trim() || draft.result.trim());
+}
+
 function savedExamplesFor(skillId) {
   return state.examples.filter((example) => example.skillId === skillId);
 }
 
 function hasCompleteExample(skillId) {
   return savedExamplesFor(skillId).length > 0 || isDraftComplete(skillId);
+}
+
+function exampleCount() {
+  return allCompleteExamples().length;
+}
+
+function remainingExampleCount() {
+  return Math.max(0, minimumSnapshotExamples - exampleCount());
 }
 
 function skillCheckScore() {
@@ -643,7 +657,11 @@ function requiredVideoKeyForStage(stageId) {
 }
 
 function isSnapshotReady() {
-  return hasCompleteExample("communication") && hasCompleteExample("collaboration");
+  return (
+    hasCompleteExample("communication") &&
+    hasCompleteExample("collaboration") &&
+    exampleCount() >= minimumSnapshotExamples
+  );
 }
 
 function currentSkillCheckCard() {
@@ -965,7 +983,7 @@ function showFeedbackAnimation(correct) {
   }, 1550);
 }
 
-function createVideoPlayer(slot) {
+function createVideoPlayer(slot, key) {
   const videoSrc = slot.dataset.video;
   if (!videoSrc) return null;
 
@@ -974,6 +992,9 @@ function createVideoPlayer(slot) {
   video.controls = true;
   video.preload = "metadata";
   if (slot.dataset.poster) video.poster = slot.dataset.poster;
+  if (key) {
+    video.addEventListener("ended", () => completeVideoCheckpoint(key));
+  }
 
   const source = document.createElement("source");
   source.src = videoSrc;
@@ -996,7 +1017,7 @@ function createVideoPlayer(slot) {
 function loadVideoOnDevice(key) {
   const button = document.querySelector(`[data-load-video="${key}"]`);
   const slot = button?.closest(".video-shell");
-  const video = slot ? createVideoPlayer(slot) : null;
+  const video = slot ? createVideoPlayer(slot, key) : null;
   if (!slot || !video) return;
   const badgeText = slot.querySelector(".video-badge")?.textContent || "Lesson video";
   const badge = document.createElement("div");
@@ -1007,7 +1028,7 @@ function loadVideoOnDevice(key) {
   checkpointStrip.className = "video-checkpoint-strip";
   checkpointStrip.dataset.videoCheckpointStrip = key;
   const checkpointText = document.createElement("span");
-  checkpointText.textContent = "When your class has watched the video, tick this to unlock the next activity.";
+  checkpointText.textContent = "This unlocks automatically when the video ends. If your teacher played it for the class, tick the button instead.";
   const checkpointButton = document.createElement("button");
   checkpointButton.type = "button";
   checkpointButton.className = "video-complete-button";
@@ -1218,9 +1239,15 @@ function renderClarifyingQuestions() {
   const list = $("clarifying-questions");
   list.innerHTML = "";
 
-  prompt.questions.forEach((question) => {
+  prompt.questions.forEach((question, index) => {
     const item = document.createElement("li");
-    item.textContent = question;
+    item.className = `prompt-tile prompt-tile-${index + 1}`;
+    const icon = document.createElement("span");
+    icon.className = "prompt-icon";
+    icon.setAttribute("aria-hidden", "true");
+    const text = document.createElement("span");
+    text.textContent = question;
+    item.append(icon, text);
     list.append(item);
   });
 
@@ -1243,17 +1270,25 @@ function renderBuilderFrame() {
   const skill = skillById(skillId);
   const isCommunication = skillId === "communication";
   const draftComplete = isDraftComplete(skillId);
+  const remainingExamples = remainingExampleCount();
+  const canFinishSkill = isCommunication ? draftComplete : draftComplete && isSnapshotReady();
 
   $("builder-eyebrow").textContent = `${skill.title} job speak`;
-  $("builder-title").textContent = `Build one strong ${isCommunication ? "communication" : "collaboration"} example`;
-  $("builder-intro").textContent = `Pick one ${isCommunication ? "communication" : "teamwork"} moment. Keep it honest, specific, and right-sized.`;
+  $("builder-title").textContent = `Build at least 3 honest examples`;
+  $("builder-intro").textContent = `Start with one ${isCommunication ? "communication" : "teamwork"} moment. Aim for 3 examples total for your skills PDF.`;
   $("saved-examples-title").textContent = `${skill.title} examples saved`;
-  $("builder-decision-text").textContent = `We will build a skills PDF for you. Do you have another ${isCommunication ? "communication" : "collaboration"} example you want to add?`;
-  $("finish-skill-button").textContent = isCommunication ? "No, move to collaboration" : "No, build my skills PDF";
+  $("builder-decision-text").textContent = isSnapshotReady()
+    ? "You have enough examples for your skills PDF. Add another if you have time, or finish."
+    : `Your skills PDF needs ${remainingExamples} more finished ${remainingExamples === 1 ? "example" : "examples"} total, including communication and collaboration.`;
+  $("finish-skill-button").textContent = isCommunication
+    ? "Move to collaboration"
+    : isSnapshotReady()
+      ? "Build my skills PDF"
+      : "Need 3 examples";
   $("another-example-button").disabled = !draftComplete;
-  $("finish-skill-button").disabled = !draftComplete;
+  $("finish-skill-button").disabled = !canFinishSkill;
   $("print-button").disabled = !isSnapshotReady();
-  $("print-button").textContent = isSnapshotReady() ? "Save PDF" : "Finish both examples";
+  $("print-button").textContent = isSnapshotReady() ? "Save PDF" : `Need ${remainingExamples} more`;
 
   const savedList = $("saved-examples-list");
   savedList.innerHTML = "";
@@ -1278,19 +1313,28 @@ function renderOutputs() {
   const outputs = getOutputs();
   const examples = allCompleteExamples();
   const snapshotReady = isSnapshotReady();
+  const skillId = buildSkillId();
+  const draftComplete = isDraftComplete(skillId);
+  const hasWriting = draftHasStudentWriting(skillId);
+  const remainingExamples = remainingExampleCount();
 
   $("progress-percent").textContent = `${progress}%`;
   $("progress-fill").style.width = `${progress}%`;
-  $("job-speak-output").textContent = outputs.jobSpeak;
+  $("job-speak-output").textContent = draftComplete
+    ? outputs.jobSpeak
+    : hasWriting
+      ? "Keep going. Once you add one real action and one small result, your job-speak sentence will appear here."
+      : "Choose an experience and write your own words first. The translator will only build a sentence from what you enter.";
   $("feedback-output").textContent = outputs.feedback;
+  $("copy-button").disabled = !draftComplete;
   $("save-pdf-button").disabled = !snapshotReady;
-  $("save-pdf-button").textContent = snapshotReady ? "Save as PDF" : "Finish examples first";
+  $("save-pdf-button").textContent = snapshotReady ? "Save as PDF" : `Need ${remainingExamples} more`;
 
   const snapshotExamples = $("snapshot-examples");
   snapshotExamples.innerHTML = "";
   if (!snapshotReady) {
     const empty = document.createElement("p");
-    empty.textContent = "Build one communication example and one collaboration example to unlock your finished skills PDF.";
+    empty.textContent = `Build at least ${minimumSnapshotExamples} examples total, including one communication and one collaboration example, to unlock your finished skills PDF.`;
     snapshotExamples.append(empty);
   } else {
     examples.forEach((example) => {
@@ -1310,7 +1354,7 @@ function renderOutputs() {
   bullets.innerHTML = "";
   if (!snapshotReady) {
     const item = document.createElement("li");
-    item.textContent = "Your resume bullets will appear after both examples are finished.";
+    item.textContent = "Your resume bullets will appear after three examples are finished.";
     bullets.append(item);
   } else {
     examples.forEach((example) => {
@@ -1327,7 +1371,7 @@ function renderOutputs() {
   answers.innerHTML = "";
   if (!snapshotReady) {
     const empty = document.createElement("p");
-    empty.textContent = "Interview practice will unlock when your communication and collaboration examples are both complete.";
+    empty.textContent = "Interview practice will unlock when you have three examples, including communication and collaboration.";
     answers.append(empty);
   } else {
     examples.forEach((example) => {
@@ -1374,7 +1418,7 @@ window.addEventListener("beforeunload", (event) => {
 function openPrintDialog() {
   if (!isSnapshotReady()) {
     setStage("communication-build", false);
-    showCelebration("Finish examples first", "Build one communication example and one collaboration example before saving the PDF.");
+    showCelebration("Finish examples first", `Build ${minimumSnapshotExamples} examples total, including communication and collaboration, before saving the PDF.`);
     return;
   }
   window.setTimeout(() => window.print(), 60);
@@ -1456,6 +1500,7 @@ function bindForm() {
   });
 
   $("copy-button").addEventListener("click", async () => {
+    if (!isDraftComplete(buildSkillId())) return;
     const output = getOutputs().jobSpeak;
     await navigator.clipboard.writeText(output);
     $("copy-button").textContent = "Copied";

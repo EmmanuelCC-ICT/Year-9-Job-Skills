@@ -2182,16 +2182,89 @@ select:disabled {
 
 .clarifying-panel li {
   min-height: 74px;
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
   align-items: center;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 18%, rgba(244, 183, 64, 0.22), transparent 26%),
+    linear-gradient(135deg, #ffffff, #f5fbff);
   color: var(--ink);
   font-size: 0.94rem;
   font-weight: 750;
   line-height: 1.35;
+  box-shadow: 0 10px 24px rgba(23, 32, 51, 0.06);
+}
+
+.prompt-icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  box-shadow: 0 10px 20px rgba(0, 167, 165, 0.16);
+}
+
+.prompt-icon::before,
+.prompt-icon::after {
+  content: "";
+  position: absolute;
+  background: #ffffff;
+}
+
+.prompt-tile-1 .prompt-icon::before {
+  left: 11px;
+  top: 11px;
+  width: 22px;
+  height: 14px;
+  border-radius: 8px;
+}
+
+.prompt-tile-1 .prompt-icon::after {
+  left: 16px;
+  top: 24px;
+  width: 10px;
+  height: 8px;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.prompt-tile-2 .prompt-icon::before {
+  left: 10px;
+  top: 13px;
+  width: 24px;
+  height: 4px;
+  border-radius: 999px;
+  box-shadow: 0 8px 0 #ffffff, 0 16px 0 #ffffff;
+}
+
+.prompt-tile-2 .prompt-icon::after {
+  right: 9px;
+  top: 9px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.prompt-tile-3 .prompt-icon::before {
+  left: 10px;
+  top: 20px;
+  width: 24px;
+  height: 5px;
+  border-radius: 999px;
+  transform: rotate(-28deg);
+}
+
+.prompt-tile-3 .prompt-icon::after {
+  right: 10px;
+  top: 11px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
 
 .saved-examples-panel {

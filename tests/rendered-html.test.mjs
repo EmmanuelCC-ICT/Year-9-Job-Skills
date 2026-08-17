@@ -119,7 +119,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Explaining ideas for the person in front of you/);
   assert.match(index, /Where have you already used communication/);
   assert.match(index, /data-stage-panel="communication-build collaboration-build"/);
-  assert.match(index, /Build one strong communication example/);
+  assert.match(index, /at least 3 examples/);
   assert.match(index, /saved-examples-panel/);
   assert.match(index, /another-example-button/);
   assert.match(index, /finish-skill-button/);
@@ -177,6 +177,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /feedback-flyout/);
   assert.match(css, /compact-video-shell/);
   assert.match(css, /clarifying-panel/);
+  assert.match(css, /prompt-icon/);
   assert.match(css, /saved-examples-panel/);
   assert.match(css, /builder-decision/);
   assert.match(css, /snapshot-example-list/);
@@ -222,11 +223,14 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /save-pdf-button/);
   assert.match(js, /videoCheckpoints/);
   assert.match(js, /isVideoCheckpointComplete/);
+  assert.match(js, /video\.addEventListener\("ended", \(\) => completeVideoCheckpoint\(key\)\)/);
   assert.match(js, /loadVideoOnDevice/);
   assert.match(js, /video-checkpoint-strip/);
   assert.match(js, /insertAdjacentElement\("afterend", checkpointStrip\)/);
   assert.match(js, /completeVideoCheckpoint/);
   assert.match(js, /isSnapshotReady/);
+  assert.match(js, /minimumSnapshotExamples = 3/);
+  assert.match(js, /Choose an experience and write your own words first/);
   assert.match(js, /Finish examples first/);
   assert.match(js, /skillCheckCards/);
   assert.match(js, /answerSkillCheckCard/);
