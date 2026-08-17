@@ -418,6 +418,7 @@ const initialState = {
   selectedCollaborationMoments: [],
   skillCheck: {
     answers: [],
+    revealedTileIds: [],
     lastFeedback: "",
   },
   examples: [],
@@ -476,6 +477,15 @@ function loadState() {
     parsed.skillCheck = { ...initialState.skillCheck, ...parsed.skillCheck };
     parsed.skillCheck.answers = Array.isArray(parsed.skillCheck.answers)
       ? parsed.skillCheck.answers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
+      : [];
+    parsed.skillCheck.revealedTileIds = Array.isArray(parsed.skillCheck.revealedTileIds)
+      ? [
+          ...new Set(
+            parsed.skillCheck.revealedTileIds
+              .map((tileId) => Number(tileId))
+              .filter((tileId) => tileId >= 1 && tileId <= skillCheckCards.length),
+          ),
+        ]
       : [];
     parsed.selectedCommunicationMoments = Array.isArray(parsed.selectedCommunicationMoments)
       ? parsed.selectedCommunicationMoments
@@ -538,6 +548,7 @@ function hasMeaningfulWork() {
   return Boolean(
     state.student.firstName.trim() ||
       state.skillCheck.answers.length ||
+      state.skillCheck.revealedTileIds.length ||
       state.selectedCommunicationMoments.length ||
       state.selectedCollaborationMoments.length ||
       state.examples.length ||
@@ -744,7 +755,11 @@ function answerSkillCheckCard(answerIsSkill) {
   const card = currentSkillCheckCard();
   if (!card) return;
 
+  const tileId = state.skillCheck.answers.length + 1;
   const correct = card.isSkill === answerIsSkill;
+  const revealedTileIds = correct
+    ? [...new Set([...state.skillCheck.revealedTileIds, tileId])]
+    : state.skillCheck.revealedTileIds;
   state.skillCheck.answers = [
     ...state.skillCheck.answers,
     {
@@ -753,6 +768,7 @@ function answerSkillCheckCard(answerIsSkill) {
       correct,
     },
   ];
+  state.skillCheck.revealedTileIds = revealedTileIds;
   state.skillCheck.lastFeedback = `${correct ? "Correct" : "Not quite"}. ${card.explanation}`;
   saveState();
   render();
@@ -763,7 +779,13 @@ function answerSkillCheckCard(answerIsSkill) {
 }
 
 function resetSkillCheck() {
-  state.skillCheck = structuredClone(initialState.skillCheck);
+  state.skillCheck = {
+    ...structuredClone(initialState.skillCheck),
+    revealedTileIds: [...new Set(state.skillCheck.revealedTileIds)],
+    lastFeedback: state.skillCheck.revealedTileIds.length >= skillCheckCards.length
+      ? "Full hidden picture unlocked. Replay if you want to practise again."
+      : "Replay round started. Correct answers will reveal any missing picture tiles.",
+  };
   saveState();
   render();
 }
@@ -980,24 +1002,33 @@ function renderSkillCheck() {
   const correctCount = skillCheckScore();
   const complete = isSkillCheckComplete();
   const currentCard = currentSkillCheckCard();
-  const power = Math.round((correctCount / skillCheckCards.length) * 100);
-  const botLevel = Math.min(5, Math.ceil((correctCount / skillCheckCards.length) * 5));
+  const revealedCount = state.skillCheck.revealedTileIds.length;
+  const pictureComplete = revealedCount >= skillCheckCards.length;
+  const power = Math.round((revealedCount / skillCheckCards.length) * 100);
+  const botLevel = Math.min(5, Math.ceil((revealedCount / skillCheckCards.length) * 5));
 
   const skillScene = $("skill-scene");
-  skillScene.className = `skill-sorter-scene level-${botLevel} ${complete ? "complete" : ""}`;
-  skillScene.dataset.revealed = String(correctCount);
-  document.querySelectorAll("[data-city-piece]").forEach((piece) => {
-    const pieceNumber = Number(piece.dataset.cityPiece || "0");
-    piece.classList.toggle("revealed", pieceNumber <= correctCount);
+  skillScene.className = `skill-sorter-scene level-${botLevel} ${pictureComplete ? "complete" : ""}`;
+  skillScene.dataset.revealed = String(revealedCount);
+  document.querySelectorAll("[data-picture-tile]").forEach((piece) => {
+    const pieceNumber = Number(piece.dataset.pictureTile || "0");
+    piece.classList.toggle("revealed", state.skillCheck.revealedTileIds.includes(pieceNumber));
   });
   $("bot-power-fill").style.width = `${power}%`;
   $("sort-progress").textContent = `${Math.min(answeredCount, skillCheckCards.length)} of ${skillCheckCards.length}`;
   $("sort-score").textContent = `${correctCount}`;
-  $("bot-status").textContent = complete
-    ? correctCount >= 8
-      ? `City Shift online. ${correctCount} scene pieces built.`
-      : `Round complete. ${correctCount} city pieces built. Replay to sharpen your score.`
-    : `City Shift ${correctCount} of ${skillCheckCards.length} pieces built. Keep sorting.`;
+  $("skill-replay-button").textContent = pictureComplete
+    ? "Replay round"
+    : complete
+      ? "Replay to reveal missing tiles"
+      : revealedCount > 0
+        ? "Restart round, keep revealed tiles"
+        : "Replay round";
+  $("bot-status").textContent = pictureComplete
+    ? "Full picture unlocked. Replay if you want to practise."
+    : complete
+      ? `Round complete. ${revealedCount} of ${skillCheckCards.length} picture tiles revealed. Replay to uncover missing tiles.`
+      : `Hidden picture: ${revealedCount} of ${skillCheckCards.length} tiles revealed. Correct answers uncover clues.`;
 
   const sortCard = $("sort-card");
   sortCard.classList.toggle("complete", complete);
@@ -1014,9 +1045,9 @@ function renderSkillCheck() {
     $("sort-card-kicker").textContent = "Round complete";
     $("sort-card-label").textContent = `${correctCount} of ${skillCheckCards.length} correct`;
     $("sort-card-clue").textContent =
-      correctCount >= 8
-        ? "You have the idea: employability skills are useful across different jobs."
-        : "Replay once if you want a stronger check before moving on.";
+      pictureComplete
+        ? "You revealed the whole City Shift clue picture."
+        : "Replay once to try the missed cards and uncover the missing tiles.";
   }
 
   $("sort-feedback").textContent =

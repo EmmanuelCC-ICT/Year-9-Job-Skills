@@ -38,6 +38,7 @@ Current generated image assets:
 - `video-opener/job-skills-contact-sheet-v1.png` - broader first contact sheet.
 - `video-opener/collaboration-communication-contact-sheet-v1.png` - focused lesson contact sheet.
 - `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
+- `quest/city-shift-hidden-picture-v1.png` - City Shift 10-tile hidden-picture reveal mural for the Skill Sorter.
 - `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
 - `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
 - `feedback/city-well-done-v1.gif` - City Shift fly-in celebration feedback.

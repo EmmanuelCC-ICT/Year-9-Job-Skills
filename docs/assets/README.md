@@ -17,6 +17,7 @@ Recommended files:
 - `video-opener/communication-detail-v1.png` - close-up communication evidence still.
 - `video-opener/collaboration-communication-contact-sheet-v1.png` - current storyboard placeholder.
 - `quest/career-quest-sorter-arena-v1.png` - Skill Sorter challenge arena background.
+- `quest/city-shift-hidden-picture-v1.png` - City Shift 10-tile hidden-picture reveal mural for the Skill Sorter.
 - `quest/career-quest-communication-v1.png` - richer communication scene for the explainer and cards.
 - `quest/career-quest-collaboration-v1.png` - richer collaboration scene for the explainer and cards.
 - `feedback/city-well-done-v1.gif` - City Shift fly-in celebration feedback.

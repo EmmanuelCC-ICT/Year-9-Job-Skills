@@ -98,9 +98,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Skill Sorter/);
   assert.match(index, /skill-yes-button/);
   assert.match(index, /skill-scene/);
-  assert.match(index, /city-puzzle/);
-  assert.match(index, /data-city-piece="10"/);
-  assert.match(index, /City Shift sorter/);
+  assert.match(index, /picture-puzzle/);
+  assert.match(index, /data-picture-tile="10"/);
+  assert.match(index, /City Shift hidden picture/);
   assert.match(index, /sort-feedback-animation/);
   assert.match(index, /city-well-done-v1\.gif/);
   assert.doesNotMatch(index, /Skill Bot|skill-bot/);
@@ -155,9 +155,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(css, /sort-card/);
   assert.match(css, /theme-picker/);
   assert.match(css, /skill-sorter-scene/);
-  assert.match(css, /city-piece/);
-  assert.match(css, /puzzle-pop/);
-  assert.match(css, /transit-light/);
+  assert.match(css, /picture-puzzle/);
+  assert.match(css, /picture-tile/);
+  assert.match(css, /city-shift-hidden-picture-v1\.png/);
   assert.match(css, /sort-feedback-animation/);
   assert.match(css, /feedback-flyout/);
   assert.match(css, /compact-video-shell/);
@@ -206,7 +206,9 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /showSortPulse/);
   assert.match(js, /feedbackAssets/);
   assert.match(js, /showFeedbackAnimation/);
-  assert.match(js, /data-city-piece/);
+  assert.match(js, /revealedTileIds/);
+  assert.match(js, /data-picture-tile/);
+  assert.match(js, /Replay to reveal missing tiles/);
   assert.match(js, /stageRailLabels/);
   assert.match(js, /themeChoices/);
   assert.match(js, /renderTheme/);
@@ -239,6 +241,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(assetReadme, /communication-explainer\.mp4/);
   assert.match(assetReadme, /collaboration-explainer\.mp4/);
   assert.match(assetReadme, /career-quest-sorter-arena-v1\.png/);
+  assert.match(assetReadme, /city-shift-hidden-picture-v1\.png/);
   assert.match(assetReadme, /career-quest-communication-v1\.png/);
   assert.match(assetReadme, /career-quest-collaboration-v1\.png/);
   assert.match(assetReadme, /city-well-done-v1\.gif/);
@@ -271,6 +274,7 @@ test("GitHub Pages version is present in docs", async () => {
 
   const questImages = [
     "career-quest-sorter-arena-v1",
+    "city-shift-hidden-picture-v1",
     "career-quest-communication-v1",
     "career-quest-collaboration-v1",
   ];
