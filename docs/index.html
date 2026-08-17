@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Year 9 Job Skills</title>
+    <meta
+      name="description"
+      content="A Year 9 enterprise skills app for turning everyday experiences into resume and interview language."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main>
+      <section class="hero-section">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Year 9 job skills</p>
+            <h1>Turn everyday experience into job speak</h1>
+            <p class="hero-lede">
+              You might not have a job yet, but you already have skills employers care about.
+              Build one clear example you can use for a resume or interview.
+            </p>
+            <div class="progress-wrap" aria-label="Takeaway progress">
+              <div class="progress-top">
+                <span>Takeaway progress</span>
+                <strong id="progress-percent">0%</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="video-slot" aria-label="Opening video area">
+            <img
+              src="assets/video-opener/collaboration-communication-contact-sheet-v1.png"
+              alt="Storyboard frames showing collaboration and communication skill moments"
+            >
+            <div class="video-overlay">
+              <div class="video-label">Opening video</div>
+              <h2>You already have job skills</h2>
+              <p>
+                Add the final video as <code>docs/assets/opener-video.mp4</code>.
+                This storyboard still holds the space for now.
+              </p>
+              <div class="video-strip">
+                <span>collaboration</span>
+                <span>communication</span>
+                <span>evidence</span>
+                <span>job speak</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quote-band" aria-label="Employer messages">
+        <article>
+          <strong>Employers say</strong>
+          <p>Speak clearly, listen properly, and think about what the other person needs to understand.</p>
+        </article>
+        <article>
+          <strong>Employers say</strong>
+          <p>Show examples of teamwork, initiative, problem solving, and how you respond when things change.</p>
+        </article>
+        <article>
+          <strong>Employers say</strong>
+          <p>Values matter: bring yourself, respect others, and add something positive to the group.</p>
+        </article>
+      </section>
+
+      <section class="section-shell" id="experiences-section">
+        <div class="section-heading">
+          <p class="eyebrow">Step 1</p>
+          <h2>Pick moments from your life</h2>
+          <p>Everyday activities count. Choose any that match you.</p>
+        </div>
+        <div class="experience-grid" id="experience-grid"></div>
+      </section>
+
+      <section class="section-shell tone-light">
+        <div class="section-heading">
+          <p class="eyebrow">Step 2</p>
+          <h2>Your matched skills</h2>
+          <p>Rate a few quickly. This is not a test; it is a confidence check.</p>
+        </div>
+        <div class="skill-grid" id="skill-grid"></div>
+      </section>
+
+      <section class="builder-section">
+        <div class="builder-panel">
+          <div class="section-heading">
+            <p class="eyebrow">Step 3</p>
+            <h2>Build one strong example</h2>
+            <p>Use one real moment. Short answers are fine.</p>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              Experience
+              <select id="experience-select">
+                <option value="">Choose one</option>
+              </select>
+            </label>
+
+            <label>
+              Skill to show
+              <select id="skill-select"></select>
+            </label>
+
+            <label class="wide">
+              What was happening?
+              <textarea
+                id="situation-input"
+                placeholder="Example: Our group had to finish a poster, but we were running out of time."
+              ></textarea>
+            </label>
+
+            <label>
+              What did you do?
+              <textarea
+                id="action-input"
+                placeholder="Example: I split up the tasks and checked what each person could finish."
+              ></textarea>
+            </label>
+
+            <label>
+              What changed because of it?
+              <textarea
+                id="result-input"
+                placeholder="Example: We finished on time and our ideas were clearer."
+              ></textarea>
+            </label>
+          </div>
+        </div>
+
+        <aside class="translation-panel" aria-label="Job speak translation">
+          <p class="eyebrow">Step 4</p>
+          <h2>Job speak translator</h2>
+          <div class="translation-output" id="job-speak-output"></div>
+          <div class="button-row">
+            <button type="button" id="copy-button">Copy</button>
+            <button type="button" id="print-button">Print</button>
+            <button type="button" class="secondary" id="reset-button">Reset</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="takeaway-section">
+        <div class="section-heading">
+          <p class="eyebrow">Takeaway</p>
+          <h2>My Employability Snapshot</h2>
+          <p>This section is designed to print or save as a PDF.</p>
+        </div>
+
+        <div class="takeaway-card" id="takeaway-card">
+          <div class="takeaway-header">
+            <div>
+              <p>Year 9 Job Skills</p>
+              <h3>My Employability Snapshot</h3>
+            </div>
+            <span>Year 9</span>
+          </div>
+
+          <div class="takeaway-grid">
+            <section>
+              <h4>My top skill example</h4>
+              <p id="snapshot-example"></p>
+            </section>
+            <section>
+              <h4>Resume bullets</h4>
+              <ul id="resume-bullets"></ul>
+            </section>
+            <section>
+              <h4>Interview answer</h4>
+              <p id="interview-answer"></p>
+            </section>
+            <section>
+              <h4>Skill to build next</h4>
+              <label>
+                Focus skill
+                <input id="improve-input" value="Planning">
+              </label>
+              <label>
+                My next step
+                <input id="next-step-input" value="Use a simple checklist before my next group task.">
+              </label>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
