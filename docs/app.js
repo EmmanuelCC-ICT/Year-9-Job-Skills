@@ -806,10 +806,7 @@ function answerSkillCheckCard(answerIsSkill) {
 function resetSkillCheck() {
   state.skillCheck = {
     ...structuredClone(initialState.skillCheck),
-    revealedTileIds: [...new Set(state.skillCheck.revealedTileIds)],
-    lastFeedback: state.skillCheck.revealedTileIds.length >= skillCheckCards.length
-      ? "Full hidden picture unlocked. Replay if you want to practise again."
-      : "Replay round started. Correct answers will reveal any missing picture tiles.",
+    lastFeedback: "Replay round started. Correct answers will reveal the picture again.",
   };
   saveState();
   render();
@@ -1122,14 +1119,14 @@ function renderSkillCheck() {
   $("skill-replay-button").textContent = pictureComplete
     ? "Replay round"
     : complete
-      ? "Replay to reveal missing tiles"
+      ? "Replay round"
       : revealedCount > 0
-        ? "Restart round, keep revealed tiles"
+        ? "Restart round"
         : "Replay round";
   $("bot-status").textContent = pictureComplete
     ? "Full picture unlocked. Replay if you want to practise."
     : complete
-      ? `Round complete. ${revealedCount} of ${skillCheckCards.length} picture tiles revealed. Replay to uncover missing tiles.`
+      ? `Round complete. ${revealedCount} of ${skillCheckCards.length} picture tiles revealed. Replay to try again from a fresh picture.`
       : `Hidden picture: ${revealedCount} of ${skillCheckCards.length} tiles revealed. Correct answers uncover clues.`;
 
   const sortCard = $("sort-card");
@@ -1148,8 +1145,8 @@ function renderSkillCheck() {
     $("sort-card-label").textContent = `${correctCount} of ${skillCheckCards.length} correct`;
     $("sort-card-clue").textContent =
       pictureComplete
-        ? "You revealed the whole City Shift clue picture."
-        : "Replay once to try the missed cards and uncover the missing tiles.";
+        ? `You revealed the whole ${state.theme === "space" ? "Mission Control" : "City Shift"} clue picture.`
+        : "Replay the round to reset the picture and try again.";
   }
 
   $("sort-feedback").textContent =

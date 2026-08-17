@@ -229,7 +229,8 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /showFeedbackAnimation/);
   assert.match(js, /revealedTileIds/);
   assert.match(js, /data-picture-tile/);
-  assert.match(js, /Replay to reveal missing tiles/);
+  assert.match(js, /Replay round started\. Correct answers will reveal the picture again\./);
+  assert.doesNotMatch(js, /keep revealed tiles|Replay to reveal missing tiles/);
   assert.match(js, /stageRailLabels/);
   assert.match(js, /liveThemeChoices/);
   assert.match(js, /renderTheme/);
