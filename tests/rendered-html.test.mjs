@@ -163,6 +163,11 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /firstNameOnly/);
   assert.match(js, /communicationMoments/);
   assert.match(js, /collaborationMoments/);
+  assert.match(js, /In a group assignment/);
+  assert.match(js, /At sport, dance, or training/);
+  assert.match(js, /Helping at home or with a younger person/);
+  assert.match(js, /Planning something with friends/);
+  assert.match(js, /In a casual, job-style, or helping task/);
   assert.match(js, /clarifyingPrompts/);
   assert.match(js, /small but real example/);
   assert.match(js, /resetWork/);
