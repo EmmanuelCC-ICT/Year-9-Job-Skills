@@ -863,16 +863,7 @@ input:focus {
   font-weight: 800;
 }
 
-.snapshot-meta {
-  margin-left: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.takeaway-header span,
-.snapshot-meta span {
+.takeaway-header span {
   padding: 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 6px;
@@ -1115,11 +1106,6 @@ input:focus {
 
   .snapshot-tagline {
     margin-top: 2mm;
-    font-size: 9pt;
-  }
-
-  .snapshot-meta span {
-    padding: 5px 7px;
     font-size: 9pt;
   }
 

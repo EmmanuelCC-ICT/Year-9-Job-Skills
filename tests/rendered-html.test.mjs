@@ -43,10 +43,13 @@ test("server-renders the Year 9 Job Skills app shell", async () => {
   assert.match(html, /\/assets\/ecc-logo\.png/);
   assert.match(html, /Download your one-page skills profile/);
   assert.match(html, /choose Save as PDF/);
-  assert.match(html, /First name only/);
+  assert.match(html, /No names in this app/);
   assert.match(html, /does not send your answers anywhere/);
+  assert.match(html, /does not ask for your name, PC class, or surname/);
+  assert.match(html, /Step 1: click Save as PDF/);
+  assert.match(html, /Step 2: open the Microsoft Form/);
   assert.match(html, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
-  assert.doesNotMatch(html, /pc-grid|pc-picker|pcClass|First name and PC class/);
+  assert.doesNotMatch(html, /pc-grid|pc-picker|pcClass|First name and PC class|firstNameOnly|First name only/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -133,12 +136,14 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /save-pdf-button/);
   assert.match(index, /choose Save as PDF/);
   assert.match(index, /Scale 90%/);
-  assert.match(index, /First name only/);
-  assert.match(index, /does not ask for your PC class or surname/);
+  assert.match(index, /No names in this app/);
+  assert.match(index, /does not ask for your name, PC class, or surname/);
+  assert.match(index, /Step 1: click Save as PDF/);
+  assert.match(index, /Step 2: open the Microsoft Form/);
   assert.match(index, /https:\/\/forms\.cloud\.microsoft\/r\/g0w8hFceqZ/);
   assert.match(index, /Upload your snapshot in Microsoft Forms/);
   assert.match(index, /form-link-button/);
-  assert.doesNotMatch(index, /pc-grid|pc-picker|snapshot-pc-class|First name and PC class/);
+  assert.doesNotMatch(index, /pc-grid|pc-picker|snapshot-pc-class|First name and PC class|first-name-input|snapshot-first-name/);
   assert.match(index, /Skill Quest/);
   assert.match(index, /mission-rail/);
   assert.match(index, /quest-meter-fill/);
@@ -148,7 +153,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /Keep it real/);
   assert.match(index, /clarifying-questions/);
   assert.match(index, /right-size-feedback/);
-  assert.match(index, /Do not include private details/);
+  assert.match(index, /Do not include private\s+details/);
   assert.match(index, /Clear work/);
   assert.match(index, /does not send your answers to AI or the internet/);
   assert.doesNotMatch(index, /data-stage-panel="build"/);
@@ -259,7 +264,7 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(js, /Certificate II/);
   assert.doesNotMatch(js, /hydrateVideoSlots/);
   assert.doesNotMatch(js, /pcClasses|pcClass|9 Teresa|snapshot-pc-class|pc-grid/);
-  assert.match(js, /firstNameOnly/);
+  assert.doesNotMatch(js, /firstNameOnly|first-name-input|snapshot-first-name|student\.firstName/);
   assert.match(js, /communicationMoments/);
   assert.match(js, /collaborationMoments/);
   assert.match(js, /In a group assignment/);

@@ -30,17 +30,12 @@ type Evidence = {
   nextStep: string;
 };
 
-type StudentDetails = {
-  firstName: string;
-};
-
 type SkillCheckAnswer = {
   id: string;
   answerIsSkill: boolean;
 };
 
 type SavedJobSkillsState = {
-  student: StudentDetails;
   selectedExperiences: string[];
   skillCheckAnswers: SkillCheckAnswer[];
   confidence: Record<string, Confidence>;
@@ -274,16 +269,11 @@ const initialEvidence: Evidence = {
   nextStep: "Use a simple checklist before my next group task.",
 };
 
-const initialStudent: StudentDetails = {
-  firstName: "",
-};
-
 const githubPagesUrl = "https://emmanuelcc-ict.github.io/Year-9-Job-Skills/";
 const microsoftFormsUrl = "https://forms.cloud.microsoft/r/g0w8hFceqZ";
 
 function readSavedState(): SavedJobSkillsState {
   const fallback = {
-    student: initialStudent,
     selectedExperiences: [],
     skillCheckAnswers: [],
     confidence: {},
@@ -299,7 +289,6 @@ function readSavedState(): SavedJobSkillsState {
   try {
     const parsed = JSON.parse(saved) as Partial<SavedJobSkillsState>;
     return {
-      student: { firstName: firstNameOnly(parsed.student?.firstName ?? "") },
       selectedExperiences: parsed.selectedExperiences ?? [],
       skillCheckAnswers: Array.isArray(parsed.skillCheckAnswers)
         ? parsed.skillCheckAnswers.filter((answer) => skillCheckCards.some((card) => card.id === answer.id))
@@ -323,13 +312,8 @@ function sentenceCase(value: string) {
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
-function firstNameOnly(value: string) {
-  return value.replace(/\s+.*/, "").slice(0, 24);
-}
-
 function App() {
   const [initialState] = useState(readSavedState);
-  const [student, setStudent] = useState<StudentDetails>(initialState.student);
   const [selectedExperiences, setSelectedExperiences] = useState<string[]>(initialState.selectedExperiences);
   const [skillCheckAnswers, setSkillCheckAnswers] = useState<SkillCheckAnswer[]>(initialState.skillCheckAnswers);
   const [confidence, setConfidence] = useState<Record<string, Confidence>>(initialState.confidence);
@@ -340,9 +324,9 @@ function App() {
   useEffect(() => {
     window.localStorage.setItem(
       "skill-sprint-state",
-      JSON.stringify({ student, selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence }),
+      JSON.stringify({ selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence }),
     );
-  }, [student, selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence]);
+  }, [selectedExperiences, skillCheckAnswers, confidence, chosenSkillId, evidence]);
 
   const matchedSkillIds = useMemo(() => {
     const ids = new Set<string>();
@@ -377,7 +361,6 @@ function App() {
   const skillCheckPower = Math.round((skillCheckScore / skillCheckCards.length) * 100);
 
   const progressParts = [
-    Boolean(student.firstName.trim()),
     skillCheckAnswers.length === skillCheckCards.length,
     selectedExperiences.length > 0,
     Object.keys(confidence).length >= 2,
@@ -397,10 +380,6 @@ function App() {
     setEvidence((current) => ({ ...current, [key]: value }));
   }
 
-  function updateStudent(key: keyof StudentDetails, value: string) {
-    setStudent((current) => ({ ...current, [key]: value }));
-  }
-
   function answerSkillCheck(id: string, answerIsSkill: boolean) {
     setSkillCheckAnswers((current) => {
       const withoutCurrent = current.filter((answer) => answer.id !== id);
@@ -415,7 +394,6 @@ function App() {
   }
 
   function resetWork() {
-    setStudent(initialStudent);
     setSelectedExperiences([]);
     setSkillCheckAnswers([]);
     setConfidence({});
@@ -567,25 +545,15 @@ function App() {
       <section className="section-shell student-section">
         <div className="section-heading compact-heading">
           <p className="eyebrow">Before you start</p>
-          <h2>First name only</h2>
-          <p>This only labels your draft while you work. Do not enter a surname.</p>
+          <h2>No names in this app</h2>
+          <p>Build your examples here. Your name and PC class are only collected later in Microsoft Forms.</p>
         </div>
 
         <div className="student-panel">
-          <label>
-            First name
-            <input
-              autoComplete="given-name"
-              maxLength={24}
-              onChange={(event) => updateStudent("firstName", firstNameOnly(event.target.value))}
-              placeholder="First name only"
-              value={student.firstName}
-            />
-          </label>
-
           <p className="privacy-note">
             Privacy note: this app does not send your answers anywhere. Your work stays on this device unless you
-            print, save, or share it. It does not ask for your PC class or surname.
+            print, save, or share it. It does not ask for your name, PC class, or surname. Do not include private
+            details about yourself or anyone else.
           </p>
         </div>
       </section>
@@ -779,9 +747,6 @@ function App() {
               <h3>My Skills PDF</h3>
               <span className="snapshot-tagline">Communication + Collaboration profile</span>
             </div>
-            <div className="snapshot-meta" aria-label="Student details">
-              <span>{student.firstName.trim() || "First name"}</span>
-            </div>
           </div>
 
           <div className="takeaway-grid">
@@ -820,8 +785,8 @@ function App() {
             <p className="eyebrow">Teacher hand-in</p>
             <h3>Upload your snapshot in Microsoft Forms</h3>
             <p>
-              Save or print your skills PDF first. Then use the Microsoft Form to upload it and enter your name and PC
-              class in the approved school system.
+              Step 1: click Save as PDF and save the file to your device. Step 2: open the Microsoft Form, upload that
+              PDF, and enter your name and PC class there in the approved school system.
             </p>
           </div>
           <a className="form-link-button" href={microsoftFormsUrl} rel="noreferrer" target="_blank">

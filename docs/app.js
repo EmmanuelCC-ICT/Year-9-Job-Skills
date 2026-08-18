@@ -354,7 +354,7 @@ const stages = [
 ];
 
 const celebrationCopy = {
-  start: ["Launch badge unlocked", "First name only is set. Good privacy choice."],
+  start: ["Launch badge unlocked", "No names needed. Good privacy choice."],
   "skill-check": ["Skill Sorter complete", "You can spot the difference between skills, emotions, and qualifications."],
   communication: ["Communication unlocked", "Speaking and listening both count. You probably use this more than you think."],
   "communication-life": ["Communication evidence found", "That is a real example you could explain to an employer one day."],
@@ -416,9 +416,6 @@ const initialState = {
     communication: false,
     collaboration: false,
   },
-  student: {
-    firstName: "",
-  },
   selectedCommunicationMoments: [],
   selectedCollaborationMoments: [],
   skillCheck: {
@@ -454,9 +451,7 @@ function loadState() {
       ...initialState.videoCheckpoints,
       ...parsed.videoCheckpoints,
     };
-    parsed.student = {
-      firstName: firstNameOnly(parsed.student?.firstName || ""),
-    };
+    delete parsed.student;
     parsed.nextStep = {
       ...initialState.nextStep,
       ...parsed.nextStep,
@@ -555,7 +550,6 @@ function hasMeaningfulWork() {
   });
 
   return Boolean(
-      state.student.firstName.trim() ||
       Object.values(state.videoCheckpoints).some(Boolean) ||
       state.skillCheck.answers.length ||
       state.skillCheck.revealedTileIds.length ||
@@ -572,10 +566,6 @@ function sentenceCase(value) {
   const trimmed = value.trim();
   if (!trimmed) return "";
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-}
-
-function firstNameOnly(value) {
-  return value.replace(/\s+.*/, "").slice(0, 24);
 }
 
 function buildSkillId() {
@@ -745,7 +735,6 @@ function allCompleteExamples() {
 
 function getProgress() {
   const parts = [
-    Boolean(state.student.firstName.trim()),
     isVideoCheckpointComplete("intro"),
     isSkillCheckComplete(),
     isVideoCheckpointComplete("communication"),
@@ -768,7 +757,7 @@ function currentStageIndex() {
 function isStageComplete(stageId) {
   switch (stageId) {
     case "start":
-      return Boolean(state.student.firstName.trim()) && isVideoCheckpointComplete("intro");
+      return isVideoCheckpointComplete("intro");
     case "skill-check":
       return isSkillCheckComplete();
     case "communication":
@@ -1061,11 +1050,6 @@ function renderVideoCheckpoints() {
     button.textContent = complete ? "Class video done" : "My class watched this";
     button.setAttribute("aria-pressed", String(complete));
   });
-}
-
-function renderStudent() {
-  $("first-name-input").value = state.student.firstName;
-  $("snapshot-first-name").textContent = state.student.firstName.trim() || "First name";
 }
 
 function renderTheme() {
@@ -1390,7 +1374,6 @@ function renderOutputs() {
 
 function render() {
   renderTheme();
-  renderStudent();
   renderSkillCheck();
   renderExperiences();
   renderSelects();
@@ -1425,13 +1408,6 @@ function openPrintDialog() {
 }
 
 function bindForm() {
-  $("first-name-input").addEventListener("input", (event) => {
-    state.student.firstName = firstNameOnly(event.target.value);
-    saveState();
-    render();
-    maybeCelebrate("start");
-  });
-
   document.querySelectorAll("[data-theme-choice]").forEach((button) => {
     button.addEventListener("click", () => {
       if (!liveThemeChoices.includes(button.dataset.themeChoice)) return;
