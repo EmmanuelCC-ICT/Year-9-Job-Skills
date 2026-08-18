@@ -293,7 +293,7 @@ const stages = [
     short: "Launch",
     title: "Launch",
     subtitle: "Start your private job-skills snapshot.",
-    hint: "Add a first name only to earn the launch badge.",
+    hint: "Watch the intro video, tick that your class watched it, then go to Skill Sorter.",
   },
   {
     id: "skill-check",
@@ -375,6 +375,16 @@ const stageTokens = {
   "collaboration-life": "06",
   "collaboration-build": "07",
   unlock: "PDF",
+};
+
+const nextStageButtonLabels = {
+  start: "Next: Skill Sorter",
+  "skill-check": "Next: Communication",
+  communication: "Next: Find Examples",
+  "communication-life": "Next: Build Story",
+  collaboration: "Next: Find Teamwork",
+  "collaboration-life": "Next: Build Story",
+  "collaboration-build": "Next: Skills PDF",
 };
 
 const stageRailLabels = {
@@ -870,12 +880,12 @@ function stageRequiresCompletion(stageId) {
 }
 
 function nextButtonLabel(stageId) {
-  if (requiredVideoKeyForStage(stageId) && !isStageComplete(stageId)) return "Wait for video";
+  if (requiredVideoKeyForStage(stageId) && !isStageComplete(stageId)) return "Watch or tick video first";
   if (stageId === "communication-build") return "Use the Yes/No choice";
   if (stageId === "collaboration-build") return "Use the Yes/No choice";
   if (stageId === "unlock" && !isSnapshotReady()) return "Finish examples first";
   if (currentStageIndex() === stages.length - 1) return "Stay here";
-  return "Next mission";
+  return nextStageButtonLabels[stageId] || "Next mission";
 }
 
 function renderQuest() {
@@ -892,7 +902,11 @@ function renderQuest() {
 
   $("mission-title").textContent = currentStage.title;
   $("mission-subtitle").textContent = currentStage.subtitle;
-  $("mission-hint").textContent = currentStage.hint;
+  const nextLabel = nextStageButtonLabels[currentStage.id];
+  $("mission-hint").textContent =
+    requiredVideoKeyForStage(currentStage.id) && isStageComplete(currentStage.id) && nextLabel
+      ? `Video done. Press ${nextLabel}.`
+      : currentStage.hint;
   $("xp-points").textContent = `${progress * 10} XP`;
   $("badge-count").textContent = `${badges.length} of ${stages.length} badges`;
   $("quest-meter-fill").style.width = `${Math.round((badges.length / stages.length) * 100)}%`;
@@ -1017,7 +1031,8 @@ function loadVideoOnDevice(key) {
   checkpointStrip.className = "video-checkpoint-strip";
   checkpointStrip.dataset.videoCheckpointStrip = key;
   const checkpointText = document.createElement("span");
-  checkpointText.textContent = "This unlocks automatically when the video ends. If your teacher played it for the class, tick the button instead.";
+  checkpointText.textContent =
+    "When the video ends, press the next button below. If your teacher played it for the class, tick this button first.";
   const checkpointButton = document.createElement("button");
   checkpointButton.type = "button";
   checkpointButton.className = "video-complete-button";

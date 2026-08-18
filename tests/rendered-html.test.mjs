@@ -90,7 +90,10 @@ test("GitHub Pages version is present in docs", async () => {
   assert.match(index, /data-video-checkpoint="intro"/);
   assert.match(index, /data-video-checkpoint="communication"/);
   assert.match(index, /data-video-checkpoint="collaboration"/);
-  assert.match(index, /Only play it here if your teacher asks you to/);
+  assert.match(index, /Step 1: watch this with your class/);
+  assert.match(index, /Step 3: press "Next: Skill Sorter"/);
+  assert.match(index, /Step 3: press "Next: Find Examples"/);
+  assert.match(index, /Step 3: press "Next: Find Teamwork"/);
   assert.match(index, /opener-poster-v1\.png/);
   assert.match(index, /intro-employability-skills\.mp4/);
   assert.match(index, /communication-explainer\.mp4/);
@@ -267,6 +270,10 @@ test("GitHub Pages version is present in docs", async () => {
   assert.doesNotMatch(js, /firstNameOnly|first-name-input|snapshot-first-name|student\.firstName/);
   assert.match(js, /communicationMoments/);
   assert.match(js, /collaborationMoments/);
+  assert.match(js, /Watch or tick video first/);
+  assert.match(js, /Next: Skill Sorter/);
+  assert.match(js, /Video done\. Press/);
+  assert.doesNotMatch(js, /Add a first name/);
   assert.match(js, /In a group assignment/);
   assert.match(js, /At sport, dance, or training/);
   assert.match(js, /Helping at home or with a younger person/);
